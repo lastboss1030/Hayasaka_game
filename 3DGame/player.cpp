@@ -11,6 +11,7 @@
 #include "shadow.h"
 #include "explosion.h"
 #include "effect.h"
+#include "select.h"
 
 //=============================================================================
 // マクロ定義
@@ -35,6 +36,7 @@ Player g_player;									//モデル情報
 
 D3DXVECTOR3 aCollisionPos[2];						//当たり判定ライン
 
+int g_nStateP;										//ステート
 int g_nShootCount = 0;								//発射カウント
 int g_nEffect = 0;
 float g_move;
@@ -63,42 +65,120 @@ void InitPlayer(void)
 
 	aCollisionPos[0] = D3DXVECTOR3(-200, 0, 200);
 	aCollisionPos[1] = D3DXVECTOR3(200, 0, 200);
-
-	g_move = 1.0f;
 	
 	//モーションの初期化
 	InitMotion();
 
-	//Xファイルの読み込み
-	D3DXLoadMeshFromX("data/MODEL/golem.x",	//ロボット本体
-		D3DXMESH_SYSTEMMEM,
-		pDevice,
-		NULL,
-		&g_player.aModel[0].pBuffMat,
-		NULL,
-		&g_player.aModel[0].nNumMat,
-		&g_player.aModel[0].pMesh);
+	if (g_player.playertype == PLAYERTYPE_GOLEM)
+	{
+		//移動速度
+		g_move = 1.0f;
 
-	D3DXLoadMeshFromX("data/MODEL/canon000.x",		//ドローン
-		D3DXMESH_SYSTEMMEM,
-		pDevice,
-		NULL,
-		&g_player.aModel[1].pBuffMat,
-		NULL,
-		&g_player.aModel[1].nNumMat,
-		&g_player.aModel[1].pMesh);
+		//Xファイルの読み込み
+		D3DXLoadMeshFromX("data/MODEL/golem.x",	//ロボット本体
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_player.aModel[0].pBuffMat,
+			NULL,
+			&g_player.aModel[0].nNumMat,
+			&g_player.aModel[0].pMesh);
 
-	//各パーツの階層構造の設定
-	g_player.aModel[0].nIdxModelParent = -1;	//親のインデックスを設定
-	g_player.aModel[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		D3DXLoadMeshFromX("data/MODEL/kang_dae.x",		//ドローン
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_player.aModel[1].pBuffMat,
+			NULL,
+			&g_player.aModel[1].nNumMat,
+			&g_player.aModel[1].pMesh);
 
-	g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
-	g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 75.0f, 5.0f);
-	g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		//各パーツの階層構造の設定
+		g_player.aModel[0].nIdxModelParent = -1;	//親のインデックスを設定
+		g_player.aModel[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
-	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//向き
+		g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
+		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 75.0f, 5.0f);
+		g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+		g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
+		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//向き
+	}
+
+	if (g_player.playertype == PLAYERTYPE_LEO)
+	{
+		//移動速度
+		g_move = 0.8f;
+
+		//Xファイルの読み込み
+		D3DXLoadMeshFromX("data/MODEL/leo.x",	//ロボット本体
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_player.aModel[0].pBuffMat,
+			NULL,
+			&g_player.aModel[0].nNumMat,
+			&g_player.aModel[0].pMesh);
+
+		D3DXLoadMeshFromX("data/MODEL/gekko.x",		//ドローン
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_player.aModel[1].pBuffMat,
+			NULL,
+			&g_player.aModel[1].nNumMat,
+			&g_player.aModel[1].pMesh);
+
+		//各パーツの階層構造の設定
+		g_player.aModel[0].nIdxModelParent = -1;	//親のインデックスを設定
+		g_player.aModel[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+		g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
+		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 75.0f, 10.0f);
+		g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+		g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
+		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//向き
+	}
+
+	if (g_player.playertype == PLAYERTYPE_STALKER)
+	{
+		//移動速度
+		g_move = 1.5f;
+
+		//Xファイルの読み込み
+		D3DXLoadMeshFromX("data/MODEL/stalker.x",	//ロボット本体
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_player.aModel[0].pBuffMat,
+			NULL,
+			&g_player.aModel[0].nNumMat,
+			&g_player.aModel[0].pMesh);
+
+		D3DXLoadMeshFromX("data/MODEL/punishert.x",		//ドローン
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_player.aModel[1].pBuffMat,
+			NULL,
+			&g_player.aModel[1].nNumMat,
+			&g_player.aModel[1].pMesh);
+
+		//各パーツの階層構造の設定
+		g_player.aModel[0].nIdxModelParent = -1;	//親のインデックスを設定
+		g_player.aModel[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+		g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
+		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 68.0f, 10.0f);
+		g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+		g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
+		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//向き
+	}
 	
 	//変数宣言
 	int nNumVtx;		//頂点数
@@ -398,17 +478,54 @@ void UpdatePlayer(void)
 	//弾の発射
 	if (GetKeyboardPress(DIK_G) == true)
 	{
-		if ((g_nShootCount % 30) == 0)
+		//ゴーレム選択時
+		if (g_player.playertype == PLAYERTYPE_GOLEM)
 		{
-			if (g_player.boost > 40)
+			if ((g_nShootCount % 30) == 0)
 			{
-				SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
-					D3DXVECTOR3(sinf(g_player.rot.y) * -10.0f, 0.0f, cosf(g_player.rot.y) * -10.0f),
-					30.0f, 30.0f);
+				if (g_player.boost > 40)
+				{
+					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
+						D3DXVECTOR3(sinf(g_player.rot.y) * -10.0f, 0.0f, cosf(g_player.rot.y) * -10.0f),
+						30.0f, 30.0f);
 
-				g_player.boost -= 25;
+					g_player.boost -= 25;
+				}
 			}
 		}
+
+		//レオ選択時
+		if (g_player.playertype == PLAYERTYPE_LEO)
+		{
+			if ((g_nShootCount % 60) == 0)
+			{
+				if (g_player.boost > 20)
+				{
+					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
+						D3DXVECTOR3(sinf(g_player.rot.y) * -10.0f, 0.0f, cosf(g_player.rot.y) * -10.0f),
+						30.0f, 30.0f);
+
+					g_player.boost -= 40;
+				}
+			}
+		}
+
+		//ストーカー選択時
+		if (g_player.playertype == PLAYERTYPE_STALKER)
+		{
+			if ((g_nShootCount % 10) == 0)
+			{
+				if (g_player.boost > 20)
+				{
+					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
+						D3DXVECTOR3(sinf(g_player.rot.y) * -10.0f, 0.0f, cosf(g_player.rot.y) * -10.0f),
+						30.0f, 30.0f);
+
+					g_player.boost -= 10;
+				}
+			}
+		}
+
 	}
 
 	//影の追従

@@ -132,7 +132,7 @@ void UpdateResult(void)
 	VERTEX_2D *pVtx;
 	g_nCounterAnimR++;		//アニメーションカウンター更新
 
-							//情報の取得
+	//情報の取得
 	int nFade = GetFade();
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得

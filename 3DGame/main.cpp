@@ -58,7 +58,7 @@ LPDIRECT3D9 g_pD3D = NULL;					//Direct3Dオブジェクトへのポインタ
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;		//Direct3Dデバイスへのポインタ
 LPD3DXFONT g_pFont = NULL;					//フォントへのポインタ
 int g_nCountFPS;							//FPSカウンタ
-MODE g_mode = MODE_TITLE;					//モードの種類
+MODE g_mode = MODE_SELECT;					//モードの種類
 
 //=============================================================================
 // メイン関数
@@ -380,7 +380,7 @@ void Draw(void)
 	//描画の開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{
-		D3DVIEWPORT9 viewportDef;
+//		D3DVIEWPORT9 viewportDef;
 
 		//現在のビューポートの取得
 //		g_pD3DDevice->GetViewport(&viewportDef);

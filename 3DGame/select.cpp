@@ -7,20 +7,22 @@
 #include "select.h"								//インクルードファイル
 #include "input.h"
 #include "fade.h"
+#include "player.h"
 
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_TEX (3)									//テクスチャ最大数
+#define MAX_TEX (4)									//テクスチャ最大数
 
 //=============================================================================
 // グローバル変数
 //=============================================================================
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffSelect = NULL;	//頂点情報のポインタ
-LPDIRECT3DTEXTURE9 g_apTextureSelect[MAX_TEX];	//テクスチャのポインタ
-D3DXCOLOR g_colorSelect;							//色
+LPDIRECT3DTEXTURE9 g_apTextureSelect[MAX_TEX];		//テクスチャのポインタ
+D3DXCOLOR g_colorSelect[MAX_TEX];					//色
 int g_nCounterAnimS;								//アニメーションカウンター
 int g_nPatternAnimS;								//アニメーションパターンNo
+int g_nState;										//ステート
 float g_nCntEnterS;
 
 //=============================================================================
@@ -36,7 +38,7 @@ HRESULT InitSelect(void)
 	pDevice = GetDevice();
 
 	//初期化
-	g_colorSelect = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	g_colorSelect[0] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	g_nCntEnterS = 0;
 	//アニメーションの初期化
 	g_nCounterAnimS = 0;
@@ -44,7 +46,9 @@ HRESULT InitSelect(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/Select_BG.png", &g_apTextureSelect[0]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/press_enter001.png", &g_apTextureSelect[1]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/metal000.jpg", &g_apTextureSelect[1]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/metal000.jpg", &g_apTextureSelect[2]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/metal000.jpg", &g_apTextureSelect[3]);
 
 	//頂点バッファの生成
 	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_TEX,	//確保するバッファサイズ
@@ -121,61 +125,124 @@ void UninitSelect(void)
 //=============================================================================
 void UpdateSelect(void)
 {
-	//情報の取得
-	int nFade = GetFade();
-	g_nCounterAnimS++;		//アニメーションカウンター更新
 	VERTEX_2D *pVtx;
+	int nFade = GetFade();
+	Player *pPlayer;
+	pPlayer = GetPlayer();
 
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	g_pVtxBuffSelect->Lock(0, 0, (void**)&pVtx, 0);
-
-	if ((g_nCounterAnimS % 20) == 0)
+	//セレクト
+	if (GetKeyboardTrigger(DIK_D) == true)
 	{
-		//アニメーションパターンを更新
-		g_nPatternAnimS = (g_nPatternAnimS + 1) % 2;
+		//効果音
+
+
+		g_nState++;
+		if (g_nState > 2)
+		{
+			g_nState = 0;
+		}
 	}
 
-	//テクスチャ座標を更新
-	pVtx[8].tex = D3DXVECTOR2(0.0f + (0.5f*g_nPatternAnimS), 1.0f);		//テクスチャ座標
-	pVtx[9].tex = D3DXVECTOR2(0.0f + (0.5f*g_nPatternAnimS), 0.0f);		//アニメーション
-	pVtx[10].tex = D3DXVECTOR2(0.5f + (0.5f*g_nPatternAnimS), 1.0f);
-	pVtx[11].tex = D3DXVECTOR2(0.5f + (0.5f*g_nPatternAnimS), 0.0f);
-
-	//PRESS_ENTERの色更新
-	pVtx[4].col = g_colorSelect;
-	pVtx[5].col = g_colorSelect;
-	pVtx[6].col = g_colorSelect;
-	pVtx[7].col = g_colorSelect;
-
-	//頂点バッファをアンロックする
-	g_pVtxBuffSelect->Unlock();
-
-	//PRESS_ENTERの点滅
-	if (nFade == FADE_NONE)
+	if (GetKeyboardTrigger(DIK_A) == true)
 	{
-		g_nCntEnterS++;
+		//効果音
 
-		if (g_nCntEnterS == 20)
+
+		g_nState--;
+		if (g_nState < 0)
 		{
-			g_colorSelect.a = 1.0f;
+			g_nState = 2;
 		}
-		else if (g_nCntEnterS == 40)
+	}
+
+	//頂点バッファをロックし頂点情報へのポインタを取得
+	g_pVtxBuffSelect->Lock(0, 0, (void**)&pVtx, 0);
+	for (int nCntSelect = 0; nCntSelect < MAX_TEX; nCntSelect++, pVtx += 4)
+	{
+		switch (g_nState)
 		{
-			g_colorSelect.a = 0.0f;
-			g_nCntEnterS = 0;
+		case SELECT_MENU_GOLEM:		 //ゴーレム選択時
+
+			g_colorSelect[1] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			g_colorSelect[2] = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			g_colorSelect[3] = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+
+			break;
+
+		case SELECT_MENU_LEO:		//レオ選択時
+			g_colorSelect[1] = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			g_colorSelect[2] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			g_colorSelect[3] = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+
+			break;
+
+		case SELECT_MENU_STALKER:	//ストーカー選択時
+			g_colorSelect[1] = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			g_colorSelect[2] = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			g_colorSelect[3] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+			break;
 		}
+		pVtx[0].col = g_colorSelect[nCntSelect];
+		pVtx[1].col = g_colorSelect[nCntSelect];
+		pVtx[2].col = g_colorSelect[nCntSelect];
+		pVtx[3].col = g_colorSelect[nCntSelect];
 	}
 
 	//エンター押したら
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
-		if (nFade == FADE_NONE)
+		if (g_nState == SELECT_MENU_GOLEM)	//ゴーレム選択時
 		{
-			//効果音
+			//決定音
 
-			SetFade(FADE_OUT, MODE_GAME);	//ゲーム画面に切り替え
+			
+			//キャラ決定
+			pPlayer->playertype = PLAYERTYPE_GOLEM;
+
+			//ゴーレム使用
+			SetFade(FADE_OUT, MODE_GAME);
+
+		}
+		else if (g_nState == SELECT_MENU_LEO)	//レオ選択時
+		{
+			//決定音
+
+
+			//キャラ決定
+			pPlayer->playertype = PLAYERTYPE_LEO;
+
+			//レオ使用
+			SetFade(FADE_OUT, MODE_GAME);
+
+		}
+		else if (g_nState == SELECT_MENU_STALKER)	//ストーカー選択時
+		{
+			//決定音
+
+
+			//キャラ決定
+			pPlayer->playertype = PLAYERTYPE_STALKER;
+
+			//ストーカー使用
+			SetFade(FADE_OUT, MODE_GAME);
+
 		}
 	}
+
+	//頂点バッファをアンロックする
+	g_pVtxBuffSelect->Unlock();
+
+	////エンター押したら
+	//if (GetKeyboardTrigger(DIK_RETURN) == true)
+	//{
+	//	if (nFade == FADE_NONE)
+	//	{
+	//		//効果音
+
+	//		SetFade(FADE_OUT, MODE_GAME);	//ゲーム画面に切り替え
+	//	}
+	//}
 }
 
 //=============================================================================
@@ -194,12 +261,6 @@ void DrawSelect(void)
 
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	//テクスチャの設定
-	for (int nCntTexture = 0; nCntTexture < MAX_TEX; nCntTexture++)
-	{
-		pDevice->SetTexture(0, g_apTextureSelect[nCntTexture]);
-	}
 
 	//ポリゴンの描画
 	for (int nCntTexture = 0; nCntTexture < MAX_TEX; nCntTexture++)
@@ -229,15 +290,50 @@ void SetTextureSelect(int nCntSelect)
 		pVtx[1].pos = D3DXVECTOR3(0, 0, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, 0, 0.0f);
+
+		//カラー
+		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
 	}
-	else if (nCntSelect == 1)	//PRESS_ENTER
+	else if (nCntSelect == 1)	//左
 	{
 		//頂点座標
-		pVtx[0].pos = D3DXVECTOR3(850, 200, 0.0f);	//Zは0.0固定
-		pVtx[1].pos = D3DXVECTOR3(850, 50, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1570, 200, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1570, 50, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(120, 950, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(120, 350, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(520, 950, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(520, 350, 0.0f);
+
+		//カラー
+		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
+	else if (nCntSelect == 2)	//中央
+	{
+		//頂点座標
+		pVtx[0].pos = D3DXVECTOR3(750, 950, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(750, 350, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(1150, 950, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1150, 350, 0.0f);
+
+		//カラー
+		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	else if (nCntSelect == 3)	//右
+	{
+		//頂点座標
+		pVtx[0].pos = D3DXVECTOR3(1400, 950, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(1400, 350, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(1800, 950, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1800, 350, 0.0f);
+
+		//カラー
+		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+
+	pVtx[0].col = g_colorSelect[nCntSelect];
+	pVtx[1].col = g_colorSelect[nCntSelect];
+	pVtx[2].col = g_colorSelect[nCntSelect];
+	pVtx[3].col = g_colorSelect[nCntSelect];
+
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffSelect->Unlock();
