@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\Game Object">
+      <UniqueIdentifier>{232b7e76-ecf8-4d5d-8718-78b6c76fd0bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game Object">
+      <UniqueIdentifier>{05a0221b-c48b-42e6-b77a-be6120234f76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Field.wall">
+      <UniqueIdentifier>{6451b066-015c-4f33-82cc-7b3ae100e123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Field.Wall">
+      <UniqueIdentifier>{c4cdc92c-186a-4f66-8fb0-6fe83b446eb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Mode">
+      <UniqueIdentifier>{6b5c98b4-6e07-472e-a73c-a9281a87d0b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Mode">
+      <UniqueIdentifier>{e513a351-d406-45a1-aaef-13540d5f9624}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Decoration">
+      <UniqueIdentifier>{284f00c3-c644-49af-ac1a-4eddc7dbfcd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Decoration">
+      <UniqueIdentifier>{3c40dfb3-42c8-471a-b9ed-fb0d7b3f76dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game">
+      <UniqueIdentifier>{24c77d33-b592-43b1-b329-336b7c57bc3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game">
+      <UniqueIdentifier>{2b427b92-4f3e-44b5-ac31-808849e68655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UI">
+      <UniqueIdentifier>{c4063da6-e81d-42bc-a6e1-caaa4910b84b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\UI">
+      <UniqueIdentifier>{baf8e787-696f-4d83-a6f0-df8e85ed2609}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>ヘッダー ファイル\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>ヘッダー ファイル\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="meshfield.h">
+      <Filter>ヘッダー ファイル\Field.Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="meshwall.h">
+      <Filter>ヘッダー ファイル\Field.Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="wall.h">
+      <Filter>ヘッダー ファイル\Field.Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="polygon.h">
+      <Filter>ヘッダー ファイル\Field.Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>ヘッダー ファイル\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="title.h">
+      <Filter>ヘッダー ファイル\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="result.h">
+      <Filter>ヘッダー ファイル\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial.h">
+      <Filter>ヘッダー ファイル\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>ヘッダー ファイル\Decoration</Filter>
+    </ClInclude>
+    <ClInclude Include="effect.h">
+      <Filter>ヘッダー ファイル\Decoration</Filter>
+    </ClInclude>
+    <ClInclude Include="explosion.h">
+      <Filter>ヘッダー ファイル\Decoration</Filter>
+    </ClInclude>
+    <ClInclude Include="shadow.h">
+      <Filter>ヘッダー ファイル\Decoration</Filter>
+    </ClInclude>
+    <ClInclude Include="fade.h">
+      <Filter>ヘッダー ファイル\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="cooldown_UI.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="item_boost.h">
+      <Filter>ヘッダー ファイル\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="select.h">
+      <Filter>ヘッダー ファイル\Mode</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>ソース ファイル\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>ソース ファイル\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="meshfield.cpp">
+      <Filter>ソース ファイル\Field.wall</Filter>
+    </ClCompile>
+    <ClCompile Include="meshwall.cpp">
+      <Filter>ソース ファイル\Field.wall</Filter>
+    </ClCompile>
+    <ClCompile Include="wall.cpp">
+      <Filter>ソース ファイル\Field.wall</Filter>
+    </ClCompile>
+    <ClCompile Include="polygon.cpp">
+      <Filter>ソース ファイル\Field.wall</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>ソース ファイル\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="result.cpp">
+      <Filter>ソース ファイル\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="title.cpp">
+      <Filter>ソース ファイル\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="tutorial.cpp">
+      <Filter>ソース ファイル\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="effect.cpp">
+      <Filter>ソース ファイル\Decoration</Filter>
+    </ClCompile>
+    <ClCompile Include="explosion.cpp">
+      <Filter>ソース ファイル\Decoration</Filter>
+    </ClCompile>
+    <ClCompile Include="shadow.cpp">
+      <Filter>ソース ファイル\Decoration</Filter>
+    </ClCompile>
+    <ClCompile Include="fade.cpp">
+      <Filter>ソース ファイル\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Billboard.cpp">
+      <Filter>ソース ファイル\Decoration</Filter>
+    </ClCompile>
+    <ClCompile Include="bullet.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="pause.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="cooldown_UI.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="item_boost.cpp">
+      <Filter>ソース ファイル\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="select.cpp">
+      <Filter>ソース ファイル\Mode</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
