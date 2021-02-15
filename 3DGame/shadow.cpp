@@ -12,6 +12,7 @@
 //マクロ定義
 //=============================================================================
 #define MAX_SHADOW (64)		//影の最大数
+#define MAX_VERTEX (4)		//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -45,7 +46,7 @@ HRESULT InitShadow(void)
 	}
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_SHADOW,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VERTEX * MAX_SHADOW,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -170,7 +171,7 @@ void DrawShadow(void)
 			pDevice->SetTexture(0, g_pTextureShadow);
 
 			//ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntShadow * 4, 2);
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntShadow * MAX_VERTEX, 2);
 		}
 	}
 

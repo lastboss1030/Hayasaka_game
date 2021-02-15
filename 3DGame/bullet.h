@@ -10,15 +10,26 @@
 #include "main.h"
 
 //=============================================================================
+// 弾の種類
+//=============================================================================
+typedef enum
+{
+	BULLETTYPE_PLAYER = 0,	//プレイヤーの弾
+	BULLETTYPE_ENEMY,		//敵の弾
+	BULLETTYPE_MAX
+}BULLETTYPE;
+
+//=============================================================================
 // 弾の構造体
 //=============================================================================
 typedef struct
 {
-	D3DXMATRIX mtxWorld;	// ワールドマトリックス
+	D3DXMATRIX mtxWorld;	//ワールドマトリックス
 	D3DXVECTOR3 pos;		//出現位置
 	D3DXVECTOR3 move;		//移動量
-	float fWidth;			// 幅
-	float fHeight;			// 高さ
+	BULLETTYPE type;		//種類
+	float fWidth;			//幅
+	float fHeight;			//高さ
 	bool bUse;				//使用しているかどうか
 }BULLET;
 
@@ -32,6 +43,7 @@ void DrawBullet(void);
 void SetBullet(D3DXVECTOR3 pos,		//出現位置
 				D3DXVECTOR3 move,	//移動量
 				float fWidth,		//幅
-				float fHeight);		//高さ
+				float fHeight,		//高さ
+				BULLETTYPE type);	//種類
 
 #endif

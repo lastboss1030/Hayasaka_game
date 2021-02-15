@@ -12,6 +12,7 @@
 // マクロ定義
 //=============================================================================
 #define MAX_TEX (3)									//テクスチャ最大数
+#define MAX_VERTEX (4)								//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -47,7 +48,7 @@ HRESULT InitTutorial(void)
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/press_enter001.png", &g_apTextureTutorial[1]);
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_TEX,	//確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_TEX,	//確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,		//頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -205,7 +206,7 @@ void DrawTutorial(void)
 	for (int nCntTexture = 0; nCntTexture < MAX_TEX; nCntTexture++)
 	{
 		pDevice->SetTexture(0, g_apTextureTutorial[nCntTexture]);
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * MAX_VERTEX, 2);
 	}
 }
 

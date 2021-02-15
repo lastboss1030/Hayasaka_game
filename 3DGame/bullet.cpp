@@ -13,8 +13,9 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_BULLET (256)	//弾の最大数
-#define HIT_WALL (800)
+#define MAX_BULLET	(256)	//弾の最大数
+#define HIT_WALL	(800)
+#define MAX_VERTEX	(4)
 
 //=============================================================================
 // グローバル変数
@@ -44,13 +45,14 @@ HRESULT InitBullet(void)
 	{
 		g_aBullet[nCntBullet].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aBullet[nCntBullet].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_aBullet[nCntBullet].type = BULLETTYPE_PLAYER;
 		g_aBullet[nCntBullet].fWidth = 5.0f;
 		g_aBullet[nCntBullet].fHeight = 5.0f;
 		g_aBullet[nCntBullet].bUse = false;
 	}
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_BULLET,
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VERTEX * MAX_BULLET,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -131,60 +133,124 @@ void UpdateBullet(void)
 
 	for (int nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++, pBullet++)
 	{
-		if (pBullet->bUse == true)	//弾が使用されていたら
+		if (pBullet->type == BULLETTYPE_PLAYER)	//プレイヤーの弾だったら
 		{
-			//位置の更新
-			pBullet->pos.x += pBullet->move.x;
-			pBullet->pos.z += pBullet->move.z;
-
-			//エフェクト
-			SetEffect(pBullet->pos,
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 0.6f, 0.2f, 1.0f),
-				0.0f,
-				10.0f,
-				0.07f,
-				0.0f);
-
-			//エフェクト
-			SetEffect(pBullet->pos,
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-				0.0f,
-				8.0f,
-				0.07f,
-				0.0f);
-
-			// 画面外チェック
-			if (pBullet->pos.z <= -HIT_WALL || pBullet->pos.z >= HIT_WALL ||
-				pBullet->pos.x <= -HIT_WALL || pBullet->pos.x >= HIT_WALL)
+			if (pBullet->bUse == true)	//弾が使用されていたら
 			{
-				//// 爆発アニメーションの配置
-				//SetExplosion(pBullet->pos);
+				//位置の更新
+				pBullet->pos.x += pBullet->move.x;
+				pBullet->pos.z += pBullet->move.z;
 
-				g_nCntEffect++;
+				//エフェクト
+				SetEffect(pBullet->pos,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
+					0.0f,
+					10.0f,
+					0.07f,
+					0.0f);
 
-				if (g_nCntEffect % 1 == 0)
+				//エフェクト
+				SetEffect(pBullet->pos,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.52f, 0.811f, 1.0f, 1.0f),
+					0.0f,
+					8.0f,
+					0.07f,
+					0.0f);
+
+				// 画面外チェック
+				if (pBullet->pos.z <= -HIT_WALL || pBullet->pos.z >= HIT_WALL ||
+					pBullet->pos.x <= -HIT_WALL || pBullet->pos.x >= HIT_WALL)
 				{
-					for (int g_nCntEffect = 0; g_nCntEffect < 10; g_nCntEffect++)
+					//// 爆発アニメーションの配置
+					//SetExplosion(pBullet->pos);
+
+					g_nCntEffect++;
+
+					if (g_nCntEffect % 1 == 0)
 					{
-						// 角度の設定
-						float fAngle = ((float)(rand() % 800)) / 100.0f;
-						float fmove = (float)(rand() % 1 + 1);
+						for (int g_nCntEffect = 0; g_nCntEffect < 10; g_nCntEffect++)
+						{
+							// 角度の設定
+							float fAngle = ((float)(rand() % 800)) / 100.0f;
+							float fmove = (float)(rand() % 1 + 1);
 
-						// エフェクトの設定
-						SetEffect(pBullet->pos,
-							D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
-							D3DXCOLOR(1.0f, 0.5f, 0.2f, 1.0f),
-							1.0f,
-							5.0f,
-							0.01f,
-							0.3f);
+							// エフェクトの設定
+							SetEffect(pBullet->pos,
+								D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
+								D3DXCOLOR(1.0f, 0.5f, 0.2f, 1.0f),
+								1.0f,
+								5.0f,
+								0.01f,
+								0.3f);
+						}
 					}
-				}
 
-				// 弾の状態をfalseにする
-				pBullet->bUse = false;
+					// 弾の状態をfalseにする
+					pBullet->bUse = false;
+				}
+			}
+		}
+
+
+		if (pBullet->type == BULLETTYPE_ENEMY)	//プレイヤーの弾だったら
+		{
+			if (pBullet->bUse == true)	//弾が使用されていたら
+			{
+				//位置の更新
+				pBullet->pos.x += pBullet->move.x;
+				pBullet->pos.z += pBullet->move.z;
+
+				//エフェクト
+				SetEffect(pBullet->pos,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.6f, 0.2f, 1.0f),
+					0.0f,
+					10.0f,
+					0.07f,
+					0.0f);
+
+				//エフェクト
+				SetEffect(pBullet->pos,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+					0.0f,
+					8.0f,
+					0.07f,
+					0.0f);
+
+				// 画面外チェック
+				if (pBullet->pos.z <= -HIT_WALL || pBullet->pos.z >= HIT_WALL ||
+					pBullet->pos.x <= -HIT_WALL || pBullet->pos.x >= HIT_WALL)
+				{
+					//// 爆発アニメーションの配置
+					//SetExplosion(pBullet->pos);
+
+					g_nCntEffect++;
+
+					if (g_nCntEffect % 1 == 0)
+					{
+						for (int g_nCntEffect = 0; g_nCntEffect < 10; g_nCntEffect++)
+						{
+							// 角度の設定
+							float fAngle = ((float)(rand() % 800)) / 100.0f;
+							float fmove = (float)(rand() % 1 + 1);
+
+							// エフェクトの設定
+							SetEffect(pBullet->pos,
+								D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
+								D3DXCOLOR(1.0f, 0.5f, 0.2f, 1.0f),
+								1.0f,
+								5.0f,
+								0.01f,
+								0.3f);
+						}
+					}
+
+					// 弾の状態をfalseにする
+					pBullet->bUse = false;
+				}
 			}
 		}
 	}
@@ -245,7 +311,7 @@ void DrawBullet(void)
 
 			//テクスチャの設定
 			pDevice->SetTexture(0, g_pTextureBullet);
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * MAX_VERTEX, 2);
 		}
 	}
 
@@ -264,7 +330,7 @@ void DrawBullet(void)
 //=============================================================================
 // 弾の設定
 //=============================================================================
-void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight)
+void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight, BULLETTYPE type)
 {
 	//変数宣言
 	BULLET *pBullet;
@@ -289,6 +355,9 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight)
 
 			//高さの設定
 			pBullet->fHeight = fHeight;
+
+			//弾の種類
+			pBullet->type = type;
 
 			//弾の使用
 			pBullet->bUse = true;

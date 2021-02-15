@@ -21,11 +21,13 @@
 #include "object.h"
 #include "cooldown_UI.h"
 #include "item_boost.h"
+#include "enemy.h"
 
 //=============================================================================
 // マクロ定義
 //=============================================================================
 #define MAX_WALLSIZE (800.0f)
+#define HEIGHT_SIZE	 (100.0f)
 
 //=============================================================================
 // グローバル変数
@@ -62,7 +64,10 @@ HRESULT InitGame(void)
 	InitPlayer();
 
 	//オブジェクトの初期化処理
-	InitObject();
+//	InitObject();
+
+	//敵の初期化処理
+	InitEnemy();
 
 	//ブーストアイテムの初期化処理
 	InitItemBoost();
@@ -118,7 +123,10 @@ void UninitGame(void)
 	UninitPlayer();
 
 	//オブジェクトの終了処理
-	UninitObject();
+//	UninitObject();
+
+	//敵の終了処理
+	UninitEnemy();
 
 	//ブーストアイテムの終了処理
 	UninitItemBoost();
@@ -185,7 +193,10 @@ void UpdateGame(void)
 		UpdatePlayer();
 
 		//オブジェクトの更新処理
-		UpdateObject();
+//		UpdateObject();
+
+		//敵の更新処理
+		UpdateEnemy();
 
 		//ブーストアイテムの更新処理
 		UpdateItemBoost();
@@ -242,7 +253,10 @@ void DrawGame(void)
 	DrawPlayer();
 
 	//オブジェクトの描画処理
-	DrawObject();
+//	DrawObject();
+
+	//敵の描画処理
+	DrawEnemy();
 
 	//ブーストアイテムの描画処理
 	DrawItemBoost();
@@ -263,10 +277,10 @@ void DrawGame(void)
 //=============================================================================
 void SetWall(void)
 {
-	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, MAX_WALLSIZE), D3DXVECTOR3(0.0f, 0.0f, 0.0f), MAX_WALLSIZE, 100.0f);
-	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, 100.0f), D3DXVECTOR3(0.0f, D3DX_PI / 2, 0.0f), MAX_WALLSIZE, 100.0f);
-	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, 100.0f), D3DXVECTOR3(0.0f, D3DX_PI / -2, 0.0f), MAX_WALLSIZE, 100.0f);
-	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, 100.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), MAX_WALLSIZE, 100.0f);
+	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, MAX_WALLSIZE), D3DXVECTOR3(0.0f, 0.0f, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
+	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI / 2, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
+	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI / -2, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
+	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
 }
 
 //=============================================================================

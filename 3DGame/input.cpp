@@ -7,15 +7,20 @@
 #include "input.h"							//インクルードファイル
 
 //=============================================================================
+// マクロ定義
+//=============================================================================
+#define MAX_KEY (256)	//キーサイズ
+
+//=============================================================================
 // グローバル変数
 //=============================================================================
 LPDIRECTINPUT8 g_pInput = NULL;				//DirectInputオブジェクトへのポインタ
 LPDIRECTINPUTDEVICE8 g_pDevKeyboard = NULL;	//入力デバイス(キーボード)へのポインタ
-BYTE g_aKeyState[256];						//キーボードの入力情報
-BYTE g_aKeyStateTrigger[256];				//キートリガー情報
-BYTE g_aKeyStateRelease[256];				//キーリリース情報
-BYTE g_aKeyStateRepeat[256];				//キーリピート情報
-int g_aCountRepeat[256];					//キーリピートカウンター
+BYTE g_aKeyState[MAX_KEY];						//キーボードの入力情報
+BYTE g_aKeyStateTrigger[MAX_KEY];				//キートリガー情報
+BYTE g_aKeyStateRelease[MAX_KEY];				//キーリリース情報
+BYTE g_aKeyStateRepeat[MAX_KEY];				//キーリピート情報
+int g_aCountRepeat[MAX_KEY];					//キーリピートカウンター
 
 //=============================================================================
 // キーボードの初期化処理

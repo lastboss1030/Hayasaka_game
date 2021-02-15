@@ -7,6 +7,11 @@
 #include "fade.h"								//インクルードファイル
 
 //=============================================================================
+// マクロ定義
+//=============================================================================
+#define MAX_VERTEX	(4)	//頂点数
+
+//=============================================================================
 // グローバル変数
 //=============================================================================
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffFade = NULL;	//頂点情報へのポインタ
@@ -33,7 +38,7 @@ HRESULT InitFade(MODE modeNext)
 	g_colorFade = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,	//確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX,	//確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,		//頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -152,7 +157,7 @@ void DrawFade(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, NULL);	//使わない場合NULL
 
-									//ポリゴンの描画
+	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }
 //=============================================================================

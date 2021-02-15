@@ -12,7 +12,7 @@
 // マクロ定義
 //=============================================================================
 #define MOVE_CAMERA (4.0f)			//移動量
-#define CAMERA_DISTANCE (600.0f)	//距離
+#define CAMERA_DISTANCE (400.0f)	//距離
 
 //=============================================================================
 // グローバル変数
@@ -56,7 +56,7 @@ void UpdateCamera(void)
 {
 	Player *pPlayer = GetPlayer();
 
-	if (GetKeyboardPress(DIK_Z) == true)	//Zを押した
+	if (GetKeyboardPress(DIK_C) == true)	//Zを押した
 	{
 		g_camera.rot.y -= 0.03f;
 
@@ -65,7 +65,7 @@ void UpdateCamera(void)
 			g_camera.rot.y += D3DX_PI * 2.0f;
 		}
 	}
-	if (GetKeyboardPress(DIK_C) == true)	//Cを押した
+	if (GetKeyboardPress(DIK_Z) == true)	//Cを押した
 	{
 		g_camera.rot.y += 0.03f;
 
@@ -133,8 +133,8 @@ void FollowCamera(void)
 	g_camera.posR.y = pPlayer->pos.y;	// 注視点のY軸座標の決定
 
 	// 視点の更新
-	g_camera.posV.x = g_camera.posR.x - sinf(g_camera.rot.y) * 400;		//視点のX軸座標の決定
-	g_camera.posV.z = g_camera.posR.z - cosf(g_camera.rot.y) * 400;		//視点のZ軸座標の決定
+	g_camera.posV.x = g_camera.posR.x - sinf(g_camera.rot.y) * CAMERA_DISTANCE;		//視点のX軸座標の決定
+	g_camera.posV.z = g_camera.posR.z - cosf(g_camera.rot.y) * CAMERA_DISTANCE;		//視点のZ軸座標の決定
 	g_camera.posV.y = g_camera.posR.y + 200.0f;							//視点のY軸座標の決定
 }
 

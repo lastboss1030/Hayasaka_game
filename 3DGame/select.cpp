@@ -13,6 +13,7 @@
 // マクロ定義
 //=============================================================================
 #define MAX_TEX (4)									//テクスチャ最大数
+#define MAX_VERTEX (4)								//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -40,18 +41,19 @@ HRESULT InitSelect(void)
 	//初期化
 	g_colorSelect[0] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	g_nCntEnterS = 0;
+
 	//アニメーションの初期化
 	g_nCounterAnimS = 0;
 	g_nPatternAnimS = 0;
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/Select_BG.png", &g_apTextureSelect[0]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/metal000.jpg", &g_apTextureSelect[1]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/metal000.jpg", &g_apTextureSelect[2]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/metal000.jpg", &g_apTextureSelect[3]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/golem_select.png", &g_apTextureSelect[1]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/leo_select.png", &g_apTextureSelect[2]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/stalker_select.png", &g_apTextureSelect[3]);
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_TEX,	//確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_TEX,	//確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,		//頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -130,8 +132,16 @@ void UpdateSelect(void)
 	Player *pPlayer;
 	pPlayer = GetPlayer();
 
+	g_nCounterAnimS++;
+
+	if ((g_nCounterAnimS % 10) == 0)
+	{
+		//アニメーションパターンを更新
+		g_nPatternAnimS = (g_nPatternAnimS + 1) % 8;
+	}
+
 	//セレクト
-	if (GetKeyboardTrigger(DIK_D) == true)
+	if (GetKeyboardTrigger(DIK_D) || GetKeyboardTrigger(DIK_RIGHT) == true)
 	{
 		//効果音
 
@@ -143,7 +153,7 @@ void UpdateSelect(void)
 		}
 	}
 
-	if (GetKeyboardTrigger(DIK_A) == true)
+	if (GetKeyboardTrigger(DIK_A) || GetKeyboardTrigger(DIK_LEFT) == true)
 	{
 		//効果音
 
@@ -157,11 +167,17 @@ void UpdateSelect(void)
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffSelect->Lock(0, 0, (void**)&pVtx, 0);
+
 	for (int nCntSelect = 0; nCntSelect < MAX_TEX; nCntSelect++, pVtx += 4)
 	{
 		switch (g_nState)
 		{
 		case SELECT_MENU_GOLEM:		 //ゴーレム選択時
+
+			//pVtx[4].tex = D3DXVECTOR2(0.0f + (0.125f * g_nPatternAnimS), 1.0f);
+			//pVtx[5].tex = D3DXVECTOR2(0.0f + (0.125f * g_nPatternAnimS), 0.0f);
+			//pVtx[6].tex = D3DXVECTOR2(0.125f + (0.125f * g_nPatternAnimS), 1.0f);
+			//pVtx[7].tex = D3DXVECTOR2(0.125f + (0.125f * g_nPatternAnimS), 0.0f);
 
 			g_colorSelect[1] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			g_colorSelect[2] = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -192,57 +208,49 @@ void UpdateSelect(void)
 	//エンター押したら
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
-		if (g_nState == SELECT_MENU_GOLEM)	//ゴーレム選択時
+		if (nFade == FADE_NONE)
 		{
-			//決定音
-
-			
-			//キャラ決定
-			pPlayer->playertype = PLAYERTYPE_GOLEM;
-
-			//ゴーレム使用
-			SetFade(FADE_OUT, MODE_GAME);
-
-		}
-		else if (g_nState == SELECT_MENU_LEO)	//レオ選択時
-		{
-			//決定音
+			if (g_nState == SELECT_MENU_GOLEM)	//ゴーレム選択時
+			{
+				//決定音
 
 
-			//キャラ決定
-			pPlayer->playertype = PLAYERTYPE_LEO;
+				//キャラ決定
+				pPlayer->playertype = PLAYERTYPE_GOLEM;
 
-			//レオ使用
-			SetFade(FADE_OUT, MODE_GAME);
+				//ゴーレム使用
+				SetFade(FADE_OUT, MODE_GAME);
 
-		}
-		else if (g_nState == SELECT_MENU_STALKER)	//ストーカー選択時
-		{
-			//決定音
+			}
+			else if (g_nState == SELECT_MENU_LEO)	//レオ選択時
+			{
+				//決定音
 
 
-			//キャラ決定
-			pPlayer->playertype = PLAYERTYPE_STALKER;
+				//キャラ決定
+				pPlayer->playertype = PLAYERTYPE_LEO;
 
-			//ストーカー使用
-			SetFade(FADE_OUT, MODE_GAME);
+				//レオ使用
+				SetFade(FADE_OUT, MODE_GAME);
 
+			}
+			else if (g_nState == SELECT_MENU_STALKER)	//ストーカー選択時
+			{
+				//決定音
+
+
+				//キャラ決定
+				pPlayer->playertype = PLAYERTYPE_STALKER;
+
+				//ストーカー使用
+				SetFade(FADE_OUT, MODE_GAME);
+
+			}
 		}
 	}
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffSelect->Unlock();
-
-	////エンター押したら
-	//if (GetKeyboardTrigger(DIK_RETURN) == true)
-	//{
-	//	if (nFade == FADE_NONE)
-	//	{
-	//		//効果音
-
-	//		SetFade(FADE_OUT, MODE_GAME);	//ゲーム画面に切り替え
-	//	}
-	//}
 }
 
 //=============================================================================
@@ -266,7 +274,7 @@ void DrawSelect(void)
 	for (int nCntTexture = 0; nCntTexture < MAX_TEX; nCntTexture++)
 	{
 		pDevice->SetTexture(0, g_apTextureSelect[nCntTexture]);
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * MAX_VERTEX, 2);
 	}
 }
 
@@ -295,7 +303,7 @@ void SetTextureSelect(int nCntSelect)
 		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	}
-	else if (nCntSelect == 1)	//左
+	else if (nCntSelect == 1)	//ゴーレム
 	{
 		//頂点座標
 		pVtx[0].pos = D3DXVECTOR3(120, 950, 0.0f);	//Zは0.0固定
@@ -306,7 +314,7 @@ void SetTextureSelect(int nCntSelect)
 		//カラー
 		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-	else if (nCntSelect == 2)	//中央
+	else if (nCntSelect == 2)	//レオ
 	{
 		//頂点座標
 		pVtx[0].pos = D3DXVECTOR3(750, 950, 0.0f);	//Zは0.0固定
@@ -317,7 +325,7 @@ void SetTextureSelect(int nCntSelect)
 		//カラー
 		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-	else if (nCntSelect == 3)	//右
+	else if (nCntSelect == 3)	//ストーカー
 	{
 		//頂点座標
 		pVtx[0].pos = D3DXVECTOR3(1400, 950, 0.0f);	//Zは0.0固定

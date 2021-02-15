@@ -11,7 +11,8 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_RESULT_TEX (4)
+#define MAX_RESULT_TEX	(4)		//テクスチャ数
+#define MAX_VERTEX		(4)		//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -51,7 +52,7 @@ HRESULT InitResult(void)
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/player100.png", &g_pTextureResult[3]);
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_RESULT_TEX,	//確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_RESULT_TEX,	//確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,		//頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -214,7 +215,7 @@ void DrawResult(void)
 	for (int nCntTexture = 0; nCntTexture < MAX_RESULT_TEX; nCntTexture++)
 	{
 		pDevice->SetTexture(0, g_pTextureResult[nCntTexture]);
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * MAX_VERTEX, 2);
 	}
 }
 

@@ -8,6 +8,11 @@
 #include "input.h"
 
 //=============================================================================
+// マクロ定義
+//=============================================================================
+#define MAX_VERTEX (4)	//頂点数
+
+//=============================================================================
 // グローバル変数
 //=============================================================================
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPolygon = NULL;	//頂点バッファへのポインタ
@@ -34,7 +39,7 @@ HRESULT InitPolygon(void)
 	g_rotPolygon = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VERTEX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,

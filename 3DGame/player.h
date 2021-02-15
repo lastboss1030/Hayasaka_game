@@ -91,6 +91,7 @@ typedef struct
 typedef struct
 {
 	D3DXVECTOR3 pos;		//中心座標
+	D3DXVECTOR3 posOld;		//前回の位置
 	D3DXVECTOR3 rot;		//回転
 	D3DXVECTOR3 rotDest;	//目的の向き
 	D3DXVECTOR3 move;		//移動量

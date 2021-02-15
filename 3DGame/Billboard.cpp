@@ -9,6 +9,11 @@
 #include "player.h"
 
 //=============================================================================
+// マクロ定義
+//=============================================================================
+#define MAX_VERTEX (4)	//頂点数
+
+//=============================================================================
 // グローバル変数
 //=============================================================================
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBillboard = NULL;	//頂点バッファへのポインタ
@@ -33,7 +38,7 @@ HRESULT InitBillboard(void)
 	g_posBillboard = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VERTEX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -101,7 +106,6 @@ void UpdateBillboard(void)
 	Player *pPlayer;
 	pPlayer = GetPlayer();
 
-	g_posBillboard = D3DXVECTOR3(pPlayer->aModel[1].pos.x, 0.0f, 0.0f);
 }
 
 //=============================================================================

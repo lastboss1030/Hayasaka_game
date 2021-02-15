@@ -12,6 +12,7 @@
 // マクロ定義
 //=============================================================================
 #define MAX_TEX (3)									//テクスチャ最大数
+#define MAX_VERTEX (4)								//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -46,7 +47,7 @@ HRESULT InitCooldown(void)
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/cooldown100.png", &g_apTextureCooldown[1]);
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_TEX,	//確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_TEX,	//確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,		//頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -163,7 +164,7 @@ void DrawCooldown(void)
 	for (int nCntTexture = 0; nCntTexture < MAX_TEX; nCntTexture++)
 	{
 		pDevice->SetTexture(0, g_apTextureCooldown[nCntTexture]);
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * MAX_VERTEX, 2);
 	}
 }
 

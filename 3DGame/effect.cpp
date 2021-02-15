@@ -11,6 +11,7 @@
 //=============================================================================
 #define MAX_EFFECT	(4096)									//エフェクトの最大数
 #define MAX_EFFECT_TEX (3)
+#define MAX_VERTEX (4)										//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -48,7 +49,7 @@ HRESULT InitEffect(void)
 	}
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_EFFECT, // 確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VERTEX * MAX_EFFECT, // 確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -248,7 +249,7 @@ void DrawEffect(void)
 					pDevice->SetTexture(0, g_apTextureEffect[0]);
 				}
 			}
-				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntEffect * 4, 2);
+				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntEffect * MAX_VERTEX, 2);
 		}
 	}
 

@@ -11,7 +11,8 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_TITLE_TEX (4)
+#define MAX_TITLE_TEX (4)	//テクスチャ数
+#define MAX_VERTEX	  (4)	//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -49,7 +50,7 @@ HRESULT InitTitle(void)
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameTitle.png", &g_pTextureTitle[2]);
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_TITLE_TEX,	//確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_TITLE_TEX,	//確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,		//頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -207,7 +208,7 @@ void DrawTitle(void)
 	for (int nCntTexture = 0; nCntTexture < MAX_TITLE_TEX; nCntTexture++)
 	{
 		pDevice->SetTexture(0, g_pTextureTitle[nCntTexture]);
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * MAX_VERTEX, 2);
 	}
 }
 

@@ -11,6 +11,8 @@
 // マクロ定義
 //=============================================================================
 #define MAX_SIZE (800.0f)							//フィールドサイズ
+#define MAX_VERTEX (14)								//頂点数
+#define MAX_SUEFACE (9)								//面の数
 
 //=============================================================================
 // グローバル変数
@@ -41,7 +43,7 @@ HRESULT InitMeshfield(void)
 	g_rotMeshfield = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 9,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_SUEFACE, 
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -99,7 +101,7 @@ HRESULT InitMeshfield(void)
 	g_pVtxBuffMeshfield->Unlock();
 
 	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * 14,
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MAX_VERTEX,
 		D3DUSAGE_WRITEONLY,
 		D3DFMT_INDEX16,
 		D3DPOOL_MANAGED,
@@ -204,5 +206,5 @@ void DrawMeshfield(void)
 	pDevice->SetTexture(0, g_pTextureMeshfield);
 
 	//ポリゴンの描画
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, 9, 0, 12);
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MAX_SUEFACE, 0, 12);
 }

@@ -1,6 +1,8 @@
-﻿  player.cpp
+﻿  Billboard.cpp
+  camera.cpp
+  effect.cpp
   コード生成しています。
-  1 of 171 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+  3 of 171 functions ( 1.8%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     1 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。

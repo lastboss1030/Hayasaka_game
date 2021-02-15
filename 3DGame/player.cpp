@@ -12,6 +12,7 @@
 #include "explosion.h"
 #include "effect.h"
 #include "select.h"
+#include "enemy.h"
 
 //=============================================================================
 // マクロ定義
@@ -20,9 +21,13 @@
 #define MOVE_BULLET (5.0f)
 #define HIT_WALL	(750.0f)
 #define MAX_TEX		(10)
+#define MAX_BOOST (200)
 
 #define VTX_MINP	(D3DXVECTOR3(10000.0f, 10000.0f, 10000.0f))		// 仮頂点最小値
 #define	VTX_MAXP	(D3DXVECTOR3(-10000.0f, -10000.0f, -10000.0f))	// 仮頂点最大値
+
+#define GRAVITY	(0.5f)				//重力
+#define HEIGHT_LIMIT	(150.0f)	//高さ上限	
 
 //=============================================================================
 // グローバル変数
@@ -38,8 +43,8 @@ D3DXVECTOR3 aCollisionPos[2];						//当たり判定ライン
 
 int g_nStateP;										//ステート
 int g_nShootCount = 0;								//発射カウント
-int g_nEffect = 0;
-float g_move;
+int g_nEffect = 0;									//エフェクト
+float g_move;										//移動速度
 
 //=============================================================================
 // 初期化処理
@@ -53,10 +58,11 @@ void InitPlayer(void)
 
 	//プレイヤーの構造体の初期化
 	g_player.pos = D3DXVECTOR3(0.0f, 10.0f, 0.0f);
+	g_player.posOld = D3DXVECTOR3(0.0f, 10.0f, 0.0f);
 	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_player.rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.boost = 200.0f;
+	g_player.boost = MAX_BOOST;
 	g_player.nNumModel = MAX_USE_MODEL;
 
 	//変数初期化
@@ -72,7 +78,7 @@ void InitPlayer(void)
 	if (g_player.playertype == PLAYERTYPE_GOLEM)
 	{
 		//移動速度
-		g_move = 1.0f;
+		g_move = 1.4f;
 
 		//Xファイルの読み込み
 		D3DXLoadMeshFromX("data/MODEL/golem.x",	//ロボット本体
@@ -109,7 +115,7 @@ void InitPlayer(void)
 	if (g_player.playertype == PLAYERTYPE_LEO)
 	{
 		//移動速度
-		g_move = 0.8f;
+		g_move = 1.0f;
 
 		//Xファイルの読み込み
 		D3DXLoadMeshFromX("data/MODEL/leo.x",	//ロボット本体
@@ -146,7 +152,7 @@ void InitPlayer(void)
 	if (g_player.playertype == PLAYERTYPE_STALKER)
 	{
 		//移動速度
-		g_move = 1.5f;
+		g_move = 1.8f;
 
 		//Xファイルの読み込み
 		D3DXLoadMeshFromX("data/MODEL/stalker.x",	//ロボット本体
@@ -318,6 +324,8 @@ void UpdatePlayer(void)
 	//発射カウントを進める
 	g_nShootCount++;
 
+	g_player.posOld = g_player.pos;
+
 	//位置の更新
 	g_player.pos.x += g_player.move.x;
 	g_player.pos.y += g_player.move.y;
@@ -331,7 +339,7 @@ void UpdatePlayer(void)
 	//重力
 	if (g_player.pos.y > 0.0f)
 	{
-		g_player.move.y -= 0.5f;
+		g_player.move.y -= GRAVITY;
 	}
 
 	//地面めり込み戻す
@@ -343,7 +351,7 @@ void UpdatePlayer(void)
 	//ブースト残量の追加
 	if (g_player.pos.y == 0.0f)
 	{
-		if (g_player.boost < 200)
+		if (g_player.boost < MAX_BOOST)
 		{
 			if ((g_nShootCount % 3) == 0)
 			{
@@ -363,9 +371,9 @@ void UpdatePlayer(void)
 
 
 	//高さ上限
-	if (g_player.pos.y > 150.0f)
+	if (g_player.pos.y > HEIGHT_LIMIT)
 	{
-		g_player.pos.y = 150.0f;
+		g_player.pos.y = HEIGHT_LIMIT;
 	}
 
 	// モデルの移動
@@ -412,12 +420,12 @@ void UpdatePlayer(void)
 			g_player.move.z -= sinf(pCamera->rot.y + D3DX_PI * 3 / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / 4;
 
-			pCamera->rot.y += 0.03f;
+			//pCamera->rot.y += 0.03f;
 
-			if (pCamera->rot.y < -D3DX_PI)
-			{
-				pCamera->rot.y += D3DX_PI * 2.0f;
-			}
+			//if (pCamera->rot.y < -D3DX_PI)
+			//{
+			//	pCamera->rot.y += D3DX_PI * 2.0f;
+			//}
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{// 右下方向
@@ -425,17 +433,17 @@ void UpdatePlayer(void)
 			g_player.move.z += sinf(pCamera->rot.y - D3DX_PI * 3 / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / -4;
 
-			pCamera->rot.y -= 0.03f;
+			//pCamera->rot.y -= 0.03f;
 
-			if (pCamera->rot.y > D3DX_PI)
-			{
-				pCamera->rot.y -= D3DX_PI * 2.0f;
-			}
+			//if (pCamera->rot.y > D3DX_PI)
+			//{
+			//	pCamera->rot.y -= D3DX_PI * 2.0f;
+			//}
 		}
 		else
 		{// 下方向
-			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI) * MOVE_MODEL;
-			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI) * MOVE_MODEL;
+			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI) * g_move;
+			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI) * g_move;
 			g_player.rotDest.y = pCamera->rot.y;
 		}
 	}
@@ -486,8 +494,9 @@ void UpdatePlayer(void)
 				if (g_player.boost > 40)
 				{
 					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
-						D3DXVECTOR3(sinf(g_player.rot.y) * -10.0f, 0.0f, cosf(g_player.rot.y) * -10.0f),
-						30.0f, 30.0f);
+						D3DXVECTOR3(sinf(g_player.rot.y) * -15.0f, 0.0f, cosf(g_player.rot.y) * -15.0f),
+						30.0f, 30.0f,
+						BULLETTYPE_PLAYER);
 
 					g_player.boost -= 25;
 				}
@@ -502,8 +511,9 @@ void UpdatePlayer(void)
 				if (g_player.boost > 20)
 				{
 					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
-						D3DXVECTOR3(sinf(g_player.rot.y) * -10.0f, 0.0f, cosf(g_player.rot.y) * -10.0f),
-						30.0f, 30.0f);
+						D3DXVECTOR3(sinf(g_player.rot.y) * -12.0f, 0.0f, cosf(g_player.rot.y) * -12.0f),
+						30.0f, 30.0f,
+						BULLETTYPE_PLAYER);
 
 					g_player.boost -= 40;
 				}
@@ -518,8 +528,9 @@ void UpdatePlayer(void)
 				if (g_player.boost > 20)
 				{
 					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
-						D3DXVECTOR3(sinf(g_player.rot.y) * -10.0f, 0.0f, cosf(g_player.rot.y) * -10.0f),
-						30.0f, 30.0f);
+						D3DXVECTOR3(sinf(g_player.rot.y) * -20.0f, 0.0f, cosf(g_player.rot.y) * -20.0f),
+						30.0f, 30.0f,
+						BULLETTYPE_PLAYER);
 
 					g_player.boost -= 10;
 				}
@@ -742,6 +753,12 @@ void EffectPlayer(void)
 //=============================================================================
 void CollisionPlayer(void)
 {
+	Enemy *pEnemy;
+	pEnemy = GetEnemy();
+
+	g_player.posOld = g_player.pos;
+
+	//敵にぶつかる
 
 }
 

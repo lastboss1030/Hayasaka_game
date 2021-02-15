@@ -9,10 +9,11 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_PATTERN     (8)					// アニメーションパターンNo.の最大数
-#define TEXTURE_X		(8)					// アニメーションパターンNo.の横の最大数
-#define TEXTURE_Y		(1)					// アニメーションパターンNo.の縦の最大数
-#define MAX_EXPLOSION	(64)				// 弾の最大値
+#define MAX_PATTERN     (8)					//アニメーションパターンNo.の最大数
+#define TEXTURE_X		(8)					//アニメーションパターンNo.の横の最大数
+#define TEXTURE_Y		(1)					//アニメーションパターンNo.の縦の最大数
+#define MAX_EXPLOSION	(64)				//弾の最大値
+#define MAX_VERTEX		(4)					//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -48,7 +49,7 @@ HRESULT InitExplosion(void)
 
 	// 頂点バッファの生成
 	if (FAILED(pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_3D) * 4 * MAX_EXPLOSION, // 確保するバッファサイズ
+		sizeof(VERTEX_3D) * MAX_VERTEX * MAX_EXPLOSION, // 確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,					// 頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -228,7 +229,7 @@ void DrawExplosion(void)
 
 			// ポリゴンの描画
 			pDevice->SetTexture(0, g_pTextureExplosion);
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntExplosion * 4, 2);
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntExplosion * MAX_VERTEX, 2);
 		}
 	}
 	// 標準に戻す

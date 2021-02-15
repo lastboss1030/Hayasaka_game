@@ -10,13 +10,19 @@
 #include "fade.h"
 
 //=============================================================================
+// マクロ定義
+//=============================================================================
+#define MAX_VERTEX	(4)	//頂点数
+#define MAX_TEX		(5)	//テクスチャ数
+
+//=============================================================================
 // グローバル変数
 //=============================================================================
-LPDIRECT3DTEXTURE9 g_pTexturePause[5] = {};		//テクスチャへのポインタ
+LPDIRECT3DTEXTURE9 g_pTexturePause[MAX_TEX] = {};		//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPause = NULL;	//頂点バッファへのポインタ
 bool g_bPause2 = false;							//ポーズ中かどうか
 int g_State;									//ステート
-D3DXCOLOR PauseCol[5];							//ポーズカラー
+D3DXCOLOR PauseCol[MAX_TEX];							//ポーズカラー
 
 //=============================================================================
 // ポーズの初期化処理
@@ -38,7 +44,7 @@ HRESULT InitPause(void)
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause002.png", &g_pTexturePause[4]);
 
 	//頂点バッファの生成
-	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * 5,	//確保するバッファサイズ
+	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_TEX,	//確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,		//頂点フォーマット
 		D3DPOOL_MANAGED,
@@ -55,7 +61,7 @@ HRESULT InitPause(void)
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffPause->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntPause = 0; nCntPause < 5; nCntPause++)
+	for (int nCntPause = 0; nCntPause < MAX_TEX; nCntPause++)
 	{
 		//頂点情報の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 1.0f);			//テクスチャ座標
@@ -95,7 +101,7 @@ void UninitPause(void)
 	}
 
 	//テクスチャの開放
-	for (int nCntTexture = 0; nCntTexture < 4; nCntTexture++)
+	for (int nCntTexture = 0; nCntTexture < MAX_TEX; nCntTexture++)
 	{
 		if (g_pTexturePause[nCntTexture] != NULL)
 		{
@@ -139,7 +145,7 @@ void UpdatePause(void)
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffPause->Lock(0, 0, (void**)&pVtx, 0);
-	for (int nCntPause = 0; nCntPause < 5; nCntPause++, pVtx += 4)
+	for (int nCntPause = 0; nCntPause < MAX_TEX; nCntPause++, pVtx += 4)
 	{
 		switch (g_State)
 		{
@@ -215,10 +221,10 @@ void DrawPause(void)
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	//ポリゴンの描画
-	for (int nCntTexture = 0; nCntTexture < 5; nCntTexture++)
+	for (int nCntTexture = 0; nCntTexture < MAX_TEX; nCntTexture++)
 	{
 		pDevice->SetTexture(0, g_pTexturePause[nCntTexture]);
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTexture * MAX_VERTEX, 2);
 	}
 }
 

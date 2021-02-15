@@ -11,6 +11,7 @@
 // マクロ定義
 //=============================================================================
 #define MAX_WALL (4)							//壁最大数
+#define MAX_VERTEX (4)							//頂点数
 
 //=============================================================================
 // グローバル変数
@@ -43,7 +44,7 @@ HRESULT InitWall(void)
 	}
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_WALL,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VERTEX * MAX_WALL,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -201,9 +202,9 @@ void DrawWall(void)
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(
-				D3DPT_TRIANGLESTRIP,	// プリミティブの種類
-				nCntWall * 4,			// 描画を開始する頂点インデックス
-				2);						// 描画するプリミティブ数
+				D3DPT_TRIANGLESTRIP,		// プリミティブの種類
+				nCntWall * MAX_VERTEX,		// 描画を開始する頂点インデックス
+				2);							// 描画するプリミティブ数
 		}
 
 		//４つ進める

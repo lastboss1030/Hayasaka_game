@@ -157,6 +157,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="cooldown_UI.h" />
     <ClInclude Include="effect.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="cooldown_UI.cpp" />
     <ClCompile Include="effect.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />

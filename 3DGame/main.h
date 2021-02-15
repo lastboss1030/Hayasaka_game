@@ -13,6 +13,7 @@
 #include <windows.h>
 #include "d3dx9.h"					//描画処理に必要
 #include "xaudio2.h"				//サウンド再生に必要
+#include <Xinput.h>					// Xinput用
 
 //=============================================================================
 // ライブラリのリンク
@@ -22,6 +23,7 @@
 #pragma comment(lib, "dxguid.lib")	//コンポーネント使用に必要
 #pragma comment(lib, "dinput8.lib")	//入力処理に必要
 #pragma comment(lib, "winmm.lib")
+#pragma comment (lib, "xinput.lib") // Xinput用
 
 //=============================================================================
 // マクロ定義
