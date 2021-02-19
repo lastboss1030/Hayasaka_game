@@ -13,15 +13,17 @@
 #include "effect.h"
 #include "select.h"
 #include "enemy.h"
+#include "fade.h"
 
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MOVE_MODEL	(1.0f)
-#define MOVE_BULLET (5.0f)
-#define HIT_WALL	(750.0f)
-#define MAX_TEX		(10)
-#define MAX_BOOST (200)
+#define MOVE_MODEL		(1.0f)
+#define MOVE_BULLET		(5.0f)
+#define HIT_WALL		(750.0f)
+#define MAX_TEX			(10)
+#define MAX_BOOST		(200)
+#define PLAYER_LIFE		(100)
 
 #define VTX_MINP	(D3DXVECTOR3(10000.0f, 10000.0f, 10000.0f))		// 仮頂点最小値
 #define	VTX_MAXP	(D3DXVECTOR3(-10000.0f, -10000.0f, -10000.0f))	// 仮頂点最大値
@@ -46,6 +48,9 @@ int g_nShootCount = 0;								//発射カウント
 int g_nEffect = 0;									//エフェクト
 float g_move;										//移動速度
 
+int g_nCntDeath;									//死亡時の待機
+int g_nCntEffectDeath = 0;							//死亡エフェクト
+
 //=============================================================================
 // 初期化処理
 //=============================================================================
@@ -62,8 +67,10 @@ void InitPlayer(void)
 	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_player.rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_player.nLife = PLAYER_LIFE;
 	g_player.boost = MAX_BOOST;
 	g_player.nNumModel = MAX_USE_MODEL;
+	g_player.bUse = true;
 
 	//変数初期化
 	g_vtxMinPlayer = VTX_MINP;
@@ -71,6 +78,8 @@ void InitPlayer(void)
 
 	aCollisionPos[0] = D3DXVECTOR3(-200, 0, 200);
 	aCollisionPos[1] = D3DXVECTOR3(200, 0, 200);
+
+	g_nCntDeath = 0;
 	
 	//モーションの初期化
 	InitMotion();
@@ -420,12 +429,12 @@ void UpdatePlayer(void)
 			g_player.move.z -= sinf(pCamera->rot.y + D3DX_PI * 3 / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / 4;
 
-			//pCamera->rot.y += 0.03f;
+			pCamera->rot.y += 0.03f;
 
-			//if (pCamera->rot.y < -D3DX_PI)
-			//{
-			//	pCamera->rot.y += D3DX_PI * 2.0f;
-			//}
+			if (pCamera->rot.y < -D3DX_PI)
+			{
+				pCamera->rot.y += D3DX_PI * 2.0f;
+			}
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{// 右下方向
@@ -433,12 +442,12 @@ void UpdatePlayer(void)
 			g_player.move.z += sinf(pCamera->rot.y - D3DX_PI * 3 / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / -4;
 
-			//pCamera->rot.y -= 0.03f;
+			pCamera->rot.y -= 0.03f;
 
-			//if (pCamera->rot.y > D3DX_PI)
-			//{
-			//	pCamera->rot.y -= D3DX_PI * 2.0f;
-			//}
+			if (pCamera->rot.y > D3DX_PI)
+			{
+				pCamera->rot.y -= D3DX_PI * 2.0f;
+			}
 		}
 		else
 		{// 下方向
@@ -569,6 +578,17 @@ void UpdatePlayer(void)
 
 	//エフェクト
 	EffectPlayer();
+
+	if (g_player.nLife <= 0)
+	{
+		g_player.bUse = false;
+
+		g_nCntDeath++;
+		if (g_nCntDeath == 10)
+		{
+			SetFade(FADE_OUT, MODE_RESULT);	//リザルト画面に切り替え
+		}
+	}
 }
 
 //=============================================================================
@@ -585,75 +605,78 @@ void DrawPlayer(void)
 	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
 
-	//ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&g_player.mtxWorld);
-
-	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_player.rot.y, g_player.rot.x, g_player.rot.z);
-	D3DXMatrixMultiply(&g_player.mtxWorld, &g_player.mtxWorld, &mtxRot);
-
-	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, g_player.pos.x, g_player.pos.y, g_player.pos.z);
-	D3DXMatrixMultiply(&g_player.mtxWorld, &g_player.mtxWorld, &mtxTrans);
-
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &g_player.mtxWorld);
-
-	//現在のマテリアルを取得
-	pDevice->GetMaterial(&matDef);
-
-	for (int nCntModel = 0; nCntModel < g_player.nNumModel; nCntModel++)
+	if (g_player.bUse == true)
 	{
-		D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用マトリックス
-		D3DXMATRIX mtxParent;					//親のマトリックス
+		//ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&g_player.mtxWorld);
 
-		//マテリアルデータへのポインタを取得
-		pMat = (D3DXMATERIAL*)g_player.aModel[nCntModel].pBuffMat->GetBufferPointer();
+		//向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_player.rot.y, g_player.rot.x, g_player.rot.z);
+		D3DXMatrixMultiply(&g_player.mtxWorld, &g_player.mtxWorld, &mtxRot);
 
-		//各パーツのワールドマトリックスの初期化
-		D3DXMatrixIdentity(&g_player.aModel[nCntModel].mtxWorld);
+		//位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_player.pos.x, g_player.pos.y, g_player.pos.z);
+		D3DXMatrixMultiply(&g_player.mtxWorld, &g_player.mtxWorld, &mtxTrans);
 
-		//各パーツの向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_player.aModel[nCntModel].rot.y, g_player.aModel[nCntModel].rot.x, g_player.aModel[nCntModel].rot.z);
-		D3DXMatrixMultiply(&g_player.aModel[nCntModel].mtxWorld, &g_player.aModel[nCntModel].mtxWorld, &mtxRotModel);
+		//ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_player.mtxWorld);
 
-		//各パーツの位置を反映
-		D3DXMatrixTranslation(&mtxTransModel, g_player.aModel[nCntModel].pos.x, g_player.aModel[nCntModel].pos.y, g_player.aModel[nCntModel].pos.z);
-		D3DXMatrixMultiply(&g_player.aModel[nCntModel].mtxWorld, &g_player.aModel[nCntModel].mtxWorld, &mtxTransModel);
+		//現在のマテリアルを取得
+		pDevice->GetMaterial(&matDef);
 
-		//各パーツの親のマトリックスを設定
-		if (g_player.aModel[nCntModel].nIdxModelParent != -1)
+		for (int nCntModel = 0; nCntModel < g_player.nNumModel; nCntModel++)
 		{
-			mtxParent = g_player.aModel[g_player.aModel[nCntModel].nIdxModelParent].mtxWorld;
+			D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用マトリックス
+			D3DXMATRIX mtxParent;					//親のマトリックス
+
+			//マテリアルデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_player.aModel[nCntModel].pBuffMat->GetBufferPointer();
+
+			//各パーツのワールドマトリックスの初期化
+			D3DXMatrixIdentity(&g_player.aModel[nCntModel].mtxWorld);
+
+			//各パーツの向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_player.aModel[nCntModel].rot.y, g_player.aModel[nCntModel].rot.x, g_player.aModel[nCntModel].rot.z);
+			D3DXMatrixMultiply(&g_player.aModel[nCntModel].mtxWorld, &g_player.aModel[nCntModel].mtxWorld, &mtxRotModel);
+
+			//各パーツの位置を反映
+			D3DXMatrixTranslation(&mtxTransModel, g_player.aModel[nCntModel].pos.x, g_player.aModel[nCntModel].pos.y, g_player.aModel[nCntModel].pos.z);
+			D3DXMatrixMultiply(&g_player.aModel[nCntModel].mtxWorld, &g_player.aModel[nCntModel].mtxWorld, &mtxTransModel);
+
+			//各パーツの親のマトリックスを設定
+			if (g_player.aModel[nCntModel].nIdxModelParent != -1)
+			{
+				mtxParent = g_player.aModel[g_player.aModel[nCntModel].nIdxModelParent].mtxWorld;
+			}
+			else
+			{
+				mtxParent = g_player.mtxWorld;	//プレイヤーのマトリックスを設定
+			}
+
+			//算出した各パーツのワールドマトリックスと親のマトリックスを掛け合わせる
+			D3DXMatrixMultiply(&g_player.aModel[nCntModel].mtxWorld,
+				&g_player.aModel[nCntModel].mtxWorld,
+				&mtxParent);
+
+			//各パーツのワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD, &g_player.aModel[nCntModel].mtxWorld);
+
+			for (int nCntMat = 0; nCntMat < (int)g_player.aModel[nCntModel].nNumMat; nCntMat++)
+			{
+				//マテリアルの設定
+				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+
+				//テクスチャの設定
+				pDevice->SetTexture(0, g_apTextureModel[nCntMat]);
+
+				//モデルの描画
+				g_player.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
+			}
 		}
-		else
-		{
-			mtxParent = g_player.mtxWorld;	//プレイヤーのマトリックスを設定
-		}
 
-		//算出した各パーツのワールドマトリックスと親のマトリックスを掛け合わせる
-		D3DXMatrixMultiply(&g_player.aModel[nCntModel].mtxWorld,
-							&g_player.aModel[nCntModel].mtxWorld,
-							&mtxParent);
-
-		//各パーツのワールドマトリックスの設定
-		pDevice->SetTransform(D3DTS_WORLD, &g_player.aModel[nCntModel].mtxWorld);	
-
-		for (int nCntMat = 0; nCntMat < (int)g_player.aModel[nCntModel].nNumMat; nCntMat++)
-		{
-			//マテリアルの設定
-			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_apTextureModel[nCntMat]);
-
-			//モデルの描画
-			g_player.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
-		}
+		//保存していたマテリアルを戻す
+		pDevice->SetMaterial(&matDef);
 	}
-
-	//保存していたマテリアルを戻す
-	pDevice->SetMaterial(&matDef);
 }
 
 //=============================================================================
@@ -749,17 +772,47 @@ void EffectPlayer(void)
 }
 
 //=============================================================================
-// 当たり判定
+// プレイヤーの当たり判定
 //=============================================================================
-void CollisionPlayer(void)
+bool HitPlayer(int nDamage)
 {
-	Enemy *pEnemy;
-	pEnemy = GetEnemy();
+	if (g_player.nLife <= 100)
+	{
+		//プレイヤーダメージのマイナス
+		g_player.nLife -= nDamage;
+		return true;
+	}
 
-	g_player.posOld = g_player.pos;
+	if (g_player.nLife = 0)
+	{
+		//使ったことにする
+		g_player.bUse = false;
 
-	//敵にぶつかる
+		//影を消す
+		DeleteShadow(g_player.nShadow);
 
+		g_nCntEffectDeath++;
+
+		if (g_nCntEffectDeath % 1 == 0)
+		{
+			for (int g_nCntEffect = 0; g_nCntEffect < 10; g_nCntEffect++)
+			{
+				//角度の設定
+				float fAngle = ((float)(rand() % 800)) / 100.0f;
+				float fmove = (float)(rand() % 1 + 1);
+
+				//エフェクトの設定
+				SetEffect(g_player.pos,
+					D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
+					D3DXCOLOR(0.0f, 0.5f, 1.0f, 1.0f),
+					1.0f,
+					5.0f,
+					0.01f,
+					0.2f);
+			}
+		}
+	}
+	return false;
 }
 
 //=============================================================================

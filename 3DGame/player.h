@@ -97,6 +97,7 @@ typedef struct
 	D3DXVECTOR3 move;		//移動量
 	D3DXMATRIX mtxWorld;	//ワールドマトリックス
 	float boost;			//ジャンプブースト
+	int nLife;				//体力
 	bool bUse;				//使用しているか
 	int nShadow;			//影
 
@@ -128,7 +129,7 @@ void DrawPlayer(void);
 void InitMotion(void);
 void MotionPlayer(void);
 void EffectPlayer(void);
-void CollisionPlayer(void);
+bool HitPlayer(int nDamage);
 
 KEY KeyPosRot(float posX, float posY, float posZ,
 				float rotX, float rotY, float rotZ);

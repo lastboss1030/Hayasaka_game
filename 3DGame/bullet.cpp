@@ -368,3 +368,11 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight, B
 	//頂点バッファをアンロックする
 	g_pVtxBuffBullet->Unlock();
 }
+
+//=============================================================================
+// 弾の位置情報の取得
+//=============================================================================
+BULLET *GetBullet(void)
+{
+	return &g_aBullet[0];
+}

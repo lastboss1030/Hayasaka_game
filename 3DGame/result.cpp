@@ -48,7 +48,7 @@ HRESULT InitResult(void)
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/result.png", &g_pTextureResult[0]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/press_enter001.png", &g_pTextureResult[1]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameclear_logo001.png", &g_pTextureResult[2]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover_logo001.png", &g_pTextureResult[2]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/player100.png", &g_pTextureResult[3]);
 
 	//頂点バッファの生成
