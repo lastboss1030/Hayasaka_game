@@ -97,7 +97,7 @@ typedef struct
 	D3DXVECTOR3 move;		//移動量
 	D3DXMATRIX mtxWorld;	//ワールドマトリックス
 	float boost;			//ジャンプブースト
-	int nLife;				//体力
+	float Life;				//体力
 	bool bUse;				//使用しているか
 	int nShadow;			//影
 

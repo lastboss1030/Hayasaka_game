@@ -7,12 +7,19 @@
 #include "title.h"								//インクルードファイル
 #include "input.h"
 #include "fade.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_TITLE_TEX (4)	//テクスチャ数
-#define MAX_VERTEX	  (4)	//頂点数
+#define MAX_TITLE_TEX	(4)					//テクスチャ数
+#define MAX_VERTEX		(4)					//頂点数
+
+#define MOVE_TITLELOGO	(4.0f)				//タイトルロゴの移動量
+#define TITLELOGO_X		(1000.0f)			//タイトルロゴ幅
+#define TITLELOGO_Y		(400.0f)			//タイトルロゴの高さ
+#define HEIGHT_Y		(100.0f * -1.0f)	//タイトルロゴの初期中心Y座標
+#define TITLE_MARGIN	(3.5f)				//タイトル余白
 
 //=============================================================================
 // グローバル変数
@@ -42,6 +49,7 @@ HRESULT InitTitle(void)
 
 	//カラーの初期
 	g_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	g_posTitleLogo = D3DXVECTOR3(SCREEN_WIDTH / 2, HEIGHT_Y, 0.0f);
 	g_nCount = 0;
 
 	//テクスチャの読み込み
@@ -93,6 +101,9 @@ HRESULT InitTitle(void)
 	//頂点バッファをアンロックする
 	g_pVtxBuffTitle->Unlock();
 
+	//BGM
+	PlaySound(SOUND_LABEL_BGM_TITLE);
+
 	return S_OK;
 }
 
@@ -101,6 +112,9 @@ HRESULT InitTitle(void)
 //=============================================================================
 void UninitTitle(void)
 {
+	//サウンド停止
+	StopSound();
+
 	//頂点バッファの開放
 	if (g_pVtxBuffTitle != NULL)
 	{
@@ -132,25 +146,45 @@ void UpdateTitle(void)
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
+	//タイトルロゴの位置更新
+	pVtx[8].pos = D3DXVECTOR3(g_posTitleLogo.x - (TITLELOGO_X / 2), g_posTitleLogo.y + (TITLELOGO_Y / 2), 0.0f);
+	pVtx[9].pos = D3DXVECTOR3(g_posTitleLogo.x - (TITLELOGO_X / 2), g_posTitleLogo.y - (TITLELOGO_Y / 2), 0.0f);
+	pVtx[10].pos = D3DXVECTOR3(g_posTitleLogo.x + (TITLELOGO_X / 2), g_posTitleLogo.y + (TITLELOGO_Y / 2), 0.0f);
+	pVtx[11].pos = D3DXVECTOR3(g_posTitleLogo.x + (TITLELOGO_X / 2), g_posTitleLogo.y - (TITLELOGO_Y / 2), 0.0f);
+
+	if (GetKeyboardTrigger(DIK_RETURN) == true)
+	{
+		//エンターキーを押したとき
+		if (nFade == FADE_IN)
+		{
+			//フェードイン
+			SetFade(FADE_NONE, MODE_TITLE);
+			g_posTitleLogo.y = SCREEN_HEIGHT / TITLE_MARGIN;
+		}
+		else if (g_posTitleLogo.y <= (SCREEN_HEIGHT / TITLE_MARGIN))
+		{
+			g_posTitleLogo.y = SCREEN_HEIGHT / TITLE_MARGIN;
+		}
+		else if (nFade == FADE_NONE && (g_posTitleLogo.y >= (SCREEN_HEIGHT / TITLE_MARGIN)))
+		{
+			//何もしていないとき
+			SetFade(FADE_OUT, MODE_GAME);
+			g_nCount = 0;
+		}
+	}
+
+	//更新処理
+	if (nFade == FADE_NONE && g_posTitleLogo.y <= (SCREEN_HEIGHT / TITLE_MARGIN))
+	{
+		//タイトルロゴの移動量の更新
+		g_posTitleLogo.y += MOVE_TITLELOGO;
+	}
+
 	//PRESS_ENTERの色更新
 	pVtx[4].col = g_color;
 	pVtx[5].col = g_color;
 	pVtx[6].col = g_color;
 	pVtx[7].col = g_color;
-
-	// テクスチャの更新
-	if ((g_nCntAnimTitle % 4) == 0)
-	{
-		// テクスチャのパターンの更新
-		g_fPatternAnimT[0] += 0.0001f;
-
-		// テクスチャの頂点座標の更新
-		pVtx[0].tex = D3DXVECTOR2(0.0f + g_fPatternAnimT[0], 1.0f + g_fMoveTitleY[0]);
-		pVtx[1].tex = D3DXVECTOR2(0.0f + g_fPatternAnimT[0], 0.0f + g_fMoveTitleY[0]);
-		pVtx[2].tex = D3DXVECTOR2(1.0f + g_fPatternAnimT[0], 1.0f + g_fMoveTitleY[0]);
-		pVtx[3].tex = D3DXVECTOR2(1.0f + g_fPatternAnimT[0], 0.0f + g_fMoveTitleY[0]);
-
-	}
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffTitle->Unlock();
@@ -176,6 +210,9 @@ void UpdateTitle(void)
 	{
 		if (nFade == FADE_NONE)
 		{
+			//効果音
+			PlaySound(SOUND_LABEL_SE_ENTER);
+
 			SetFade(FADE_OUT, MODE_TUTORIAL);	//ゲーム画面に切り替え
 		}
 	}
@@ -243,10 +280,10 @@ void SetTextureTitle(int nCntTitle)
 	else if (nCntTitle == 2)	//タイトルロゴ
 	{
 		//頂点座標
-		pVtx[0].pos = D3DXVECTOR3(340, 550, 0.0f);	//Zは0.0固定
-		pVtx[1].pos = D3DXVECTOR3(340, 100, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1580, 550, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1580, 100, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(g_posTitleLogo.x - (TITLELOGO_X / 2), g_posTitleLogo.y + (TITLELOGO_Y / 2), 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_posTitleLogo.x - (TITLELOGO_X / 2), g_posTitleLogo.y - (TITLELOGO_Y / 2), 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(g_posTitleLogo.x + (TITLELOGO_X / 2), g_posTitleLogo.y + (TITLELOGO_Y / 2), 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_posTitleLogo.x + (TITLELOGO_X / 2), g_posTitleLogo.y - (TITLELOGO_Y / 2), 0.0f);
 	}
 
 	//頂点バッファをアンロックする

@@ -8,6 +8,7 @@
 #include "input.h"
 #include "game.h"
 #include "fade.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
@@ -122,7 +123,7 @@ void UpdatePause(void)
 	if (GetKeyboardTrigger(DIK_S) == true)
 	{
 		//効果音
-
+		PlaySound(SOUND_LABEL_BGM_SELECT);
 
 		g_State++;
 		if (g_State > 2)
@@ -134,7 +135,7 @@ void UpdatePause(void)
 	if (GetKeyboardTrigger(DIK_W) == true)
 	{
 		//効果音
-
+		PlaySound(SOUND_LABEL_BGM_SELECT);
 
 		g_State--;
 		if (g_State < 0)
@@ -183,7 +184,7 @@ void UpdatePause(void)
 		if (g_State == PAUSE_MENU_RETRY)	//リトライ選択時
 		{
 			//ゲーム画面へ
-			SetFade(FADE_OUT, MODE_GAME);
+			SetFade(FADE_OUT, MODE_SELECT);
 
 			//決定音
 

@@ -13,6 +13,7 @@
 #define MAX_SIZE (800.0f)							//フィールドサイズ
 #define MAX_VERTEX (14)								//頂点数
 #define MAX_SUEFACE (9)								//面の数
+#define MAX_FIELD (1)
 
 //=============================================================================
 // グローバル変数
@@ -23,6 +24,8 @@ LPDIRECT3DTEXTURE9	g_pTextureMeshfield = NULL;		//テクスチャへのポインタ
 D3DXVECTOR3 g_posMeshfield;							//位置
 D3DXVECTOR3 g_rotMeshfield;							//向き
 D3DXMATRIX g_mtxWorldMeshfield;						//ワールドマトリックス
+
+Meshfield g_aMeshfield;
 
 //=============================================================================
 // 初期化処理
@@ -41,6 +44,14 @@ HRESULT InitMeshfield(void)
 
 	g_posMeshfield = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_rotMeshfield = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	// 変数の初期化
+	g_aMeshfield.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_aMeshfield.posMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_aMeshfield.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_aMeshfield.fWidth = 0.0f;
+	g_aMeshfield.fHeight = 0.0f;
+	g_aMeshfield.bUse = false;
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_SUEFACE, 
@@ -179,32 +190,64 @@ void DrawMeshfield(void)
 	//デバイスの取得
 	pDevice = GetDevice();
 
-	//ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&g_mtxWorldMeshfield);
+	if (g_aMeshfield.bUse == true)
+	{
+		//ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&g_mtxWorldMeshfield);
 
-	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_rotMeshfield.y, g_rotMeshfield.x, g_rotMeshfield.z);
-	D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxRot);
+		//向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_rotMeshfield.y, g_rotMeshfield.x, g_rotMeshfield.z);
+		D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxRot);
 
-	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, g_posMeshfield.x, g_posMeshfield.y, g_posMeshfield.z);
-	D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxTrans);
+		//位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_posMeshfield.x, g_posMeshfield.y, g_posMeshfield.z);
+		D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxTrans);
 
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldMeshfield);
+		//ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldMeshfield);
 
-	//頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffMeshfield, 0, sizeof(VERTEX_3D));
+		//頂点バッファをデータストリームに設定
+		pDevice->SetStreamSource(0, g_pVtxBuffMeshfield, 0, sizeof(VERTEX_3D));
 
-	//インデックスバッファをデータストリームに設定
-	pDevice->SetIndices(g_pIdxBuffMeshfield);
+		//インデックスバッファをデータストリームに設定
+		pDevice->SetIndices(g_pIdxBuffMeshfield);
 
-	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_3D);
+		//頂点フォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_3D);
 
-	//テクスチャの設定
-	pDevice->SetTexture(0, g_pTextureMeshfield);
+		//テクスチャの設定
+		pDevice->SetTexture(0, g_pTextureMeshfield);
 
-	//ポリゴンの描画
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MAX_SUEFACE, 0, 12);
+		//ポリゴンの描画
+		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MAX_SUEFACE, 0, 12);
+	}
+}
+
+//==============================================================================
+//	メッシュ床の設定
+//==============================================================================
+void SetMeshfield(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight)
+{
+	// ローカル変数宣言
+	Meshfield *pMeshfield;
+	pMeshfield = &g_aMeshfield;
+
+	// 壁の設定
+	for (int nCntWall = 0; nCntWall < MAX_FIELD; nCntWall++, pMeshfield++)
+	{
+		if (pMeshfield->bUse == false)
+		{
+			pMeshfield->posMove = pos;		//位置
+
+			pMeshfield->rot = rot;			//向き
+
+			pMeshfield->fWidth = fWidth;	//幅
+
+			pMeshfield->fHeight = fHeight;	//高さ
+
+			pMeshfield->bUse = true;		//使用状態
+
+			break;
+		}
+	}
 }

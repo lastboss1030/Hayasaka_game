@@ -6,7 +6,7 @@
 //=============================================================================
 #include "Billboard.h"
 #include "input.h"
-#include "player.h"
+#include "enemy.h"
 
 //=============================================================================
 // マクロ定義
@@ -103,9 +103,16 @@ void UninitBillboard(void)
 //=============================================================================
 void UpdateBillboard(void)
 {
-	Player *pPlayer;
-	pPlayer = GetPlayer();
+	VERTEX_2D *pVtx;
+	Enemy *pEnemy;
+	pEnemy = GetEnemy();
 
+	//頂点バッファをロックし頂点情報へのポインタを取得
+	g_pVtxBuffBillboard->Lock(0, 0, (void**)&pVtx, 0);
+
+
+	//頂点バッファをアンロックする
+	g_pVtxBuffBillboard->Unlock();
 }
 
 //=============================================================================

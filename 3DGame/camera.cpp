@@ -56,7 +56,7 @@ void UpdateCamera(void)
 {
 	Player *pPlayer = GetPlayer();
 
-	if (GetKeyboardPress(DIK_C) == true)	//Z‚ð‰Ÿ‚µ‚½
+	if (GetKeyboardPress(DIK_LEFT) == true)	//Z‚ð‰Ÿ‚µ‚½
 	{
 		g_camera.rot.y -= 0.03f;
 
@@ -65,7 +65,7 @@ void UpdateCamera(void)
 			g_camera.rot.y += D3DX_PI * 2.0f;
 		}
 	}
-	if (GetKeyboardPress(DIK_Z) == true)	//C‚ð‰Ÿ‚µ‚½
+	if (GetKeyboardPress(DIK_RIGHT) == true)	//C‚ð‰Ÿ‚µ‚½
 	{
 		g_camera.rot.y += 0.03f;
 

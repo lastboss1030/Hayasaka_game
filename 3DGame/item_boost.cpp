@@ -10,6 +10,7 @@
 #include "shadow.h"
 #include "input.h"
 #include "effect.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
@@ -121,6 +122,9 @@ void UpdateItemBoost(void)
 				{
 					//ブースト残量増加
 					pPlayer->boost = 200;
+
+					//効果音
+					PlaySound(SOUND_LABEL_SE_ITEM);
 
 					//使った判定
 					pItemBoost->bUse = false;

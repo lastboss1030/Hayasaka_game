@@ -14,16 +14,17 @@
 #include "select.h"
 #include "enemy.h"
 #include "fade.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MOVE_MODEL		(1.0f)
-#define MOVE_BULLET		(5.0f)
-#define HIT_WALL		(750.0f)
-#define MAX_TEX			(10)
-#define MAX_BOOST		(200)
-#define PLAYER_LIFE		(100)
+#define MOVE_MODEL		(1.0f)			//モデル移動量
+#define MOVE_BULLET		(5.0f)			//弾移動量
+#define HIT_WALL		(750.0f)		//壁
+#define MAX_TEX			(10)			//テクスチャ
+#define MAX_BOOST		(200)			//ブースト
+#define PLAYER_LIFE		(200)			//ライフ基準
 
 #define VTX_MINP	(D3DXVECTOR3(10000.0f, 10000.0f, 10000.0f))		// 仮頂点最小値
 #define	VTX_MAXP	(D3DXVECTOR3(-10000.0f, -10000.0f, -10000.0f))	// 仮頂点最大値
@@ -46,6 +47,7 @@ D3DXVECTOR3 aCollisionPos[2];						//当たり判定ライン
 int g_nStateP;										//ステート
 int g_nShootCount = 0;								//発射カウント
 int g_nEffect = 0;									//エフェクト
+int g_life = 0;										//ライフ
 float g_move;										//移動速度
 
 int g_nCntDeath;									//死亡時の待機
@@ -67,7 +69,7 @@ void InitPlayer(void)
 	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_player.rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.nLife = PLAYER_LIFE;
+	g_player.Life = PLAYER_LIFE;
 	g_player.boost = MAX_BOOST;
 	g_player.nNumModel = MAX_USE_MODEL;
 	g_player.bUse = true;
@@ -90,7 +92,7 @@ void InitPlayer(void)
 		g_move = 1.4f;
 
 		//Xファイルの読み込み
-		D3DXLoadMeshFromX("data/MODEL/golem.x",	//ロボット本体
+		D3DXLoadMeshFromX("data/MODEL/golem.x",	//ゴーレム
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -99,7 +101,7 @@ void InitPlayer(void)
 			&g_player.aModel[0].nNumMat,
 			&g_player.aModel[0].pMesh);
 
-		D3DXLoadMeshFromX("data/MODEL/kang_dae.x",		//ドローン
+		D3DXLoadMeshFromX("data/MODEL/kang_dae.x",	//キャノン
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -124,10 +126,10 @@ void InitPlayer(void)
 	if (g_player.playertype == PLAYERTYPE_LEO)
 	{
 		//移動速度
-		g_move = 1.0f;
+		g_move = 1.1f;
 
 		//Xファイルの読み込み
-		D3DXLoadMeshFromX("data/MODEL/leo.x",	//ロボット本体
+		D3DXLoadMeshFromX("data/MODEL/leo.x",	//レオ
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -136,7 +138,7 @@ void InitPlayer(void)
 			&g_player.aModel[0].nNumMat,
 			&g_player.aModel[0].pMesh);
 
-		D3DXLoadMeshFromX("data/MODEL/gekko.x",		//ドローン
+		D3DXLoadMeshFromX("data/MODEL/gekko.x",	//月光
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -151,12 +153,12 @@ void InitPlayer(void)
 		g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
-		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 75.0f, 10.0f);
+		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 80.0f, 10.0f);
 		g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
-		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//向き
-	}
+		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//向き
+	}	
 
 	if (g_player.playertype == PLAYERTYPE_STALKER)
 	{
@@ -164,7 +166,7 @@ void InitPlayer(void)
 		g_move = 1.8f;
 
 		//Xファイルの読み込み
-		D3DXLoadMeshFromX("data/MODEL/stalker.x",	//ロボット本体
+		D3DXLoadMeshFromX("data/MODEL/stalker.x",	//ストーカー
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -173,7 +175,7 @@ void InitPlayer(void)
 			&g_player.aModel[0].nNumMat,
 			&g_player.aModel[0].pMesh);
 
-		D3DXLoadMeshFromX("data/MODEL/punishert.x",		//ドローン
+		D3DXLoadMeshFromX("data/MODEL/punishert000.x",	//パニッシャー
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -368,15 +370,6 @@ void UpdatePlayer(void)
 			}
 		}
 	}
-	//ブースト(浮遊)
-	if (GetKeyboardPress(DIK_SPACE) == true)
-	{
-		if (g_player.boost > 0)
-		{
-			g_player.move.y +=1.0f;
-			g_player.boost -= 1;
-		}
-	}
 
 
 	//高さ上限
@@ -385,37 +378,27 @@ void UpdatePlayer(void)
 		g_player.pos.y = HEIGHT_LIMIT;
 	}
 
+
 	// モデルの移動
 	if (GetKeyboardPress(DIK_W) == true)
 	{
 		if (GetKeyboardPress(DIK_A) == true)
-		{// 左上方向
+		{
+			// 左上方向
 			g_player.move.x -= cosf(pCamera->rot.y + D3DX_PI / 4) * g_move;
 			g_player.move.z += sinf(pCamera->rot.y + D3DX_PI / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + (D3DX_PI * 3 / 4);
-
-			pCamera->rot.y -= 0.03f;
-
-			if (pCamera->rot.y < -D3DX_PI)
-			{
-				pCamera->rot.y += D3DX_PI * 2.0f;
-			}
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
-		{// 右上方向
+		{
+			// 右上方向
 			g_player.move.x += cosf(pCamera->rot.y - D3DX_PI / 4) * g_move;
 			g_player.move.z -= sinf(pCamera->rot.y - D3DX_PI / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y - (D3DX_PI * 3 / 4);
-
-			pCamera->rot.y += 0.03f;
-
-			if (pCamera->rot.y > D3DX_PI)
-			{
-				pCamera->rot.y -= D3DX_PI * 2.0f;
-			}
 		}
 		else
-		{// 上方向
+		{
+			// 上方向
 			g_player.move.x += sinf(pCamera->rot.y) * g_move;
 			g_player.move.z += cosf(pCamera->rot.y) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + D3DX_PI;
@@ -424,46 +407,37 @@ void UpdatePlayer(void)
 	else if (GetKeyboardPress(DIK_S) == true)
 	{
 		if (GetKeyboardPress(DIK_A) == true)
-		{// 左下方向
+		{
+			// 左下方向
 			g_player.move.x += cosf(pCamera->rot.y + D3DX_PI * 3 / 4) * g_move;
 			g_player.move.z -= sinf(pCamera->rot.y + D3DX_PI * 3 / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / 4;
-
-			pCamera->rot.y += 0.03f;
-
-			if (pCamera->rot.y < -D3DX_PI)
-			{
-				pCamera->rot.y += D3DX_PI * 2.0f;
-			}
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
-		{// 右下方向
+		{
+			// 右下方向
 			g_player.move.x -= cosf(pCamera->rot.y - D3DX_PI * 3 / 4) * g_move;
 			g_player.move.z += sinf(pCamera->rot.y - D3DX_PI * 3 / 4) * g_move;
 			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / -4;
-
-			pCamera->rot.y -= 0.03f;
-
-			if (pCamera->rot.y > D3DX_PI)
-			{
-				pCamera->rot.y -= D3DX_PI * 2.0f;
-			}
 		}
 		else
-		{// 下方向
+		{
+			// 下方向
 			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI) * g_move;
 			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI) * g_move;
 			g_player.rotDest.y = pCamera->rot.y;
 		}
 	}
 	else if (GetKeyboardPress(DIK_A) == true)
-	{// 左方向
+	{
+		// 左方向
 		g_player.move.x -= cosf(pCamera->rot.y) * g_move;
 		g_player.move.z += sinf(pCamera->rot.y) * g_move;
 		g_player.rotDest.y = pCamera->rot.y + (D3DX_PI / 2);
 	}
 	else if (GetKeyboardPress(DIK_D) == true)
-	{// 右方向
+	{
+		// 右方向
 		g_player.move.x += cosf(pCamera->rot.y) * g_move;
 		g_player.move.z -= sinf(pCamera->rot.y) * g_move;
 		g_player.rotDest.y = pCamera->rot.y + (D3DX_PI / -2);
@@ -493,7 +467,7 @@ void UpdatePlayer(void)
 	}
 
 	//弾の発射
-	if (GetKeyboardPress(DIK_G) == true)
+	if (GetKeyboardPress(DIK_SPACE) == true)
 	{
 		//ゴーレム選択時
 		if (g_player.playertype == PLAYERTYPE_GOLEM)
@@ -507,6 +481,9 @@ void UpdatePlayer(void)
 						30.0f, 30.0f,
 						BULLETTYPE_PLAYER);
 
+					//効果音
+					PlaySound(SOUND_LABEL_SE_SHOOT_GOLEM);
+
 					g_player.boost -= 25;
 				}
 			}
@@ -519,10 +496,13 @@ void UpdatePlayer(void)
 			{
 				if (g_player.boost > 20)
 				{
-					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 85.0f, g_player.pos.z),
+					SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 90.0f, g_player.pos.z),
 						D3DXVECTOR3(sinf(g_player.rot.y) * -12.0f, 0.0f, cosf(g_player.rot.y) * -12.0f),
 						30.0f, 30.0f,
 						BULLETTYPE_PLAYER);
+
+					//効果音
+					PlaySound(SOUND_LABEL_SE_SHOOT_LEO);
 
 					g_player.boost -= 40;
 				}
@@ -540,6 +520,9 @@ void UpdatePlayer(void)
 						D3DXVECTOR3(sinf(g_player.rot.y) * -20.0f, 0.0f, cosf(g_player.rot.y) * -20.0f),
 						30.0f, 30.0f,
 						BULLETTYPE_PLAYER);
+
+					//効果音
+					PlaySound(SOUND_LABEL_SE_SHOOT_STALKER);
 
 					g_player.boost -= 10;
 				}
@@ -579,12 +562,37 @@ void UpdatePlayer(void)
 	//エフェクト
 	EffectPlayer();
 
-	if (g_player.nLife <= 0)
+	if (g_player.Life <= 0)
 	{
+		//使った判定
 		g_player.bUse = false;
 
+		//影を消す
+		DeleteShadow(g_player.nShadow);
+
+		g_nCntEffectDeath++;
+
+		if (g_nCntEffectDeath % 1 == 0)
+		{
+			for (int g_nCntEffect = 0; g_nCntEffect < 1; g_nCntEffect++)
+			{
+				//角度の設定
+				float fAngle = ((float)(rand() % 800)) / 100.0f;
+				float fmove = (float)(rand() % 1 + 1);
+
+				//エフェクトの設定
+				SetEffect(g_player.pos,
+					D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
+					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+					1.0f,
+					5.0f,
+					0.01f,
+					0.1f);
+			}
+		}
+
 		g_nCntDeath++;
-		if (g_nCntDeath == 10)
+		if (g_nCntDeath == 20)
 		{
 			SetFade(FADE_OUT, MODE_RESULT);	//リザルト画面に切り替え
 		}
@@ -747,26 +755,13 @@ void EffectPlayer(void)
 			float fAngle = ((float)(rand() % 800)) / 100.0f;
 			float fmove = (float)(rand() % 1 + 1);
 
-			// 重力なし
-			SetEffect(g_player.aModel[1].pos,
-				D3DXVECTOR3(sinf(fAngle) * fmove, 4, cosf(fAngle) * fmove),
-				D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),
+			SetEffect(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 40.0f, g_player.pos.z),
+				D3DXVECTOR3(sinf(fAngle) * fmove, 0, cosf(fAngle) * fmove / 2),
+				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 				1.0f,
-				5.0f,
-				0.01f,
-				0.0f);
-
-			//廃棄ガス
-			if (g_player.pos.y > 5)
-			{
-				SetEffect(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 40.0f, g_player.pos.z),
-					D3DXVECTOR3(sinf(fAngle) * fmove, 0, cosf(fAngle) * fmove / 2),
-					D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-					1.0f,
-					10.0f,
-					0.2f,
-					0.25f);
-			}
+				10.0f,
+				0.2f,
+				0.25f);
 		}
 	}
 }
@@ -776,41 +771,11 @@ void EffectPlayer(void)
 //=============================================================================
 bool HitPlayer(int nDamage)
 {
-	if (g_player.nLife <= 100)
+	if (g_player.Life <= PLAYER_LIFE)
 	{
 		//プレイヤーダメージのマイナス
-		g_player.nLife -= nDamage;
+		g_player.Life -= nDamage;
 		return true;
-	}
-
-	if (g_player.nLife = 0)
-	{
-		//使ったことにする
-		g_player.bUse = false;
-
-		//影を消す
-		DeleteShadow(g_player.nShadow);
-
-		g_nCntEffectDeath++;
-
-		if (g_nCntEffectDeath % 1 == 0)
-		{
-			for (int g_nCntEffect = 0; g_nCntEffect < 10; g_nCntEffect++)
-			{
-				//角度の設定
-				float fAngle = ((float)(rand() % 800)) / 100.0f;
-				float fmove = (float)(rand() % 1 + 1);
-
-				//エフェクトの設定
-				SetEffect(g_player.pos,
-					D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
-					D3DXCOLOR(0.0f, 0.5f, 1.0f, 1.0f),
-					1.0f,
-					5.0f,
-					0.01f,
-					0.2f);
-			}
-		}
 	}
 	return false;
 }

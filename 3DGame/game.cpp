@@ -18,10 +18,14 @@
 #include "fade.h"
 #include "input.h"
 #include "pause.h"
-#include "object.h"
 #include "cooldown_UI.h"
 #include "item_boost.h"
 #include "enemy.h"
+#include "time.h"
+#include "closshair.h"
+#include "score.h"
+#include "ranking.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
@@ -33,6 +37,7 @@
 // グローバル変数
 //=============================================================================
 bool g_bPause = false;		//ポーズ中かどうか
+int g_nCntResult;			// リザルト画面までのカウント
 
 //=============================================================================
 // ゲーム画面の初期化処理
@@ -46,7 +51,7 @@ HRESULT InitGame(void)
 	InitMeshwall();
 
 	//ビルボードの初期化処理
-	InitBillboard();
+//	InitBillboard();
 
 	//弾の初期化処理
 	InitBullet();
@@ -62,9 +67,6 @@ HRESULT InitGame(void)
 
 	//モデルの初期化処理
 	InitPlayer();
-
-	//オブジェクトの初期化処理
-//	InitObject();
 
 	//敵の初期化処理
 	InitEnemy();
@@ -84,12 +86,25 @@ HRESULT InitGame(void)
 	//クールダウンUIの初期化処理
 	InitCooldown();
 
+	//クロスヘアの初期化処理
+	InitClosshair();
+	
+	//タイムの初期化処理
+	InitTime();
+
+	//スコアの初期化処理
+	InitScore();
+
 	//------------------------------------
 
 	//壁の配置
 	SetWall();
 
 	//------------------------------------
+
+	//BGM
+	PlaySound(SOUND_LABEL_BGM_GAME);
+
 	return S_OK;
 }
 
@@ -98,6 +113,9 @@ HRESULT InitGame(void)
 //=============================================================================
 void UninitGame(void)
 {
+	//サウンドストップ
+	StopSound();
+
 	//メッシュフィールドの終了処理
 	UninitMeshfield();
 
@@ -105,7 +123,7 @@ void UninitGame(void)
 	UninitMeshwall();
 
 	//ビルボードの終了処理
-	UninitBillboard();
+//	UninitBillboard();
 
 	//弾の終了処理
 	UninitBullet();
@@ -121,9 +139,6 @@ void UninitGame(void)
 
 	//モデルの終了処理
 	UninitPlayer();
-
-	//オブジェクトの終了処理
-//	UninitObject();
 
 	//敵の終了処理
 	UninitEnemy();
@@ -142,6 +157,15 @@ void UninitGame(void)
 
 	//クールダウンUIの終了処理
 	UninitCooldown();
+
+	//クロスヘアの終了処理
+	UninitClosshair();
+
+	//タイムの終了処理
+	UninitTime();
+
+	//スコアの終了処理
+	UninitScore();
 }
 
 //=============================================================================
@@ -151,11 +175,13 @@ void UpdateGame(void)
 {
 	//情報の取得
 	int nFade = GetFade();
+	int nTime = GetTime();
 
 	//ポーズ
 	if (GetKeyboardTrigger(DIK_P) == true)
 	{
 		//効果音
+		PlaySound(SOUND_LABEL_SE_PAUSE);
 
 		g_bPause = g_bPause ? false : true;	//1行Ver.
 	}
@@ -166,7 +192,7 @@ void UpdateGame(void)
 		UpdatePause();
 	}
 
-	if (g_bPause == false)
+	if (g_bPause == false && nTime != 0)
 	{
 		//メッシュフィールドの更新処理
 		UpdateMeshfield();
@@ -175,7 +201,7 @@ void UpdateGame(void)
 		UpdateMeshwall();
 
 		//ビルボードの更新処理
-		UpdateBillboard();
+//		UpdateBillboard();
 
 		//弾の更新処理
 		UpdateBullet();
@@ -192,9 +218,6 @@ void UpdateGame(void)
 		//モデルの更新処理
 		UpdatePlayer();
 
-		//オブジェクトの更新処理
-//		UpdateObject();
-
 		//敵の更新処理
 		UpdateEnemy();
 
@@ -209,16 +232,26 @@ void UpdateGame(void)
 
 		//クールダウンUIの更新処理
 		UpdateCooldown();
+
+		//クロスヘアの更新処理
+		UpdateClosshair();
+
+		//タイムの更新処理
+		UpdateTime();
+
+		//スコアの更新処理
+		UpdateScore();
 	}
 
-	//エンター押したら
-	if (GetKeyboardTrigger(DIK_RETURN) == true)
+	// リザルト画面遷移
+	if ((nTime == 0))
 	{
-		if (nFade == FADE_NONE)
+		// リザルト画面までのカウント
+		g_nCntResult++;
+		if (g_nCntResult == 60)
 		{
-			//効果音
-
-			SetFade(FADE_OUT, MODE_RESULT);	//タイトル画面に切り替え
+			// 画面モードの初期化処理
+			SetFade(FADE_OUT, MODE_RESULT);
 		}
 	}
 }
@@ -235,7 +268,7 @@ void DrawGame(void)
 	DrawMeshwall();
 
 	//ビルボードの描画処理
-	DrawBillboard();
+//	DrawBillboard();
 
 	//弾の描画処理
 	DrawBullet();
@@ -252,9 +285,6 @@ void DrawGame(void)
 	//モデルの描画処理
 	DrawPlayer();
 
-	//オブジェクトの描画処理
-//	DrawObject();
-
 	//敵の描画処理
 	DrawEnemy();
 
@@ -263,6 +293,15 @@ void DrawGame(void)
 
 	//クールダウンUIの描画処理
 	DrawCooldown();
+
+	//クロスヘアの描画処理
+	DrawClosshair();
+
+	//タイムの描画処理
+	DrawTime();
+
+	//スコアの描画処理
+	DrawScore();
 
 
 	//ポーズの描画処理
@@ -281,6 +320,8 @@ void SetWall(void)
 	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI / 2, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
 	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI / -2, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
 	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
+
+	SetMeshfield(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
 }
 
 //=============================================================================

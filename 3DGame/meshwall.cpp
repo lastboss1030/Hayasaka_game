@@ -10,7 +10,7 @@
 //==============================================================================
 // マクロ定義
 //==============================================================================
-#define MAX_MWALL	(4)
+#define MAX_WALL	(4)
 #define WIDTH_WALL	(2)		// 列数(幅)
 #define HEIGHT_WALL	(2)		// 行数(高さ)
 #define WALL_SIZE (800.0f)
@@ -21,7 +21,7 @@
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshwall = NULL;	// バッファへのポインタ
 LPDIRECT3DINDEXBUFFER9 g_pIdxBuffMeshwall = NULL;	// インデックスバッファへのポインタ
 LPDIRECT3DTEXTURE9 g_pTextureMeshwall = NULL;		// テクスチャへのポインタ
-Meshwall g_aMeshwall[MAX_MWALL];
+Meshwall g_aMeshwall[MAX_WALL];
 int g_nAllPointWall;								// 総頂点数
 int g_nPolygonWall;									// ポリゴン数
 int g_nIdxPointWall;								// インデックスバッファの必要な確保数
@@ -44,7 +44,7 @@ HRESULT InitMeshwall(void)
 	D3DXCreateTextureFromFile(	pDevice,"data/TEXTURE/tokyo.jpg",	&g_pTextureMeshwall);
 
 	// 変数の初期化
-	for (int nCnt = 0; nCnt < MAX_MWALL; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_WALL; nCnt++)
 	{
 		g_aMeshwall[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aMeshwall[nCnt].posMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -62,7 +62,7 @@ HRESULT InitMeshwall(void)
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_3D) * g_nIdxPointWall * MAX_MWALL,
+		sizeof(VERTEX_3D) * g_nIdxPointWall * MAX_WALL,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -73,7 +73,7 @@ HRESULT InitMeshwall(void)
 	g_pVtxBuffMeshwall->Lock(0, 0, (void**)&pVtx, 0);
 
 
-	for (int nCnt = 0; nCnt < MAX_MWALL; nCnt++, pVtx += 9)
+	for (int nCnt = 0; nCnt < MAX_WALL; nCnt++, pVtx += 9)
 	{
 		// ポリゴンの各頂点座標
 		pVtx[0].pos = D3DXVECTOR3(g_aMeshwall[nCnt].pos.x - WALL_SIZE, g_aMeshwall[nCnt].pos.y + WALL_SIZE, g_aMeshwall[nCnt].pos.z);
@@ -125,7 +125,7 @@ HRESULT InitMeshwall(void)
 
 	// インデックスバッファの生成
 	pDevice->CreateIndexBuffer(
-		sizeof(WORD) * g_nAllPointWall * MAX_MWALL,
+		sizeof(WORD) * g_nAllPointWall * MAX_WALL,
 		D3DUSAGE_WRITEONLY,
 		D3DFMT_INDEX16,
 		D3DPOOL_MANAGED,
@@ -197,7 +197,7 @@ void UpdateMeshwall(void)
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffMeshwall->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntMax = 0; nCntMax < MAX_MWALL; nCntMax++)
+	for (int nCntMax = 0; nCntMax < MAX_WALL; nCntMax++)
 	{
 		for (int nCntWall = 0; nCntWall < g_aMeshwall[nCntMax].nCntY; nCntWall++)
 		{
@@ -234,7 +234,7 @@ void DrawMeshwall(void)
 	// デバイスの取得
 	pDevice = GetDevice();
 
-	for (int nCnt = 0; nCnt < MAX_MWALL; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_WALL; nCnt++)
 	{
 		if (g_aMeshwall[nCnt].bUse == true)
 		{
@@ -292,7 +292,7 @@ void SetMeshwall(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight)
 	pMeshwall = &g_aMeshwall[0];
 
 	// 壁の設定
-	for (int nCntWall = 0; nCntWall < MAX_MWALL; nCntWall++, pMeshwall++)
+	for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++, pMeshwall++)
 	{
 		if (pMeshwall->bUse == false)
 		{

@@ -1,13 +1,39 @@
-﻿  cooldown_UI.cpp
+﻿  Billboard.cpp
+  bullet.cpp
+  camera.cpp
+  closshair.cpp
+  cooldown_UI.cpp
+  effect.cpp
   enemy.cpp
+  explosion.cpp
+  fade.cpp
   game.cpp
+  input.cpp
+  item_boost.cpp
+  light.cpp
   main.cpp
+  meshfield.cpp
+  meshwall.cpp
+  pause.cpp
   player.cpp
+  polygon.cpp
+  ranking.cpp
+  コンパイル中...
   result.cpp
+  score.cpp
+  select.cpp
+  shadow.cpp
+  Sound.cpp
+  time.cpp
+time.cpp(99): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+time.cpp(181): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  title.cpp
+  tutorial.cpp
+  wall.cpp
   コード生成しています。
-  11 of 183 functions ( 6.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    27 functions had inline decision re-evaluated but remain unchanged
+  109 of 223 functions (48.9%) were compiled, the rest were copied from previous compilation.
+    28 functions were new in current compilation
+    28 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   3DGame.vcxproj -> C:\Users\student\Desktop\3DGame\Release\3DGame.exe
   3DGame.vcxproj -> C:\Users\student\Desktop\3DGame\Release\3DGame.pdb (Full PDB)

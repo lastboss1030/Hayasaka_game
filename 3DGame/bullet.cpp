@@ -9,6 +9,10 @@
 #include "explosion.h"
 #include "effect.h"
 #include "input.h"
+#include "enemy.h"
+#include "player.h"
+#include "score.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
@@ -16,6 +20,8 @@
 #define MAX_BULLET	(256)	//弾の最大数
 #define HIT_WALL	(800)
 #define MAX_VERTEX	(4)
+#define BULLET_SIZE_P (70.0f)
+#define BULLET_SIZE_E (50.0f)
 
 //=============================================================================
 // グローバル変数
@@ -127,6 +133,8 @@ void UpdateBullet(void)
 {
 	//変数宣言
 	BULLET *pBullet;
+	Enemy *pEnemy = GetEnemy();
+	Player *pPlayer = GetPlayer();
 
 	//pBulletの初期化
 	pBullet = &g_aBullet[0];
@@ -250,6 +258,112 @@ void UpdateBullet(void)
 
 					// 弾の状態をfalseにする
 					pBullet->bUse = false;
+				}
+			}
+		}
+
+		for (int nCntEnemy = 0; nCntEnemy < 1; nCntEnemy++, pEnemy++)
+		{
+			if (pBullet->type == BULLETTYPE_PLAYER)
+			{
+				if (pBullet->bUse == true)
+				{
+					if (pEnemy->bUse == true)
+					{
+						if (pBullet->pos.x + BULLET_SIZE_P > pEnemy->pos.x - pEnemy->vtxMinEnemy.x &&
+							pBullet->pos.x - BULLET_SIZE_P < pEnemy->pos.x + pEnemy->vtxMaxEnemy.x &&
+ 							pBullet->pos.z + BULLET_SIZE_P > pEnemy->pos.z - pEnemy->vtxMinEnemy.z &&
+							pBullet->pos.z - BULLET_SIZE_P < pEnemy->pos.z + pEnemy->vtxMaxEnemy.z)
+						{
+							if (pPlayer->playertype == PLAYERTYPE_GOLEM)
+							{
+								HitEnemy(5);					//ゴーレム時
+								pBullet->bUse = false;			//使った判定
+								PlaySound(SOUND_LABEL_SE_HIT);	//効果音
+							}
+							if (pPlayer->playertype == PLAYERTYPE_LEO)
+							{
+								HitEnemy(10);					//レオ選択時
+								pBullet->bUse = false;			//使った判定
+								PlaySound(SOUND_LABEL_SE_HIT);	//効果音
+							}
+							if (pPlayer->playertype == PLAYERTYPE_STALKER)
+							{
+								HitEnemy(3);					//ストーカー選択時
+								pBullet->bUse = false;			//使った判定
+								PlaySound(SOUND_LABEL_SE_HIT);	//効果音
+							}
+
+							g_nCntEffect++;
+
+							if (g_nCntEffect % 10 == 0)
+							{
+								for (int g_nCntEffect = 0; g_nCntEffect < 10; g_nCntEffect++)
+								{
+									// 角度の設定
+									float fAngle = ((float)(rand() % 800)) / 100.0f;
+									float fmove = (float)(rand() % 1 + 1);
+
+									// エフェクトの設定
+									SetEffect(pEnemy->pos,
+										D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
+										D3DXCOLOR(1.0f, 0.5f, 0.2f, 1.0f),
+										1.0f,
+										5.0f,
+										0.01f,
+										0.3f);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (pBullet->type == BULLETTYPE_ENEMY)
+			{
+				if (pBullet->bUse == true)
+				{
+					if (pPlayer->bUse == true)
+					{
+						if (pBullet->pos.x + BULLET_SIZE_E > pPlayer->pos.x + pPlayer->minVecPlayer.x &&
+							pBullet->pos.x - BULLET_SIZE_E < pPlayer->pos.x + pPlayer->maxVecPlayer.x &&
+							pBullet->pos.z + BULLET_SIZE_E > pPlayer->pos.z + pPlayer->minVecPlayer.z &&
+							pBullet->pos.z - BULLET_SIZE_E < pPlayer->pos.z + pPlayer->maxVecPlayer.z)
+						{
+							g_nCntEffect++;
+
+							if (g_nCntEffect % 10 == 0)
+							{
+								//プレイヤーにダメージ
+								HitPlayer(3);
+
+								//効果音
+								PlaySound(SOUND_LABEL_SE_HIT);	
+
+								//スコアマイナス
+								AddScore(-50);
+
+								//使った判定
+								pBullet->bUse = false;
+
+								for (int g_nCntEffect = 0; g_nCntEffect < 10; g_nCntEffect++)
+								{
+									// 角度の設定
+									float fAngle = ((float)(rand() % 800)) / 100.0f;
+									float fmove = (float)(rand() % 1 + 1);
+
+									// エフェクトの設定
+									SetEffect(pBullet->pos,
+										D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
+										D3DXCOLOR(1.0f, 0.5f, 0.2f, 1.0f),
+										1.0f,
+										5.0f,
+										0.01f,
+										0.3f);
+								}
+							}
+						}
+					}
 				}
 			}
 		}

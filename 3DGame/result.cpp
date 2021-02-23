@@ -7,6 +7,9 @@
 #include "result.h"								//インクルードファイル
 #include "input.h"
 #include "fade.h"
+#include "player.h"
+#include "enemy.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
@@ -24,6 +27,8 @@ D3DXCOLOR g_colorR;											//色
 int g_nCounterAnimR;										//アニメーションカウンター
 int g_nPatternAnimR;										//アニメーションパターンNo
 float g_nCountR;											//カウント
+int g_nResultState;											//リザルトモード
+D3DXCOLOR ResultCol[MAX_RESULT_TEX];						//リザルトカラー
 
 //=============================================================================
 // リザルトの初期化処理
@@ -42,14 +47,18 @@ HRESULT InitResult(void)
 	g_nPatternAnimR = 0;
 
 	//カラーの初期
-	g_colorR = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+//	g_colorR = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	g_nCountR = 0;
+
+	//初期化
+	g_nResultState = RESULT_GAMEOVER;
+	ResultCol[0] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/result.png", &g_pTextureResult[0]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/press_enter001.png", &g_pTextureResult[1]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover_logo001.png", &g_pTextureResult[2]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/player100.png", &g_pTextureResult[3]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameclear_logo001.png", &g_pTextureResult[3]);
 
 	//頂点バッファの生成
 	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_RESULT_TEX,	//確保するバッファサイズ
@@ -82,11 +91,11 @@ HRESULT InitResult(void)
 		pVtx[2].rhw = 1.0f;
 		pVtx[3].rhw = 1.0f;
 
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		////頂点カラーの設定
+		//pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		//pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		//pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		//pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
 		//４つの頂点を進める
 		pVtx += 4;
@@ -96,6 +105,7 @@ HRESULT InitResult(void)
 	g_pVtxBuffResult->Unlock();
 
 	//BGM
+	PlaySound(SOUND_LABEL_BGM_RESULT);
 
 	return S_OK;
 }
@@ -106,6 +116,7 @@ HRESULT InitResult(void)
 void UninitResult(void)
 {
 	//サウンド停止
+	StopSound();
 
 	//頂点バッファの開放
 	if (g_pVtxBuffResult != NULL)
@@ -130,26 +141,48 @@ void UninitResult(void)
 //=============================================================================
 void UpdateResult(void)
 {
+	//変数宣言
 	VERTEX_2D *pVtx;
+	Player *pPlayer = GetPlayer();
+	Enemy *pEnemy = GetEnemy();
+	int nFade = GetFade();
+
 	g_nCounterAnimR++;		//アニメーションカウンター更新
 
-	//情報の取得
-	int nFade = GetFade();
+	if (pEnemy->nLife <= 0)
+	{
+		g_nResultState = RESULT_GAMECLEAR;
+	}
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffResult->Lock(0, 0, (void**)&pVtx, 0);
 
-	if ((g_nCounterAnimR % 30) == 0)
+	for (int nCntResult = 0; nCntResult < MAX_RESULT_TEX; nCntResult++, pVtx += 4)
 	{
-		//アニメーションパターンを更新
-		g_nPatternAnimR = (g_nPatternAnimR + 1) % 2;
-	}
+		switch (g_nResultState)
+		{
+		case RESULT_GAMECLEAR:	//ゲームクリア
 
-	//テクスチャ座標を更新
-	pVtx[12].tex = D3DXVECTOR2(0.0f + (0.5f*g_nPatternAnimR), 1.0f);		//テクスチャ座標
-	pVtx[13].tex = D3DXVECTOR2(0.0f + (0.5f*g_nPatternAnimR), 0.0f);		//アニメーション
-	pVtx[14].tex = D3DXVECTOR2(0.5f + (0.5f*g_nPatternAnimR), 1.0f);
-	pVtx[15].tex = D3DXVECTOR2(0.5f + (0.5f*g_nPatternAnimR), 0.0f);
+			ResultCol[0] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+			ResultCol[1] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			ResultCol[2] = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
+			ResultCol[3] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+			break;
+
+		case RESULT_GAMEOVER:	//ゲームオーバー
+			ResultCol[0] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+			ResultCol[1] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			ResultCol[2] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			ResultCol[3] = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
+
+			break;
+		}
+		pVtx[0].col = ResultCol[nCntResult];
+		pVtx[1].col = ResultCol[nCntResult];
+		pVtx[2].col = ResultCol[nCntResult];
+		pVtx[3].col = ResultCol[nCntResult];
+	}
 
 	//PRESS_ENTERの色更新
 	pVtx[4].col = g_colorR;
@@ -182,8 +215,19 @@ void UpdateResult(void)
 		if (nFade == FADE_NONE)
 		{
 			//効果音
+			PlaySound(SOUND_LABEL_SE_ENTER);
 
-			SetFade(FADE_OUT, MODE_TITLE);	//タイトル画面に切り替え
+			//クリアだったら
+			if (g_nResultState == RESULT_GAMECLEAR)
+			{
+				SetFade(FADE_OUT, MODE_RANKING);	//ランキング画面に切り替え
+			}
+
+			//ゲームオーバーだったら
+			if (g_nResultState == RESULT_GAMEOVER)
+			{
+				SetFade(FADE_OUT, MODE_TITLE);	//ランキング画面に切り替え
+			}
 		}
 	}
 }
@@ -238,6 +282,9 @@ void SetTextureResult(int nCntResult)
 		pVtx[1].pos = D3DXVECTOR3(0, 0, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, 0, 0.0f);
+
+		//カラー
+		ResultCol[nCntResult] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
 	}
 	else if (nCntResult == 1)	//PRESS_ENTER
 	{
@@ -246,15 +293,37 @@ void SetTextureResult(int nCntResult)
 		pVtx[1].pos = D3DXVECTOR3(650, 800, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(1290, 950, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(1290, 800, 0.0f);
+
+		//カラー
+		ResultCol[nCntResult] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-	else if (nCntResult == 2)	//クリアロゴ
+	else if (nCntResult == 2)	//ゲームオーバー
 	{
 		//頂点座標
-		pVtx[0].pos = D3DXVECTOR3(480, 300, 0.0f);	//Zは0.0固定
-		pVtx[1].pos = D3DXVECTOR3(480, 100, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1440, 300, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1440, 100, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(480, 400, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(480, 200, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(1440, 400, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1440, 200, 0.0f);
+
+		//カラー
+		ResultCol[nCntResult] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
+	else if (nCntResult == 3)	//ゲームクリア
+	{
+		//頂点座標
+		pVtx[0].pos = D3DXVECTOR3(480, 400, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(480, 200, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(1440, 400, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1440, 200, 0.0f);
+
+		//カラー
+		ResultCol[nCntResult] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+
+	pVtx[0].col = ResultCol[nCntResult];
+	pVtx[1].col = ResultCol[nCntResult];
+	pVtx[2].col = ResultCol[nCntResult];
+	pVtx[3].col = ResultCol[nCntResult];
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffResult->Unlock();

@@ -27,6 +27,8 @@
 #include "tutorial.h"
 #include "result.h"
 #include "select.h"
+#include "ranking.h"
+#include "Sound.h"
 
 #include <stdio.h>
 
@@ -34,7 +36,7 @@
 // マクロ定義
 //=============================================================================
 #define CLASS_NAME "WindowClass"				//ウィンドウクラスの名前
-#define WINDOW_NAME "3DGame"					//ウィンドウの名前
+#define WINDOW_NAME "Robots Battle"					//ウィンドウの名前
 #define WINDOW_POS_X (100)						//ウィンドウの左上X
 #define WINDOW_POS_Y (100)						//ウィンドウの左上Y
 #define ID_TIMER (121)							//タイマーのID
@@ -288,6 +290,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//キーボードの初期化処理
 	InitKeyboard(hInstance, hWnd);
 
+	//サウンドの初期化処理
+	InitSound(hWnd);
+
 	//モードの設定
 	SetMode(g_mode);
 
@@ -331,6 +336,9 @@ void Uninit(void)
 		g_pFont->Release();
 		g_pFont = NULL;
 	}
+
+	//サウンドの終了処理
+	UninitSound();
 }
 
 //=============================================================================
@@ -365,6 +373,10 @@ void Update(void)
 
 	case MODE_RESULT:		//リザルト画面
 		UpdateResult();
+		break;
+
+	case MODE_RANKING:		//ランキング画面
+		UpdateRanking();
 		break;
 	}
 }
@@ -408,6 +420,10 @@ void Draw(void)
 
 		case MODE_RESULT:		//リザルト画面
 			DrawResult();
+			break;
+
+		case MODE_RANKING:		//ランキング画面
+			DrawRanking();
 			break;
 		}
 
@@ -515,6 +531,10 @@ void SetMode(MODE mode)
 	case MODE_RESULT:		//リザルト画面
 		UninitResult();
 		break;
+
+	case MODE_RANKING:		//ランキング画面
+		UninitResult();
+		break;
 	}
 	g_mode = mode;
 
@@ -540,6 +560,10 @@ void SetMode(MODE mode)
 
 	case MODE_RESULT:	//リザルト画面
 		InitResult();
+		break;
+
+	case MODE_RANKING:	//ランキング画面
+		InitRanking();
 		break;
 	}
 

@@ -11,12 +11,15 @@
 #include "effect.h"
 #include "player.h"
 #include "bullet.h"
+#include "fade.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
 //=============================================================================
 #define MAX_ENEMY	(8)
 #define MOVE_ENEMY (1.5f)
+#define ENEMY_LIFE (100)
 
 //=============================================================================
 // グローバル変数
@@ -24,7 +27,12 @@
 Enemy g_aEnemy[MAX_ENEMY];							// モデル情報
 D3DXVECTOR3 g_vtxMinEnemy, g_vtxMaxEnemy;				// 各頂点座標の最小値、最大値
 LPDIRECT3DTEXTURE9 g_apTextureEnemy[MAX_ENEMY] = {};	// テクスチャへのポインタ
+
 int g_nCntEffectGetE = 0;
+int g_nCntEffectDeathE = 0;							//死亡エフェクト
+int nCntShootEnemy = 0;								//発射カウント
+int	g_nEnemyCnt = 0;								//敵数
+int nCntWait = 0;									//待機時間
 
 //=============================================================================
 // 敵の初期化処理
@@ -46,7 +54,7 @@ HRESULT InitEnemy(void)
 		g_aEnemy[nCntEnemy].rotDest = g_aEnemy[nCntEnemy].rot;
 		g_aEnemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aEnemy[nCntEnemy].moverot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_aEnemy[nCntEnemy].nLife = 50;
+		g_aEnemy[nCntEnemy].nLife = ENEMY_LIFE;
 		g_aEnemy[nCntEnemy].nIdx = -1;
 		g_aEnemy[nCntEnemy].bUse = false;
 
@@ -64,8 +72,7 @@ HRESULT InitEnemy(void)
 		}
 	}
 	//敵の設置
-	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 200.0f));
-
+	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 600.0f));
 
 	return S_OK;
 }
@@ -104,49 +111,94 @@ void UpdateEnemy(void)
 
 	// 変数宣言
 	int nCntTrue = 0;
+	int nFade = GetFade();
 
-	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++, nCntEnemy++)
+	nCntShootEnemy++;
+	nCntWait++;
+
+	if (nFade == FADE_NONE && pPlayer->bUse == true)
 	{
-		if (pEnemy->bUse == true)
+		for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++, nCntEnemy++)
 		{
-			MoveEnemy(nCntEnemy);
-
-			//プレイヤーが当たったら消す
-			if ((pPlayer->pos.x - pPlayer->minVecPlayer.x) < (pEnemy->pos.x + pEnemy->vtxMaxEnemy.x) &&
-				(pPlayer->pos.x + pPlayer->maxVecPlayer.x) > (pEnemy->pos.x - pEnemy->vtxMaxEnemy.x) &&
-				(pPlayer->pos.z - pPlayer->minVecPlayer.z) < (pEnemy->pos.z + pEnemy->vtxMaxEnemy.z) &&
-				(pPlayer->pos.z + pPlayer->maxVecPlayer.z) > (pEnemy->pos.z - pEnemy->vtxMaxEnemy.z))
+			if (pEnemy->bUse == true)
 			{
-				if (pPlayer->nLife <= 100)
+				MoveEnemy(nCntEnemy);
+
+				//プレイヤーが当たったら消す
+				if ((pPlayer->pos.x - pPlayer->minVecPlayer.x) < (pEnemy->pos.x + pEnemy->vtxMaxEnemy.x) &&
+					(pPlayer->pos.x + pPlayer->maxVecPlayer.x) > (pEnemy->pos.x - pEnemy->vtxMaxEnemy.x) &&
+					(pPlayer->pos.z - pPlayer->minVecPlayer.z) < (pEnemy->pos.z + pEnemy->vtxMaxEnemy.z) &&
+					(pPlayer->pos.z + pPlayer->maxVecPlayer.z) > (pEnemy->pos.z - pEnemy->vtxMaxEnemy.z))
 				{
-					//プレイヤー即死
-					HitPlayer(100);
+					if (pPlayer->Life <= 500)
+					{
+						//プレイヤー即死
+						HitPlayer(100);
+					}
 				}
-			}
 
-			//弾が当たったら敵にダメージ
-			if ((pBullet->pos.x) < (pEnemy->pos.x + pEnemy->vtxMaxEnemy.x) &&
-				(pBullet->pos.x) > (pEnemy->pos.x - pEnemy->vtxMaxEnemy.x) &&
-				(pBullet->pos.z) < (pEnemy->pos.z + pEnemy->vtxMaxEnemy.z) &&
-				(pBullet->pos.z) > (pEnemy->pos.z - pEnemy->vtxMaxEnemy.z))
-			{
-				if (pBullet->type == BULLETTYPE_PLAYER)
+				if (pEnemy->nLife <= 0)
 				{
-					HitEnemy(5);
+					//使った判定
+					pEnemy->bUse = false;
+
+					//影を消す
+					DeleteShadow(pEnemy->nIdx);
+
+					//効果音
+					PlaySound(SOUND_LABEL_SE_DEATH);
+
+					g_nCntEffectDeathE++;
+
+					if (g_nCntEffectDeathE % 1 == 0)
+					{
+						for (int g_nCntEffect = 0; g_nCntEffect < 100; g_nCntEffect++)
+						{
+							//角度の設定
+							float fAngle = ((float)(rand() % 800)) / 100.0f;
+							float fmove = (float)(rand() % 1 + 1);
+
+							//エフェクトの設定
+							SetEffect(pEnemy->pos,
+								D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
+								D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+								1.0f,
+								5.0f,
+								0.01f,
+								0.2f);
+						}
+					}
 				}
+
+				//弾発射
+				if ((nCntShootEnemy % 50) == 0)
+				{
+					SetBullet(D3DXVECTOR3(pEnemy->pos.x, pEnemy->pos.y + 75.0f, pEnemy->pos.z),
+						D3DXVECTOR3(sinf(pEnemy->rot.y) * 10.0f, 0.0f, cosf(pEnemy->rot.y) * 10.0f),
+						30.0f, 30.0f,
+						BULLETTYPE_ENEMY);
+				}
+
+				//使われているカウント
+				nCntTrue++;
 			}
+		}
+	}
 
-			if (pEnemy->nLife <= 0)
-			{
-				//使った判定
-				pEnemy->bUse = false;
+	if (pEnemy->nLife <= 0)
+	{
+		//敵数カウント-
+		g_nEnemyCnt--;
+	}
 
-				//影を消す
-				DeleteShadow(pEnemy->nIdx);
-			}
-
-			//使われているカウント
-			nCntTrue++;
+	//敵を全部倒したら
+	if (g_nEnemyCnt <= 0)
+	{
+		g_nCntEffectDeathE++;
+		if (g_nCntEffectDeathE == 40)
+		{
+			SetFade(FADE_OUT, MODE_RESULT);	//リザルト画面に切り替え
+			g_nEnemyCnt++;
 		}
 	}
 }
@@ -213,7 +265,7 @@ void MoveEnemy(int nCntEnemy)
 	Player *pPlayer = GetPlayer();
 	D3DXVECTOR3 EnemyV;		//プレイヤーに向く
 
-							//目的の回転角を制限
+	//目的の回転角を制限
 	if (g_aEnemy[nCntEnemy].rotDest.y - g_aEnemy[nCntEnemy].rot.y < -D3DX_PI)
 	{
 		//3.14fより大きくなったら-3.14fにする
@@ -271,6 +323,9 @@ void SetEnemy(D3DXVECTOR3 pos)
 {
 	Enemy *pEnemy = &g_aEnemy[0];
 
+	//敵数カウント+
+	g_nEnemyCnt++;
+
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		if (g_aEnemy[nCntEnemy].bUse == false)
@@ -302,7 +357,7 @@ void VecEnemy(int nCntEnemy)
 	DWORD sizeFVF;			//頂点フォーマットのサイズ
 	BYTE *pVtxBuff;			//頂点バッファへのポインタ
 
-							//頂点数の取得
+	//頂点数の取得
 	nNumVtx = g_aEnemy[nCntEnemy].pMeshEnemy->GetNumVertices();
 
 	//頂点フォーマットのサイズを取得
@@ -381,12 +436,14 @@ void VecEnemy(int nCntEnemy)
 //=============================================================================
 bool HitEnemy(int nDamage)
 {
+	Enemy *pEnemy = &g_aEnemy[0];
+
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		if (g_aEnemy[nCntEnemy].nLife <= 50)
+		if (pEnemy->nLife <= ENEMY_LIFE)
 		{
 			//プレイヤーダメージのマイナス
-			g_aEnemy[nCntEnemy].nLife -= nDamage;
+			pEnemy->nLife -= nDamage;
 			return true;
 		}
 	}

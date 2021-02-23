@@ -8,6 +8,7 @@
 #include "input.h"
 #include "fade.h"
 #include "player.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
@@ -96,6 +97,9 @@ HRESULT InitSelect(void)
 	//頂点バッファをアンロックする
 	g_pVtxBuffSelect->Unlock();
 
+	//BGM
+	PlaySound(SOUND_LABEL_BGM_SELECT);
+
 	return S_OK;
 }
 
@@ -104,6 +108,9 @@ HRESULT InitSelect(void)
 //=============================================================================
 void UninitSelect(void)
 {
+	//サウンド停止
+	StopSound();
+
 	//頂点バッファの開放
 	if (g_pVtxBuffSelect != NULL)
 	{
@@ -144,7 +151,7 @@ void UpdateSelect(void)
 	if (GetKeyboardTrigger(DIK_D) || GetKeyboardTrigger(DIK_RIGHT) == true)
 	{
 		//効果音
-
+		PlaySound(SOUND_LABEL_SE_SELECT);
 
 		g_nState++;
 		if (g_nState > 2)
@@ -156,7 +163,7 @@ void UpdateSelect(void)
 	if (GetKeyboardTrigger(DIK_A) || GetKeyboardTrigger(DIK_LEFT) == true)
 	{
 		//効果音
-
+		PlaySound(SOUND_LABEL_SE_SELECT);
 
 		g_nState--;
 		if (g_nState < 0)
@@ -213,7 +220,7 @@ void UpdateSelect(void)
 			if (g_nState == SELECT_MENU_GOLEM)	//ゴーレム選択時
 			{
 				//決定音
-
+				PlaySound(SOUND_LABEL_SE_ENTER);
 
 				//キャラ決定
 				pPlayer->playertype = PLAYERTYPE_GOLEM;
@@ -225,7 +232,7 @@ void UpdateSelect(void)
 			else if (g_nState == SELECT_MENU_LEO)	//レオ選択時
 			{
 				//決定音
-
+				PlaySound(SOUND_LABEL_SE_ENTER);
 
 				//キャラ決定
 				pPlayer->playertype = PLAYERTYPE_LEO;
@@ -237,7 +244,7 @@ void UpdateSelect(void)
 			else if (g_nState == SELECT_MENU_STALKER)	//ストーカー選択時
 			{
 				//決定音
-
+				PlaySound(SOUND_LABEL_SE_ENTER);
 
 				//キャラ決定
 				pPlayer->playertype = PLAYERTYPE_STALKER;
@@ -306,10 +313,10 @@ void SetTextureSelect(int nCntSelect)
 	else if (nCntSelect == 1)	//ゴーレム
 	{
 		//頂点座標
-		pVtx[0].pos = D3DXVECTOR3(120, 950, 0.0f);	//Zは0.0固定
-		pVtx[1].pos = D3DXVECTOR3(120, 350, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(520, 950, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(520, 350, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(100, 950, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(100, 300, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(530, 950, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(530, 300, 0.0f);
 
 		//カラー
 		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -317,10 +324,10 @@ void SetTextureSelect(int nCntSelect)
 	else if (nCntSelect == 2)	//レオ
 	{
 		//頂点座標
-		pVtx[0].pos = D3DXVECTOR3(750, 950, 0.0f);	//Zは0.0固定
-		pVtx[1].pos = D3DXVECTOR3(750, 350, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1150, 950, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1150, 350, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(735, 950, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(735, 300, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(1165, 950, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1165, 300, 0.0f);
 
 		//カラー
 		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -328,10 +335,10 @@ void SetTextureSelect(int nCntSelect)
 	else if (nCntSelect == 3)	//ストーカー
 	{
 		//頂点座標
-		pVtx[0].pos = D3DXVECTOR3(1400, 950, 0.0f);	//Zは0.0固定
-		pVtx[1].pos = D3DXVECTOR3(1400, 350, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1800, 950, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1800, 350, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(1390, 950, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(1390, 300, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(1820, 950, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1820, 300, 0.0f);
 
 		//カラー
 		g_colorSelect[nCntSelect] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);

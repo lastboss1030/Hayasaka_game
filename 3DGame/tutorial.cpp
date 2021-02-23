@@ -7,6 +7,7 @@
 #include "tutorial.h"								//インクルードファイル
 #include "input.h"
 #include "fade.h"
+#include "Sound.h"
 
 //=============================================================================
 // マクロ定義
@@ -91,6 +92,9 @@ HRESULT InitTutorial(void)
 	//頂点バッファをアンロックする
 	g_pVtxBuffTutorial->Unlock();
 
+	//BGM
+	PlaySound(SOUND_LABEL_BGM_TUTORIAL);
+
 	return S_OK;
 }
 
@@ -99,6 +103,9 @@ HRESULT InitTutorial(void)
 //=============================================================================
 void UninitTutorial(void)
 {
+	//サウンド停止
+	StopSound();
+
 	//頂点バッファの開放
 	if (g_pVtxBuffTutorial != NULL)
 	{
@@ -173,6 +180,7 @@ void UpdateTutorial(void)
 		if (nFade == FADE_NONE)
 		{
 			//効果音
+			PlaySound(SOUND_LABEL_SE_ENTER);
 
 			SetFade(FADE_OUT, MODE_SELECT);	//ゲーム画面に切り替え
 		}
@@ -234,10 +242,10 @@ void SetTextureTutorial(int nCntTutorial)
 	else if (nCntTutorial == 1)	//PRESS_ENTER
 	{
 		//頂点座標
-		pVtx[0].pos = D3DXVECTOR3(850, 200, 0.0f);	//Zは0.0固定
-		pVtx[1].pos = D3DXVECTOR3(850, 50, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1570, 200, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1570, 50, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(300, 1000, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(300, 900, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(920, 1000, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(920, 900, 0.0f);
 	}
 
 	//頂点バッファをアンロックする
