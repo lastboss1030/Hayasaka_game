@@ -20,7 +20,7 @@
 #define MAX_BULLET	(256)	//íeÇÃç≈ëÂêî
 #define HIT_WALL	(800)
 #define MAX_VERTEX	(4)
-#define BULLET_SIZE_P (70.0f)
+#define BULLET_SIZE_P (100.0f)
 #define BULLET_SIZE_E (50.0f)
 
 //=============================================================================

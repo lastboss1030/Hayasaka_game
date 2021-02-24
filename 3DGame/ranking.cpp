@@ -167,6 +167,13 @@ void UpdateRanking(void)
 	//変数の初期化
 	g_nCntScore = 0;
 
+	// スコアのテクスチャ更新
+	for (int nCntScore = 7; nCntScore < MAX_PATTERN; nCntScore++)
+	{
+		//頂点座標の更新
+		SetVertexRanking(nCntScore);
+	}
+
 	//画面遷移
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
@@ -174,12 +181,6 @@ void UpdateRanking(void)
 		PlaySound(SOUND_LABEL_SE_ENTER);
 
 		SetFade(FADE_OUT, MODE_TITLE);
-	}
-	// スコアのテクスチャ更新
-	for (int nCntScore = 7; nCntScore < MAX_PATTERN; nCntScore++)
-	{
-		//頂点座標の更新
-		SetVertexRanking(nCntScore);
 	}
 }
 
