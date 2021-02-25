@@ -40,7 +40,7 @@ HRESULT InitMeshfield(void)
 	pDevice = GetDevice();
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/block000.jpg", &g_pTextureMeshfield);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/dart.jpg", &g_pTextureMeshfield);
 
 	g_posMeshfield = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_rotMeshfield = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -99,14 +99,14 @@ HRESULT InitMeshfield(void)
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(6.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(12.0f, 0.0f);
-	pVtx[3].tex = D3DXVECTOR2(0.0f, 6.0f);
-	pVtx[4].tex = D3DXVECTOR2(6.0f, 6.0f);
-	pVtx[5].tex = D3DXVECTOR2(12.0f, 6.0f);
-	pVtx[6].tex = D3DXVECTOR2(0.0f, 12.0f);
-	pVtx[7].tex = D3DXVECTOR2(6.0f, 12.0f);
-	pVtx[8].tex = D3DXVECTOR2(12.0f, 12.0f);
+	pVtx[1].tex = D3DXVECTOR2(3.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(6.0f, 0.0f);
+	pVtx[3].tex = D3DXVECTOR2(0.0f, 3.0f);
+	pVtx[4].tex = D3DXVECTOR2(3.0f, 3.0f);
+	pVtx[5].tex = D3DXVECTOR2(6.0f, 3.0f);
+	pVtx[6].tex = D3DXVECTOR2(0.0f, 6.0f);
+	pVtx[7].tex = D3DXVECTOR2(3.0f, 6.0f);
+	pVtx[8].tex = D3DXVECTOR2(6.0f, 6.0f);
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffMeshfield->Unlock();

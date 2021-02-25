@@ -37,7 +37,7 @@
 // グローバル変数
 //=============================================================================
 bool g_bPause = false;		//ポーズ中かどうか
-int g_nCntResult;			// リザルト画面までのカウント
+int g_nCntResult = 0;			// リザルト画面までのカウント
 
 //=============================================================================
 // ゲーム画面の初期化処理
@@ -87,8 +87,8 @@ HRESULT InitGame(void)
 	InitCooldown();
 
 	//クロスヘアの初期化処理
-	InitClosshair();
-	
+//	InitClosshair();
+
 	//タイムの初期化処理
 	InitTime();
 
@@ -159,7 +159,7 @@ void UninitGame(void)
 	UninitCooldown();
 
 	//クロスヘアの終了処理
-	UninitClosshair();
+//	UninitClosshair();
 
 	//タイムの終了処理
 	UninitTime();
@@ -234,23 +234,23 @@ void UpdateGame(void)
 		UpdateCooldown();
 
 		//クロスヘアの更新処理
-		UpdateClosshair();
-
-		//タイムの更新処理
-		UpdateTime();
+//		UpdateClosshair();
 
 		//スコアの更新処理
 		UpdateScore();
 	}
 
+	//タイムの更新処理
+	UpdateTime();
+
 	// リザルト画面遷移
 	if ((nTime == 0))
 	{
-		// リザルト画面までのカウント
+		//リザルト画面までのカウント
 		g_nCntResult++;
 		if (g_nCntResult == 60)
 		{
-			// 画面モードの初期化処理
+			//画面モードの初期化処理
 			SetFade(FADE_OUT, MODE_RESULT);
 		}
 	}
@@ -295,7 +295,7 @@ void DrawGame(void)
 	DrawCooldown();
 
 	//クロスヘアの描画処理
-	DrawClosshair();
+//	DrawClosshair();
 
 	//タイムの描画処理
 	DrawTime();

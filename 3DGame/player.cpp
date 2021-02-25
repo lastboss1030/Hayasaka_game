@@ -113,11 +113,15 @@ void InitPlayer(void)
 		//各パーツの階層構造の設定
 		g_player.aModel[0].nIdxModelParent = -1;	//親のインデックスを設定
 		g_player.aModel[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[0].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[0].rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
 		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 75.0f, 5.0f);
+		g_player.aModel[1].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[1].rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
 		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//向き
@@ -150,11 +154,14 @@ void InitPlayer(void)
 		//各パーツの階層構造の設定
 		g_player.aModel[0].nIdxModelParent = -1;	//親のインデックスを設定
 		g_player.aModel[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[0].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
 		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 80.0f, 10.0f);
+		g_player.aModel[0].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[1].rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
 		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//向き
@@ -187,11 +194,14 @@ void InitPlayer(void)
 		//各パーツの階層構造の設定
 		g_player.aModel[0].nIdxModelParent = -1;	//親のインデックスを設定
 		g_player.aModel[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[0].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_player.aModel[0].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.aModel[1].nIdxModelParent = 0;		//親のインデックスを設定
 		g_player.aModel[1].pos = D3DXVECTOR3(0.0f, 68.0f, 10.0f);
+		g_player.aModel[1].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_player.aModel[1].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_player.aModel[1].rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		g_player.pos = D3DXVECTOR3(0.0f, 10000.0f, 0.0f);	//位置
 		g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//向き
@@ -387,21 +397,21 @@ void UpdatePlayer(void)
 			// 左上方向
 			g_player.move.x -= cosf(pCamera->rot.y + D3DX_PI / 4) * g_move;
 			g_player.move.z += sinf(pCamera->rot.y + D3DX_PI / 4) * g_move;
-			g_player.rotDest.y = pCamera->rot.y + (D3DX_PI * 3 / 4);
+//			g_player.rotDest.y = pCamera->rot.y + (D3DX_PI * 3 / 4);
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{
 			// 右上方向
 			g_player.move.x += cosf(pCamera->rot.y - D3DX_PI / 4) * g_move;
 			g_player.move.z -= sinf(pCamera->rot.y - D3DX_PI / 4) * g_move;
-			g_player.rotDest.y = pCamera->rot.y - (D3DX_PI * 3 / 4);
+//			g_player.rotDest.y = pCamera->rot.y - (D3DX_PI * 3 / 4);
 		}
 		else
 		{
 			// 上方向
 			g_player.move.x += sinf(pCamera->rot.y) * g_move;
 			g_player.move.z += cosf(pCamera->rot.y) * g_move;
-			g_player.rotDest.y = pCamera->rot.y + D3DX_PI;
+//			g_player.rotDest.y = pCamera->rot.y + D3DX_PI;
 		}
 	}
 	else if (GetKeyboardPress(DIK_S) == true)
@@ -411,21 +421,21 @@ void UpdatePlayer(void)
 			// 左下方向
 			g_player.move.x += cosf(pCamera->rot.y + D3DX_PI * 3 / 4) * g_move;
 			g_player.move.z -= sinf(pCamera->rot.y + D3DX_PI * 3 / 4) * g_move;
-			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / 4;
+//			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / 4;
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{
 			// 右下方向
 			g_player.move.x -= cosf(pCamera->rot.y - D3DX_PI * 3 / 4) * g_move;
 			g_player.move.z += sinf(pCamera->rot.y - D3DX_PI * 3 / 4) * g_move;
-			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / -4;
+//			g_player.rotDest.y = pCamera->rot.y + D3DX_PI / -4;
 		}
 		else
 		{
 			// 下方向
 			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI) * g_move;
 			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI) * g_move;
-			g_player.rotDest.y = pCamera->rot.y;
+//			g_player.rotDest.y = pCamera->rot.y;
 		}
 	}
 	else if (GetKeyboardPress(DIK_A) == true)
@@ -433,14 +443,14 @@ void UpdatePlayer(void)
 		// 左方向
 		g_player.move.x -= cosf(pCamera->rot.y) * g_move;
 		g_player.move.z += sinf(pCamera->rot.y) * g_move;
-		g_player.rotDest.y = pCamera->rot.y + (D3DX_PI / 2);
+//		g_player.rotDest.y = pCamera->rot.y + (D3DX_PI / 2);
 	}
 	else if (GetKeyboardPress(DIK_D) == true)
 	{
 		// 右方向
 		g_player.move.x += cosf(pCamera->rot.y) * g_move;
 		g_player.move.z -= sinf(pCamera->rot.y) * g_move;
-		g_player.rotDest.y = pCamera->rot.y + (D3DX_PI / -2);
+//		g_player.rotDest.y = pCamera->rot.y + (D3DX_PI / -2);
 	}
 
 	// 目的の回転角の上限
@@ -466,7 +476,15 @@ void UpdatePlayer(void)
 		g_player.rot.y -= D3DX_PI * 2.0f;
 	}
 
+	//敵を追従
+	FollowPlayer();
+
 	//弾の発射
+	if (GetKeyboardTrigger(DIK_SPACE) == true)
+	{
+		g_nShootCount = 0;
+	}
+
 	if (GetKeyboardPress(DIK_SPACE) == true)
 	{
 		//ゴーレム選択時
@@ -492,7 +510,7 @@ void UpdatePlayer(void)
 		//レオ選択時
 		if (g_player.playertype == PLAYERTYPE_LEO)
 		{
-			if ((g_nShootCount % 60) == 0)
+			if ((g_nShootCount % 40) == 0)
 			{
 				if (g_player.boost > 20)
 				{
@@ -504,7 +522,7 @@ void UpdatePlayer(void)
 					//効果音
 					PlaySound(SOUND_LABEL_SE_SHOOT_LEO);
 
-					g_player.boost -= 40;
+					g_player.boost -= 30;
 				}
 			}
 		}
@@ -524,7 +542,7 @@ void UpdatePlayer(void)
 					//効果音
 					PlaySound(SOUND_LABEL_SE_SHOOT_STALKER);
 
-					g_player.boost -= 10;
+					g_player.boost -= 20;
 				}
 			}
 		}
@@ -778,6 +796,59 @@ bool HitPlayer(int nDamage)
 		return true;
 	}
 	return false;
+}
+
+//=============================================================================
+// 追従
+//=============================================================================
+void FollowPlayer(void)
+{
+	//変数宣言
+	Enemy *pEnemy = GetEnemy();
+	D3DXVECTOR3 PlayerV;		//プレイヤーに向く
+
+	//目的の回転角を制限
+	if (g_player.rotDest.y - g_player.rot.y < -D3DX_PI)
+	{
+		//3.14fより大きくなったら-3.14fにする
+		g_player.rotDest.y += D3DX_PI * 2.0f;
+	}
+	else if (g_player.rotDest.y - g_player.rot.y > D3DX_PI)
+	{
+		//3.14fより大きくなったら-3.14fにする
+		g_player.rotDest.y -= D3DX_PI * 2.0f;
+	}
+
+	//向きの更新
+	g_player.rot.y += (g_player.rotDest.y - g_player.rot.y) * 0.05f;
+
+	//現在の回転角を制限
+	if (g_player.rot.y < -D3DX_PI)
+	{
+		//3.14fより大きくなったら-3.14fにする
+		g_player.rot.y += D3DX_PI * 2.0f;
+	}
+	else if (g_player.rot.y > D3DX_PI)
+	{
+		//3.14fより大きくなったら-3.14fにする
+		g_player.rot.y -= D3DX_PI * 2.0f;
+	}
+
+	//敵がプレイヤーを見るようにする
+	PlayerV = g_player.pos - pEnemy->pos;
+
+	//角度を求める
+	float fAngle = (float)atan2(PlayerV.x, PlayerV.z);
+
+	//自機と中心点の対角線の長さ
+	float fLength = sqrtf((PlayerV.x * PlayerV.x) + (PlayerV.z * PlayerV.z));
+
+	//向きの更新
+	g_player.rotDest.y = fAngle;
+
+	//位置の更新
+	g_player.pos.x += g_player.move.x;
+	g_player.pos.z += g_player.move.z;
 }
 
 //=============================================================================

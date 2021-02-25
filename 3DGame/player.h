@@ -80,7 +80,9 @@ typedef struct
 	LPD3DXBUFFER pBuffMat;	//マテリアルへのポインタ
 	DWORD nNumMat;			//マテリアルの数
 	D3DXVECTOR3 pos;		//位置(オフセット)
+	D3DXVECTOR3 posOld;		//前回の位置
 	D3DXVECTOR3 rot;		//向き
+	D3DXVECTOR3 rotDest;	//目的の向き
 	D3DXMATRIX mtxWorld;	//ワールドマトリックス
 	int nIdxModelParent;	//親モデルのインデックス
 }Model;
@@ -130,6 +132,7 @@ void InitMotion(void);
 void MotionPlayer(void);
 void EffectPlayer(void);
 bool HitPlayer(int nDamage);
+void FollowPlayer(void);
 
 KEY KeyPosRot(float posX, float posY, float posZ,
 				float rotX, float rotY, float rotZ);

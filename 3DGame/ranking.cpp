@@ -167,7 +167,7 @@ void UpdateRanking(void)
 	//変数の初期化
 	g_nCntScore = 0;
 
-	// スコアのテクスチャ更新
+	//テクスチャ更新
 	for (int nCntScore = 7; nCntScore < MAX_PATTERN; nCntScore++)
 	{
 		//頂点座標の更新
@@ -264,17 +264,17 @@ void SetVertexRanking(int nCnt)
 	//頂点座標の設定
 	if (nCnt == 0)
 	{
-		//ランキングの背景の設置
+		//背景配置
 		RankingBg(nCnt);
 	}
 	else if (nCnt == 1)
 	{
-		//ランキングロゴの配置
+		//ロゴ配置
 		RankingLogo(nCnt);
 	}
 	else if (nCnt >= 2 && nCnt < 7)
 	{
-		//ランキング順位の配置
+		//順位配置
 		RankingRank(nCnt);
 	}
 	else if (nCnt >= 7 && nCnt < MAX_PATTERN)
@@ -282,7 +282,7 @@ void SetVertexRanking(int nCnt)
 		//点滅
 		if (g_bFlash == true)
 		{
-			if (g_nFlashScoreTimer == FLASH_SCORE_INTERVAL / 2)
+			if (g_nFlashScoreTimer == FLASH_SCORE_INTERVAL / 4)
 			{
 				//色の確定
 				g_ScoreCol[g_nFlashScore] = D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f);
@@ -292,7 +292,7 @@ void SetVertexRanking(int nCnt)
 				//色の確定
 				g_ScoreCol[g_nFlashScore] = D3DXCOLOR(1.0f, 0.1f, 0.1f, 1.0f);
 
-				// イマーの初期化
+				//タイマーの初期化
 				g_nFlashScoreTimer = 0;
 			}
 			g_nFlashScoreTimer++;
@@ -357,6 +357,8 @@ void RankingLogo(int nCnt)
 	//何番目か
 	pVtx += nCnt * 4;
 
+
+	//頂点座標の設定
 	pVtx[0].pos = D3DXVECTOR3(g_posRankingLogo.x - RANKING_LOGO_WIDTH / 2, g_posRankingLogo.y + RANKING_LOGO_HEIGHT / 2, 0.0f);
 	pVtx[1].pos = D3DXVECTOR3(g_posRankingLogo.x - RANKING_LOGO_WIDTH / 2, g_posRankingLogo.y - RANKING_LOGO_HEIGHT / 2, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(g_posRankingLogo.x + RANKING_LOGO_WIDTH / 2, g_posRankingLogo.y + RANKING_LOGO_HEIGHT / 2, 0.0f);
@@ -389,7 +391,7 @@ void RankingLogo(int nCnt)
 //=============================================================================
 void RankingRank(int nCnt)
 {
-	//構造体のポインタ変数
+	//変数宣言
 	VERTEX_2D *pVtx;
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
@@ -446,8 +448,8 @@ void RankingScore(int nCnt)
 
 	for (int nCntScore = 0; nCntScore < MAX_SCORE; nCntScore++)
 	{
-		//スコアを配置する間隔
-		int nWidth = nCntScore % MAX_SCORE;			// 幅
+		//スコアを配置する幅の間隔
+		int nWidth = nCntScore % MAX_SCORE;
 
 		//頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(g_posRankingScore.x - (RANKING_SCORE_WIDTH / 2) + RANKING_SCORE_SPACE * nWidth, g_posRankingScore.y + (RANKING_SCORE_HEIGHT / 2) + RANKING_RANK_SPACE * g_nCntScore, 0.0f);
@@ -479,6 +481,7 @@ void RankingScore(int nCnt)
 		//4つ進める
 		pVtx += 4;
 	}
+
 	//スコア表示の更新
 	g_nCntScore++;
 

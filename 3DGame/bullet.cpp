@@ -20,8 +20,8 @@
 #define MAX_BULLET	(256)	//弾の最大数
 #define HIT_WALL	(800)
 #define MAX_VERTEX	(4)
-#define BULLET_SIZE_P (100.0f)
-#define BULLET_SIZE_E (50.0f)
+#define BULLET_SIZE_P (70.0f)
+#define BULLET_SIZE_E (30.0f)
 
 //=============================================================================
 // グローバル変数
@@ -335,7 +335,7 @@ void UpdateBullet(void)
 							if (g_nCntEffect % 10 == 0)
 							{
 								//プレイヤーにダメージ
-								HitPlayer(3);
+								HitPlayer(10);
 
 								//効果音
 								PlaySound(SOUND_LABEL_SE_HIT);	

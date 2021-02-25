@@ -171,10 +171,10 @@ void UpdateEnemy(void)
 				}
 
 				//’e”­ŽË
-				if ((nCntShootEnemy % 50) == 0)
+				if ((nCntShootEnemy % 30) == 0)
 				{
 					SetBullet(D3DXVECTOR3(pEnemy->pos.x, pEnemy->pos.y + 75.0f, pEnemy->pos.z),
-						D3DXVECTOR3(sinf(pEnemy->rot.y) * 10.0f, 0.0f, cosf(pEnemy->rot.y) * 10.0f),
+						D3DXVECTOR3(sinf(pEnemy->rot.y) * 20.0f, 0.0f, cosf(pEnemy->rot.y) * 20.0f),
 						30.0f, 30.0f,
 						BULLETTYPE_ENEMY);
 				}
