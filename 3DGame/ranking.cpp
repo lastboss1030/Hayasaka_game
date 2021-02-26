@@ -166,6 +166,7 @@ void UpdateRanking(void)
 {
 	//変数の初期化
 	g_nCntScore = 0;
+	int nFade = GetFade();
 
 	//テクスチャ更新
 	for (int nCntScore = 7; nCntScore < MAX_PATTERN; nCntScore++)
@@ -177,10 +178,13 @@ void UpdateRanking(void)
 	//画面遷移
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
-		//効果音
-		PlaySound(SOUND_LABEL_SE_ENTER);
+		if ((nFade == FADE_NONE))
+		{
+			//効果音
+			PlaySound(SOUND_LABEL_SE_ENTER);
 
-		SetFade(FADE_OUT, MODE_TITLE);
+			SetFade(FADE_OUT, MODE_TITLE);
+		}
 	}
 }
 

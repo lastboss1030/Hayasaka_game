@@ -22,7 +22,6 @@
 #include "item_boost.h"
 #include "enemy.h"
 #include "time.h"
-#include "closshair.h"
 #include "score.h"
 #include "ranking.h"
 #include "Sound.h"
@@ -37,13 +36,16 @@
 // グローバル変数
 //=============================================================================
 bool g_bPause = false;		//ポーズ中かどうか
-int g_nCntResult = 0;			// リザルト画面までのカウント
+int g_nCntResult;		// リザルト画面までのカウント
 
 //=============================================================================
 // ゲーム画面の初期化処理
 //=============================================================================
 HRESULT InitGame(void)
 {
+	//カウント初期化
+	g_nCntResult = 0;
+
 	//メッシュフィールドの初期化処理
 	InitMeshfield();
 
@@ -85,9 +87,6 @@ HRESULT InitGame(void)
 
 	//クールダウンUIの初期化処理
 	InitCooldown();
-
-	//クロスヘアの初期化処理
-//	InitClosshair();
 
 	//タイムの初期化処理
 	InitTime();
@@ -157,9 +156,6 @@ void UninitGame(void)
 
 	//クールダウンUIの終了処理
 	UninitCooldown();
-
-	//クロスヘアの終了処理
-//	UninitClosshair();
 
 	//タイムの終了処理
 	UninitTime();
@@ -233,9 +229,6 @@ void UpdateGame(void)
 		//クールダウンUIの更新処理
 		UpdateCooldown();
 
-		//クロスヘアの更新処理
-//		UpdateClosshair();
-
 		//スコアの更新処理
 		UpdateScore();
 	}
@@ -294,9 +287,6 @@ void DrawGame(void)
 	//クールダウンUIの描画処理
 	DrawCooldown();
 
-	//クロスヘアの描画処理
-//	DrawClosshair();
-
 	//タイムの描画処理
 	DrawTime();
 
@@ -322,6 +312,9 @@ void SetWall(void)
 	SetMeshwall(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
 
 	SetMeshfield(D3DXVECTOR3(0.0f, 0.0f, HEIGHT_SIZE), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), MAX_WALLSIZE, HEIGHT_SIZE);
+
+	//敵の設置
+	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 600.0f));
 }
 
 //=============================================================================

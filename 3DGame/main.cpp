@@ -8,13 +8,11 @@
 
 //インクルードファイル
 #include "main.h"	
-#include "polygon.h"
 #include "camera.h"
 #include "light.h"
 #include "input.h"
 #include "player.h"
 #include "shadow.h"
-#include "wall.h"
 #include "meshwall.h"
 #include "Billboard.h"
 #include "meshfield.h"

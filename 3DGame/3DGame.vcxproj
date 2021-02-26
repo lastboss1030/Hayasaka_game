@@ -155,7 +155,6 @@
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="camera.h" />
-    <ClInclude Include="closshair.h" />
     <ClInclude Include="cooldown_UI.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="enemy.h" />
@@ -170,7 +169,6 @@
     <ClInclude Include="meshwall.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="polygon.h" />
     <ClInclude Include="ranking.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="score.h" />
@@ -180,13 +178,11 @@
     <ClInclude Include="time.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="tutorial.h" />
-    <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="closshair.cpp" />
     <ClCompile Include="cooldown_UI.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="enemy.cpp" />
@@ -201,7 +197,6 @@
     <ClCompile Include="meshwall.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="polygon.cpp" />
     <ClCompile Include="ranking.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="score.cpp" />
@@ -211,7 +206,6 @@
     <ClCompile Include="time.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tutorial.cpp" />
-    <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

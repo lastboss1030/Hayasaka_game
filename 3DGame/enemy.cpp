@@ -24,7 +24,7 @@
 //=============================================================================
 // グローバル変数
 //=============================================================================
-Enemy g_aEnemy[MAX_ENEMY];							// モデル情報
+Enemy g_aEnemy[MAX_ENEMY];								// モデル情報
 D3DXVECTOR3 g_vtxMinEnemy, g_vtxMaxEnemy;				// 各頂点座標の最小値、最大値
 LPDIRECT3DTEXTURE9 g_apTextureEnemy[MAX_ENEMY] = {};	// テクスチャへのポインタ
 
@@ -42,6 +42,11 @@ HRESULT InitEnemy(void)
 	//変数宣言
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = GetDevice();
+
+	//初期化
+	g_nCntEffectDeathE = 0;
+	nCntShootEnemy = 0;
+	g_nEnemyCnt = 0;
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
@@ -71,8 +76,6 @@ HRESULT InitEnemy(void)
 			return E_FAIL;
 		}
 	}
-	//敵の設置
-	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 600.0f));
 
 	return S_OK;
 }
@@ -124,7 +127,7 @@ void UpdateEnemy(void)
 			{
 				MoveEnemy(nCntEnemy);
 
-				//プレイヤーが当たったら消す
+				//プレイヤーが当たったら1
 				if ((pPlayer->pos.x - pPlayer->minVecPlayer.x) < (pEnemy->pos.x + pEnemy->vtxMaxEnemy.x) &&
 					(pPlayer->pos.x + pPlayer->maxVecPlayer.x) > (pEnemy->pos.x - pEnemy->vtxMaxEnemy.x) &&
 					(pPlayer->pos.z - pPlayer->minVecPlayer.z) < (pEnemy->pos.z + pEnemy->vtxMaxEnemy.z) &&
@@ -132,8 +135,8 @@ void UpdateEnemy(void)
 				{
 					if (pPlayer->Life <= 500)
 					{
-						//プレイヤー即死
-						HitPlayer(100);
+						//プレイヤーにダメージ
+						HitPlayer(1);
 					}
 				}
 
@@ -163,7 +166,7 @@ void UpdateEnemy(void)
 								D3DXVECTOR3(sinf(fAngle) * fmove, 5, cosf(fAngle) * fmove),
 								D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
 								1.0f,
-								5.0f,
+								10.0f,
 								0.01f,
 								0.2f);
 						}
@@ -171,12 +174,25 @@ void UpdateEnemy(void)
 				}
 
 				//弾発射
-				if ((nCntShootEnemy % 30) == 0)
+				if (pEnemy->nLife >= 50)
 				{
-					SetBullet(D3DXVECTOR3(pEnemy->pos.x, pEnemy->pos.y + 75.0f, pEnemy->pos.z),
-						D3DXVECTOR3(sinf(pEnemy->rot.y) * 20.0f, 0.0f, cosf(pEnemy->rot.y) * 20.0f),
-						30.0f, 30.0f,
-						BULLETTYPE_ENEMY);
+					if ((nCntShootEnemy % 30) == 0)
+					{
+						SetBullet(D3DXVECTOR3(pEnemy->pos.x, pEnemy->pos.y + 75.0f, pEnemy->pos.z),
+							D3DXVECTOR3(sinf(pEnemy->rot.y) * 20.0f, 0.0f, cosf(pEnemy->rot.y) * 20.0f),
+							30.0f, 30.0f,
+							BULLETTYPE_ENEMY);
+					}
+				}
+				if (pEnemy->nLife < 50)
+				{
+					if ((nCntShootEnemy % 15) == 0)
+					{
+						SetBullet(D3DXVECTOR3(pEnemy->pos.x, pEnemy->pos.y + 75.0f, pEnemy->pos.z),
+							D3DXVECTOR3(sinf(pEnemy->rot.y) * 20.0f, 0.0f, cosf(pEnemy->rot.y) * 20.0f),
+							50.0f, 50.0f,
+							BULLETTYPE_ENEMY);
+					}
 				}
 
 				//使われているカウント

@@ -325,9 +325,9 @@ void UpdateBullet(void)
 				{
 					if (pPlayer->bUse == true)
 					{
-						if (pBullet->pos.x + BULLET_SIZE_E > pPlayer->pos.x + pPlayer->minVecPlayer.x &&
+						if (pBullet->pos.x + BULLET_SIZE_E > pPlayer->pos.x - pPlayer->minVecPlayer.x &&
 							pBullet->pos.x - BULLET_SIZE_E < pPlayer->pos.x + pPlayer->maxVecPlayer.x &&
-							pBullet->pos.z + BULLET_SIZE_E > pPlayer->pos.z + pPlayer->minVecPlayer.z &&
+							pBullet->pos.z + BULLET_SIZE_E > pPlayer->pos.z - pPlayer->minVecPlayer.z &&
 							pBullet->pos.z - BULLET_SIZE_E < pPlayer->pos.z + pPlayer->maxVecPlayer.z)
 						{
 							g_nCntEffect++;
@@ -341,7 +341,7 @@ void UpdateBullet(void)
 								PlaySound(SOUND_LABEL_SE_HIT);	
 
 								//スコアマイナス
-								AddScore(-50);
+								AddScore(-100);
 
 								//使った判定
 								pBullet->bUse = false;

@@ -75,12 +75,6 @@
     <ClInclude Include="meshwall.h">
       <Filter>ヘッダー ファイル\Field.Wall</Filter>
     </ClInclude>
-    <ClInclude Include="wall.h">
-      <Filter>ヘッダー ファイル\Field.Wall</Filter>
-    </ClInclude>
-    <ClInclude Include="polygon.h">
-      <Filter>ヘッダー ファイル\Field.Wall</Filter>
-    </ClInclude>
     <ClInclude Include="game.h">
       <Filter>ヘッダー ファイル\Mode</Filter>
     </ClInclude>
@@ -135,9 +129,6 @@
     <ClInclude Include="time.h">
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
-    <ClInclude Include="closshair.h">
-      <Filter>ヘッダー ファイル\UI</Filter>
-    </ClInclude>
     <ClInclude Include="ranking.h">
       <Filter>ヘッダー ファイル\ranking</Filter>
     </ClInclude>
@@ -162,12 +153,6 @@
       <Filter>ソース ファイル\Field.wall</Filter>
     </ClCompile>
     <ClCompile Include="meshwall.cpp">
-      <Filter>ソース ファイル\Field.wall</Filter>
-    </ClCompile>
-    <ClCompile Include="wall.cpp">
-      <Filter>ソース ファイル\Field.wall</Filter>
-    </ClCompile>
-    <ClCompile Include="polygon.cpp">
       <Filter>ソース ファイル\Field.wall</Filter>
     </ClCompile>
     <ClCompile Include="game.cpp">
@@ -223,9 +208,6 @@
     </ClCompile>
     <ClCompile Include="time.cpp">
       <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="closshair.cpp">
-      <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
     <ClCompile Include="score.cpp">
       <Filter>ソース ファイル\ranking</Filter>
