@@ -29,7 +29,7 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_WALLSIZE (800.0f)
+#define MAX_WALLSIZE (1600.0f)
 #define HEIGHT_SIZE	 (100.0f)
 
 //=============================================================================
@@ -188,53 +188,55 @@ void UpdateGame(void)
 		UpdatePause();
 	}
 
-	if (g_bPause == false && nTime != 0)
+	if (g_bPause == false)
 	{
-		//メッシュフィールドの更新処理
-		UpdateMeshfield();
+		//タイムの更新処理
+		UpdateTime();
+		if (nTime != 0)
+		{
+			//メッシュフィールドの更新処理
+			UpdateMeshfield();
 
-		//壁(メッシュ)の更新処理
-		UpdateMeshwall();
+			//壁(メッシュ)の更新処理
+			UpdateMeshwall();
 
-		//ビルボードの更新処理
-//		UpdateBillboard();
+			//ビルボードの更新処理
+//			UpdateBillboard();
 
-		//弾の更新処理
-		UpdateBullet();
+			//弾の更新処理
+			UpdateBullet();
 
-		//爆発の更新処理
-		UpdateExplosion();
+			//爆発の更新処理
+			UpdateExplosion();
 
-		//影の更新処理
-		UpdateShadow();
+			//影の更新処理
+			UpdateShadow();
 
-		//エフェクトの更新処理
-		UpdateEffect();
+			//エフェクトの更新処理
+			UpdateEffect();
 
-		//モデルの更新処理
-		UpdatePlayer();
+			//モデルの更新処理
+			UpdatePlayer();
 
-		//敵の更新処理
-		UpdateEnemy();
+			//敵の更新処理
+			UpdateEnemy();
 
-		//ブーストアイテムの更新処理
-		UpdateItemBoost();
+			//ブーストアイテムの更新処理
+			UpdateItemBoost();
 
-		//カメラの更新処理
-		UpdateCamera();
+			//カメラの更新処理
+			UpdateCamera();
 
-		//ライトの更新処理
-		UpdateLight();
+			//ライトの更新処理
+			UpdateLight();
 
-		//クールダウンUIの更新処理
-		UpdateCooldown();
+			//クールダウンUIの更新処理
+			UpdateCooldown();
 
-		//スコアの更新処理
-		UpdateScore();
+			//スコアの更新処理
+			UpdateScore();
+		}
 	}
-
-	//タイムの更新処理
-	UpdateTime();
 
 	// リザルト画面遷移
 	if ((nTime == 0))

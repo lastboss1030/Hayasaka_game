@@ -13,7 +13,7 @@
 #define MAX_WALL	(4)
 #define WIDTH_WALL	(2)		// 列数(幅)
 #define HEIGHT_WALL	(2)		// 行数(高さ)
-#define WALL_SIZE (800.0f)
+#define WALL_SIZE (1600.0f)
 
 //==============================================================================
 // グローバル変数

@@ -52,7 +52,7 @@ HRESULT InitTime(void)
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/number001.png", &g_pTextureTime);
 
 	// 変数の初期化
-	g_nTime = 100;									//タイム
+	g_nTime = 60;									//タイム
 	g_nTimeCnt = 60;								//タイムカウント
 	g_TimeCol = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	//タイムの色
 

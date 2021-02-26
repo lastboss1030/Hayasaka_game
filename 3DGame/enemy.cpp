@@ -28,11 +28,11 @@ Enemy g_aEnemy[MAX_ENEMY];								// モデル情報
 D3DXVECTOR3 g_vtxMinEnemy, g_vtxMaxEnemy;				// 各頂点座標の最小値、最大値
 LPDIRECT3DTEXTURE9 g_apTextureEnemy[MAX_ENEMY] = {};	// テクスチャへのポインタ
 
-int g_nCntEffectGetE = 0;
-int g_nCntEffectDeathE = 0;							//死亡エフェクト
-int nCntShootEnemy = 0;								//発射カウント
-int	g_nEnemyCnt = 0;								//敵数
-int nCntWait = 0;									//待機時間
+int g_nCntEffectGetE;
+int g_nCntEffectDeathE;				//死亡エフェクト
+int nCntShootEnemy;					//発射カウント
+int	g_nEnemyCnt;					//敵数
+int nCntWait;						//待機時間
 
 //=============================================================================
 // 敵の初期化処理
@@ -44,9 +44,11 @@ HRESULT InitEnemy(void)
 	pDevice = GetDevice();
 
 	//初期化
+	g_nCntEffectGetE = 0;
 	g_nCntEffectDeathE = 0;
 	nCntShootEnemy = 0;
 	g_nEnemyCnt = 0;
+	nCntWait = 0;
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{

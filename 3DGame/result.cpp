@@ -22,7 +22,6 @@
 //=============================================================================
 LPDIRECT3DTEXTURE9 g_pTextureResult[MAX_RESULT_TEX] = {};	//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;			//頂点バッファへのポインタ
-D3DXVECTOR3 g_posGameclear;									//クリアロゴ座標
 D3DXCOLOR g_colorR;											//色
 int g_nCounterAnimR;										//アニメーションカウンター
 int g_nPatternAnimR;										//アニメーションパターンNo
@@ -185,10 +184,10 @@ void UpdateResult(void)
 	}
 
 	//PRESS_ENTERの色更新
-	pVtx[4].col = g_colorR;
-	pVtx[5].col = g_colorR;
-	pVtx[6].col = g_colorR;
-	pVtx[7].col = g_colorR;
+	//pVtx[4].col = g_colorR;
+	//pVtx[5].col = g_colorR;
+	//pVtx[6].col = g_colorR;
+	//pVtx[7].col = g_colorR;
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffResult->Unlock();

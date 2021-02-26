@@ -127,7 +127,7 @@ void UninitEffect(void)
 //=============================================================================
 void UpdateEffect(void)
 {
-	//構造体のポインタ変数
+	//変数宣言
 	VERTEX_3D *pVtx;
 	EFFECT *pEffect;
 	pEffect = &g_aEffect[0];
@@ -153,10 +153,10 @@ void UpdateEffect(void)
 			//α値の加算
 			pEffect->col.a -= pEffect->nCntAlpha;
 
-			// 重力の加算
+			//重力の加算
 			pEffect->move.y -= pEffect->fGravity;
 
-			// バウンド
+			//バウンド
 			if (pEffect->pos.y <= 0.0f)
 			{
 				pEffect->move.y *= -0.5f;
@@ -221,12 +221,12 @@ void DrawEffect(void)
 			//pEffect->mtxWorld._42 = 0.0f;
 			//pEffect->mtxWorld._43 = 0.0f;
 
-			pEffect->mtxWorld._11 = mtxView._11 * pEffect->fRadius;
-			pEffect->mtxWorld._12 = mtxView._21 * pEffect->fRadius;
-			pEffect->mtxWorld._13 = mtxView._31 * pEffect->fRadius;
-			pEffect->mtxWorld._21 = mtxView._12 * pEffect->fRadius;
-			pEffect->mtxWorld._22 = mtxView._22 * pEffect->fRadius;
-			pEffect->mtxWorld._23 = mtxView._32 * pEffect->fRadius;	
+			pEffect->mtxWorld._11 = mtxView._11 * pEffect->fRadius * 1.5f;
+			pEffect->mtxWorld._12 = mtxView._21 * pEffect->fRadius * 1.5f;
+			pEffect->mtxWorld._13 = mtxView._31 * pEffect->fRadius * 1.5f;
+			pEffect->mtxWorld._21 = mtxView._12 * pEffect->fRadius * 1.5f;
+			pEffect->mtxWorld._22 = mtxView._22 * pEffect->fRadius * 1.5f;
+			pEffect->mtxWorld._23 = mtxView._32 * pEffect->fRadius * 1.5f;	
 
 			//位置を反映
 			D3DXMatrixTranslation(&mtxTrans, pEffect->pos.x, pEffect->pos.y, pEffect->pos.z);

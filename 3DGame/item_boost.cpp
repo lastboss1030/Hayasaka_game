@@ -23,7 +23,7 @@
 ItemBoost g_aItemBoost[MAX_ITEMBOOST];							// モデル情報
 D3DXVECTOR3 g_vtxMinItemBoost, g_vtxMaxItemBoost;				// 各頂点座標の最小値、最大値
 LPDIRECT3DTEXTURE9 g_apTextureItemBoost[MAX_ITEMBOOST] = {};	// テクスチャへのポインタ
-int g_nCntEffectGet = 0;
+int g_nCntEffectGet;
 
 //=============================================================================
 // ブーストアイテムの初期化処理
@@ -33,6 +33,9 @@ HRESULT InitItemBoost(void)
 	//変数宣言
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = GetDevice();
+
+	//初期化
+	g_nCntEffectGet = 0;
 
 	for (int nCnt = 0; nCnt < MAX_ITEMBOOST; nCnt++)
 	{

@@ -17,11 +17,11 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_BULLET	(256)	//弾の最大数
-#define HIT_WALL	(800)
-#define MAX_VERTEX	(4)
-#define BULLET_SIZE_P (70.0f)
-#define BULLET_SIZE_E (30.0f)
+#define MAX_BULLET		(256)	//弾の最大数
+#define HIT_WALL		(1200)
+#define MAX_VERTEX		(4)
+#define BULLET_SIZE_P	(70.0f)
+#define BULLET_SIZE_E	(30.0f)
 
 //=============================================================================
 // グローバル変数
@@ -29,7 +29,7 @@
 LPDIRECT3DTEXTURE9 g_pTextureBullet = NULL;			//弾のテクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBullet = NULL;	//弾の頂点バッファのポインタ
 BULLET g_aBullet[MAX_BULLET];						//弾の情報
-int g_nCntEffect = 0;
+int g_nCntEffect;
 
 //=============================================================================
 // 弾の初期化処理
@@ -56,6 +56,9 @@ HRESULT InitBullet(void)
 		g_aBullet[nCntBullet].fHeight = 5.0f;
 		g_aBullet[nCntBullet].bUse = false;
 	}
+
+	//初期化
+	g_nCntEffect = 0;
 
 	//頂点バッファの生成
 	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VERTEX * MAX_BULLET,
@@ -135,6 +138,7 @@ void UpdateBullet(void)
 	BULLET *pBullet;
 	Enemy *pEnemy = GetEnemy();
 	Player *pPlayer = GetPlayer();
+	D3DXVECTOR3 BulletV;
 
 	//pBulletの初期化
 	pBullet = &g_aBullet[0];
@@ -143,6 +147,7 @@ void UpdateBullet(void)
 	{
 		if (pBullet->type == BULLETTYPE_PLAYER)	//プレイヤーの弾だったら
 		{
+
 			if (pBullet->bUse == true)	//弾が使用されていたら
 			{
 				//位置の更新
@@ -154,8 +159,8 @@ void UpdateBullet(void)
 					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 					D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
 					0.0f,
-					10.0f,
-					0.07f,
+					8.0f,
+					0.05f,
 					0.0f);
 
 				//エフェクト
@@ -216,7 +221,7 @@ void UpdateBullet(void)
 					D3DXCOLOR(1.0f, 0.6f, 0.2f, 1.0f),
 					0.0f,
 					10.0f,
-					0.07f,
+					0.05f,
 					0.0f);
 
 				//エフェクト
@@ -225,7 +230,7 @@ void UpdateBullet(void)
 					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
 					0.0f,
 					8.0f,
-					0.07f,
+					0.05f,
 					0.0f);
 
 				// 画面外チェック
@@ -261,6 +266,42 @@ void UpdateBullet(void)
 				}
 			}
 		}
+		if (pBullet->type == BULLETTYPE_EFFECT)	//エフェクト用
+		{
+
+			if (pBullet->bUse == true)	//弾が使用されていたら
+			{
+				//位置の更新
+				pBullet->pos.x += pBullet->move.x;
+				pBullet->pos.z += pBullet->move.z;
+
+				//エフェクト
+				SetEffect(pBullet->pos,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+					0.0f,
+					5.0f,
+					0.05f,
+					0.0f);
+
+				//エフェクト
+				SetEffect(pBullet->pos,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+					0.0f,
+					8.0f,
+					0.05f,
+					0.0f);
+
+				// 画面外チェック
+				if (pBullet->pos.z <= -HIT_WALL || pBullet->pos.z >= HIT_WALL ||
+					pBullet->pos.x <= -HIT_WALL || pBullet->pos.x >= HIT_WALL)
+				{
+					// 弾の状態をfalseにする
+					pBullet->bUse = false;
+				}
+			}
+		}
 
 		for (int nCntEnemy = 0; nCntEnemy < 1; nCntEnemy++, pEnemy++)
 		{
@@ -275,6 +316,7 @@ void UpdateBullet(void)
  							pBullet->pos.z + BULLET_SIZE_P > pEnemy->pos.z - pEnemy->vtxMinEnemy.z &&
 							pBullet->pos.z - BULLET_SIZE_P < pEnemy->pos.z + pEnemy->vtxMaxEnemy.z)
 						{
+
 							if (pPlayer->playertype == PLAYERTYPE_GOLEM)
 							{
 								HitEnemy(5);					//ゴーレム時

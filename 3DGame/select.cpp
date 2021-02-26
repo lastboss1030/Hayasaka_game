@@ -9,6 +9,7 @@
 #include "fade.h"
 #include "player.h"
 #include "Sound.h"
+#include "score.h"
 
 //=============================================================================
 // マクロ定義
@@ -217,6 +218,7 @@ void UpdateSelect(void)
 	{
 		if (nFade == FADE_NONE)
 		{
+
 			if (g_nState == SELECT_MENU_GOLEM)	//ゴーレム選択時
 			{
 				//決定音
@@ -227,7 +229,6 @@ void UpdateSelect(void)
 
 				//ゴーレム使用
 				SetFade(FADE_OUT, MODE_GAME);
-
 			}
 			else if (g_nState == SELECT_MENU_LEO)	//レオ選択時
 			{
@@ -239,7 +240,6 @@ void UpdateSelect(void)
 
 				//レオ使用
 				SetFade(FADE_OUT, MODE_GAME);
-
 			}
 			else if (g_nState == SELECT_MENU_STALKER)	//ストーカー選択時
 			{
@@ -251,7 +251,6 @@ void UpdateSelect(void)
 
 				//ストーカー使用
 				SetFade(FADE_OUT, MODE_GAME);
-
 			}
 		}
 	}
