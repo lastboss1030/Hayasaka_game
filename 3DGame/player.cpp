@@ -526,7 +526,7 @@ void UpdatePlayer(void)
 						//Œø‰Ê‰¹
 						PlaySound(SOUND_LABEL_SE_SHOOT_GOLEM);
 
-						g_player.boost -= 25;
+						g_player.boost -= 40;
 					}
 				}
 			}
@@ -536,7 +536,7 @@ void UpdatePlayer(void)
 			{
 				if ((g_nShootCount % 40) == 0)
 				{
-					if (g_player.boost > 20)
+					if (g_player.boost > 30)
 					{
 						SetBullet(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 90.0f, g_player.pos.z),
 							D3DXVECTOR3(sinf(g_player.rot.y) * -12.0f, 0.0f, cosf(g_player.rot.y) * -12.0f),

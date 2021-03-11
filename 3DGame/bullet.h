@@ -46,6 +46,7 @@ void SetBullet(D3DXVECTOR3 pos,		//èoåªà íu
 				float fWidth,		//ïù
 				float fHeight,		//çÇÇ≥
 				BULLETTYPE type);	//éÌóﬁ
+void FollowBullet(void);
 
 BULLET *GetBullet(void);
 

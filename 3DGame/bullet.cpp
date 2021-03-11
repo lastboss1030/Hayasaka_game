@@ -136,7 +136,6 @@ void UpdateBullet(void)
 {
 	//変数宣言
 	BULLET *pBullet;
-	Enemy *pEnemy = GetEnemy();
 	Player *pPlayer = GetPlayer();
 	D3DXVECTOR3 BulletV;
 
@@ -145,14 +144,17 @@ void UpdateBullet(void)
 
 	for (int nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++, pBullet++)
 	{
+		Enemy *pEnemy = GetEnemy();
+
 		if (pBullet->type == BULLETTYPE_PLAYER)	//プレイヤーの弾だったら
 		{
-
 			if (pBullet->bUse == true)	//弾が使用されていたら
 			{
 				//位置の更新
 				pBullet->pos.x += pBullet->move.x;
 				pBullet->pos.z += pBullet->move.z;
+
+				//FollowBullet();
 
 				//エフェクト
 				SetEffect(pBullet->pos,
@@ -523,6 +525,38 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight, B
 	}
 	//頂点バッファをアンロックする
 	g_pVtxBuffBullet->Unlock();
+}
+
+//=============================================================================
+// 弾の追従
+//=============================================================================
+void FollowBullet(void)
+{
+	//変数宣言
+	BULLET *pBullet;
+	pBullet = &g_aBullet[0];
+	Enemy *pEnemy = GetEnemy();
+	D3DXVECTOR3 BulletV;		//プレイヤーに向く
+
+	for (int nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++, pBullet++)
+	{
+		//プレイヤーが敵を見るようにする
+		BulletV = pEnemy->pos - g_aBullet[nCntBullet].pos;
+
+		//角度を求める
+		float fAngle = (float)atan2(BulletV.x, BulletV.z);
+
+		//自機と中心点の対角線の長さ
+		float fLength = sqrtf((BulletV.x * BulletV.x) + (BulletV.z * BulletV.z));
+
+		//プレイヤーの追尾
+		g_aBullet[nCntBullet].move.x = 10.0f * sinf(fAngle);
+		g_aBullet[nCntBullet].move.z = 10.0f * cosf(fAngle);
+
+		//位置の更新
+		g_aBullet[nCntBullet].pos.x += g_aBullet[nCntBullet].move.x;
+		g_aBullet[nCntBullet].pos.z += g_aBullet[nCntBullet].move.z;
+	}
 }
 
 //=============================================================================

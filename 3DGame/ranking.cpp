@@ -36,7 +36,7 @@
 #define RANKING_SCORE_HEIGHT	(100.0f)			//ランキングスコアの高さ
 #define RANKING_SCORE_SPACE		(70.0f)				//ランキングスコアを配置する間隔
 
-#define FLASH_SCORE_INTERVAL	(20)				//点滅のインターバル
+#define FLASH_SCORE_INTERVAL	(40)				//点滅のインターバル
 
 #define MAX_VERTEX				(4)					//頂点数
 
@@ -294,7 +294,7 @@ void SetVertexRanking(int nCnt)
 			else if (g_nFlashScoreTimer == FLASH_SCORE_INTERVAL)
 			{
 				//色の確定
-				g_ScoreCol[g_nFlashScore] = D3DXCOLOR(1.0f, 0.1f, 0.1f, 1.0f);
+				g_ScoreCol[g_nFlashScore] = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
 
 				//タイマーの初期化
 				g_nFlashScoreTimer = 0;
