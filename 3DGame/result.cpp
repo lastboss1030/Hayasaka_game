@@ -14,7 +14,7 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define MAX_RESULT_TEX	(4)		//テクスチャ数
+#define MAX_RESULT_TEX	(5)		//テクスチャ数
 #define MAX_VERTEX		(4)		//頂点数
 
 //=============================================================================
@@ -25,9 +25,11 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;			//頂点バッファへのポインタ
 D3DXCOLOR g_colorR;											//色
 int g_nCounterAnimR;										//アニメーションカウンター
 int g_nPatternAnimR;										//アニメーションパターンNo
+float g_fPatternAnimR[MAX_RESULT_TEX];						//アニメーションパターン
 float g_nCountR;											//カウント
 int g_nResultState;											//リザルトモード
 D3DXCOLOR ResultCol[MAX_RESULT_TEX];						//リザルトカラー
+float g_fMoveResultY[MAX_RESULT_TEX];						//移動量Y
 
 //=============================================================================
 // リザルトの初期化処理
@@ -40,10 +42,6 @@ HRESULT InitResult(void)
 
 	//デバイスの取得
 	pDevice = GetDevice();
-
-	//アニメーションの初期化
-	g_nCounterAnimR = 0;
-	g_nPatternAnimR = 0;
 
 	//カラーの初期
 //	g_colorR = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -58,6 +56,7 @@ HRESULT InitResult(void)
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/press_enter001.png", &g_pTextureResult[1]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover_logo001.png", &g_pTextureResult[2]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameclear_logo001.png", &g_pTextureResult[3]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/haguruma.png", &g_pTextureResult[4]);
 
 	//頂点バッファの生成
 	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_VERTEX * MAX_RESULT_TEX,	//確保するバッファサイズ
@@ -146,7 +145,7 @@ void UpdateResult(void)
 	Enemy *pEnemy = GetEnemy();
 	int nFade = GetFade();
 
-	g_nCounterAnimR++;		//アニメーションカウンター更新
+	//g_nCounterAnimR++;		//アニメーションカウンター更新
 
 	if (pEnemy->nLife <= 0)
 	{
@@ -155,6 +154,19 @@ void UpdateResult(void)
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffResult->Lock(0, 0, (void**)&pVtx, 0);
+
+	// テクスチャの更新
+	if ((g_nCounterAnimR % 4) == 0)
+	{
+		// テクスチャのパターンの更新
+		g_fPatternAnimR[0] += 0.0005f;
+
+		// テクスチャの頂点座標の更新
+		pVtx[16].tex = D3DXVECTOR2(0.0f + g_fPatternAnimR[0], 1.0f + g_fMoveResultY[0]);
+		pVtx[17].tex = D3DXVECTOR2(0.0f + g_fPatternAnimR[0], 0.0f + g_fMoveResultY[0]);
+		pVtx[18].tex = D3DXVECTOR2(1.0f + g_fPatternAnimR[0], 1.0f + g_fMoveResultY[0]);
+		pVtx[19].tex = D3DXVECTOR2(1.0f + g_fPatternAnimR[0], 0.0f + g_fMoveResultY[0]);
+	}
 
 	for (int nCntResult = 0; nCntResult < MAX_RESULT_TEX; nCntResult++, pVtx += 4)
 	{
@@ -184,10 +196,10 @@ void UpdateResult(void)
 	}
 
 	//PRESS_ENTERの色更新
-	//pVtx[4].col = g_colorR;
-	//pVtx[5].col = g_colorR;
-	//pVtx[6].col = g_colorR;
-	//pVtx[7].col = g_colorR;
+	pVtx[4].col = g_colorR;
+	pVtx[5].col = g_colorR;
+	pVtx[6].col = g_colorR;
+	pVtx[7].col = g_colorR;
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffResult->Unlock();
@@ -314,6 +326,17 @@ void SetTextureResult(int nCntResult)
 		pVtx[1].pos = D3DXVECTOR3(480, 200, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(1440, 400, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(1440, 200, 0.0f);
+
+		//カラー
+		ResultCol[nCntResult] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	else if (nCntResult == 4)	//歯車
+	{
+		//頂点座標
+		pVtx[0].pos = D3DXVECTOR3(0, SCREEN_HEIGHT, 0.0f);	//Zは0.0固定
+		pVtx[1].pos = D3DXVECTOR3(0, 0, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, 0, 0.0f);
 
 		//カラー
 		ResultCol[nCntResult] = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);

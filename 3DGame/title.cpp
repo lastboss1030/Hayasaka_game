@@ -29,6 +29,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;			//頂点バッファへのポインタ
 D3DXVECTOR3 g_posTitleLogo;								//タイトルロゴ座標
 D3DXCOLOR g_color;										//色
 float g_nCount;											//カウント
+float g_nCntWait;										//待ち時間
 float g_nCountFade;										//自動フェードカウント
 int g_nCntAnimTitle;									//アニメーションカウンター
 float g_fPatternAnimT[MAX_TITLE_TEX];					//アニメーションパターン
@@ -51,6 +52,7 @@ HRESULT InitTitle(void)
 	g_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	g_posTitleLogo = D3DXVECTOR3(SCREEN_WIDTH / 2, HEIGHT_Y, 0.0f);
 	g_nCount = 0;
+	g_nCntWait = 0;
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/title.png", &g_pTextureTitle[0]);
@@ -168,7 +170,7 @@ void UpdateTitle(void)
 		else if (nFade == FADE_NONE && (g_posTitleLogo.y >= (SCREEN_HEIGHT / TITLE_MARGIN)))
 		{
 			//何もしていないとき
-			SetFade(FADE_OUT, MODE_GAME);
+			SetFade(FADE_OUT, MODE_TUTORIAL);
 			g_nCount = 0;
 		}
 	}
@@ -208,6 +210,18 @@ void UpdateTitle(void)
 	//エンター押したら
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
+		g_nCntWait++;
+
+		if (g_nCount == 5)
+		{
+			g_color.a = 1.0f;
+		}
+		else if (g_nCount == 10)
+		{
+			g_color.a = 0.0f;
+			g_nCount = 0;
+		}
+
 		if (nFade == FADE_NONE)
 		{
 			//効果音
