@@ -11,7 +11,7 @@
 //=============================================================================
 CSound::SOUNDPARAM CSound::m_aParam[SOUND_LABEL_MAX] =
 {
-	// SE
+	// SE (ゲーム関連)
 	{ "data/SE/shot_player.wav", 0 },				// プレイヤー弾発射音		
 	{ "data/SE/shot_enemy.wav", 0 },				// 敵弾発射音
 	{ "data/SE/shot_boss.wav", 0 },					// ボス弾発射音
@@ -19,7 +19,16 @@ CSound::SOUNDPARAM CSound::m_aParam[SOUND_LABEL_MAX] =
 	{ "data/SE/parts_break.wav", 0},				// パーツ破損
 	{ "data/SE/alert.wav", 0},						// 警告音
 	{ "data/SE/hit.wav", 0},						// ヒット
-	{ "data/SE/shot_laser.wav", 0}					// レーザー音
+	{ "data/SE/shot_laser.wav", 0},					// レーザー音
+	{ "data/SE/homing.wav" , 0},					// ホーミング
+
+	// SE (システム)
+	{ "data/SE/press_enter.wav", 0},				// エンター		
+
+	// BGM
+	{ "data/BGM/bgm_normal.wav", 0 },				// 通常BGM
+	{ "data/BGM/bgm_title.wav", 0 },				// タイトルBGM
+	{ "data/BGM/bgm_result.wav", 0 },				// リザルトBGM
 };
 
 //=============================================================================

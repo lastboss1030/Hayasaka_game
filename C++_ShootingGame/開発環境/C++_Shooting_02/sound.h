@@ -21,7 +21,7 @@ public:
 	//サウンドファイル
 	typedef enum
 	{
-		// 効果音
+		// SE (ゲーム関連)
 		SOUND_LABEL_SE_SHOTPLAYER,		// 弾発射音
 		SOUND_LABEL_SE_SHOTENEMY,		// 敵発射音
 		SOUND_LABEL_SE_SHOTBOSS,		// ボス弾発射音
@@ -30,6 +30,16 @@ public:
 		SOUND_LABEL_SE_ALERT,			// アラート
 		SOUND_LABEL_SE_HIT,				// ヒット
 		SOUND_LABEL_SE_LASER,			// レーザー音
+		SOUND_LABEL_SE_HOMING,			// ホーミング
+
+		// SE (システム)
+		SOUND_LABEL_SE_ENTER,			// エンター時
+
+		// BGM
+		SOUND_LABEL_BGM_NORMAL,			// 通常BGM
+		SOUND_LABEL_BGM_TITLE,			// タイトルBGM
+		SOUND_LABEL_BGM_RESULT,			// リザルトBGM
+
 		SOUND_LABEL_MAX,
 	} SOUND_LABEL;
 

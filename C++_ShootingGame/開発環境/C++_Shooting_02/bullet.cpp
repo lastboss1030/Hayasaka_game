@@ -33,7 +33,9 @@ CBullet::CBullet(PRIORITY nPriority) :CScene2D(nPriority)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_bulletType = BULLETTYPE_NONE;
-	m_life = 30;
+	m_life = 40;
+
+	m_nCntHoming = 0;
 }
 
 //=============================================================================
@@ -47,7 +49,7 @@ CBullet::~CBullet()
 //=============================================================================
 // 生成処理
 //=============================================================================
-CBullet *CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BULLETTYPE type, int nDamage)
+CBullet *CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BULLETTYPE type, ATTACKTYPE AttackType, int nDamage)
 {
 	// ポインタ
 	CBullet *pBullet = NULL;
@@ -64,6 +66,10 @@ CBullet *CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BU
 			pBullet->BindTexture(m_pTexture);
 		}
 	}
+
+	//攻撃種類情報の呼び出し
+	pBullet->SetAttackType(AttackType);
+
 	return pBullet;
 }
 
@@ -121,16 +127,20 @@ void CBullet::Update(void)
 	if (Pos.x - m_size.x / 2.0f < 0.0f || Pos.x + m_size.x / 2.0f > SCREEN_WIDTH ||
 		Pos.y - m_size.y / 2.0f < 0.0f || Pos.y + m_size.y / 2.0f > SCREEN_HEIGHT)
 	{
+		// 弾を消す
 		Uninit();
 
 		return;
 	}
 
+
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	// 弾のライフが減ったら
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	if (m_life <= 0)
 	{
 		// 爆発の生成
-		CExplosion::Create(D3DXVECTOR3(Pos.x, Pos.y, 0.0f), D3DXVECTOR3(40, 40, 0), D3DXVECTOR3(0, 0, 0));
+		CExplosion::Create(D3DXVECTOR3(Pos.x, Pos.y, 0.0f), D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
 		// 弾を消す
 		Uninit();
@@ -138,7 +148,10 @@ void CBullet::Update(void)
 		return;
 	}
 
+
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	// エフェクトを生成
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	if (m_bulletType == BULLETTYPE_PLAYER)
 	{
 		CEffect::Create(Pos, 50, m_size*1.8f, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f));
@@ -153,9 +166,25 @@ void CBullet::Update(void)
 	{
 		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(0.5f, 1.0f, 1.0f, 1.0f));
 	}
+	else if (m_bulletType == BULLETTYPE_ENEMYHOMING)
+	{
+		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	}
 
 
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// ホーミングだったら
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	if (m_AttackType == ATTACKTYPE_HOMING)
+	{
+		OnHoming();
+	}
+
+
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	// 当たり判定
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
 	{
 		for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
@@ -198,14 +227,12 @@ void CBullet::Update(void)
 						// 爆発の生成
 						CExplosion::Create(PosEnemy, D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
-						// SEの追加
-						pSound->Play(CSound::SOUND_LABEL_SE_EXPLOSION);
-
-						// 敵の破棄
-						pScene->Uninit();
+						// ライフ減少
+						CEnemy *pEnemy = (CEnemy*)pScene;
+						pEnemy->HitEnemy(1);
 
 						// スコアの加算
-						CScore::AddScore(100);
+						CScore::AddScore(200);
 
 						// 弾の破棄
 						Uninit();
@@ -234,9 +261,6 @@ void CBullet::Update(void)
 						// 爆発の生成
 						CExplosion::Create(D3DXVECTOR3(Pos.x, Pos.y, 0.0f), D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
-						// SEの追加
-//						pSound->Play(CSound::SOUND_LABEL_SE_EXPLOSION);
-
 						// ライフ減少
 						CParts *pParts = (CParts*)pScene;
 						pParts->HitBossParts(1);
@@ -252,12 +276,14 @@ void CBullet::Update(void)
 				}
 
 				// プレイヤーだったら
-				if (objType == CScene::OBJTYPE_PLAYER && ( m_bulletType == BULLETTYPE_ENEMY || m_bulletType== BULLETTYPE_BOSSPARTS) && nPlayerState == CPlayer::PLAYERSTATE_NONE)
+				if (objType == CScene::OBJTYPE_PLAYER && ( m_bulletType == BULLETTYPE_ENEMY || m_bulletType== BULLETTYPE_BOSSPARTS || m_bulletType == BULLETTYPE_ENEMYHOMING) && nPlayerState == CPlayer::PLAYERSTATE_NONE)
 				{
+					// プレイヤーの情報
 					D3DXVECTOR3 posPlayer = pScene->GetPos();
 					D3DXVECTOR3 sizePlayer = pScene->GetSize();
 					CLife *pLife = CGame::GetLife();
 
+					// プレイヤーの状態
 					int nPlayerState = CPlayer::GetPlayerState();
 					CPlayer *pPlayer;
 					pPlayer = CGame::GetPlayer();
@@ -322,5 +348,62 @@ void CBullet::Unload(void)
 	{
 		m_pTexture->Release();
 		m_pTexture = NULL;
+	}
+}
+
+//=============================================================================
+// 追尾処理
+//=============================================================================
+void CBullet::OnHoming(void)
+{
+	// 変数宣言
+	D3DXVECTOR3 Pos;
+	Pos = GetPosition();
+
+	float fLengthMin = 10000.0f;
+	float fAngle = 0.0f;
+
+	for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
+	{
+		// Scene呼び出し	
+		CScene*pScene;
+		pScene = CScene::GetScene(OBJTYPE_ENEMY, nCntScene);
+
+		if (pScene != NULL)
+		{
+			// プレイヤーの弾だった場合
+			if (m_bulletType == BULLETTYPE_PLAYER)
+			{
+				// 位置の取得
+				CPlayer *pPlayer = (CPlayer*)pScene;
+				D3DXVECTOR3 PlayerPos;
+				PlayerPos = pPlayer->GetPosition();
+
+				//CEnemy *pEnemy = (CEnemy*)pScene;
+				//D3DXVECTOR3 EnemyPos;
+				//EnemyPos = pEnemy->GetPosition();
+
+				// 角度計算
+				float VectorX = PlayerPos.x - Pos.x;
+				float VectorY = PlayerPos.y - Pos.y;
+				float fLengthObj = sqrtf( (VectorX * VectorX) + (VectorY * VectorY) );
+
+				// 値が指定値より低い場合
+				if (fLengthObj <= fLengthMin)
+				{
+					fLengthMin = fLengthObj;
+
+					fAngle = atan2f(VectorX, VectorY);
+
+					// ホーミング計算
+					float moveX = sinf(fAngle) * 20.0f;
+					float moveY = cosf(fAngle) * 20.0f;
+
+					// 移動値を換算
+					m_move.x = moveX;
+					m_move.y = moveY;
+				}
+			}
+		}
 	}
 }

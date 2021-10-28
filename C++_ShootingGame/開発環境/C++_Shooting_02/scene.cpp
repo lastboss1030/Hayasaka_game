@@ -8,6 +8,7 @@
 #include "main.h"
 #include "renderer.h"
 #include "scene2D.h"
+#include "manager.h"
 
 //=============================================================================
 // Ã“Iƒƒ“ƒo•Ï”
@@ -20,6 +21,7 @@ int CScene::m_nNumAll = 0;										// Å‘å”
 //=============================================================================
 CScene::CScene(CScene::PRIORITY Priority)
 {
+	// ‰Šú‰»
 	for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
 	{
 		if (m_apScene[Priority][nCntScene] == NULL)

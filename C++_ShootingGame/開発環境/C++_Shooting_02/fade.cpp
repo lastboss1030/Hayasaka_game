@@ -16,6 +16,7 @@
 //=============================================================================
 CFade::CFade(PRIORITY nPriority) : CScene2D(nPriority)
 {
+	// èâä˙âª
 	m_fade = FADE_NONE;
 	m_colorFade = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
 }
@@ -121,7 +122,7 @@ void CFade::Draw(void)
 //=============================================================================
 //	âÊñ èÛë‘ÇÃï€ë∂
 //=============================================================================
-void CFade::SetFade(CManager::MODE modeNext)
+void CFade::SetFade(FADE fade, CManager::MODE modeNext)
 {
 	m_fade = FADE_OUT;
 	m_modeNext = modeNext;

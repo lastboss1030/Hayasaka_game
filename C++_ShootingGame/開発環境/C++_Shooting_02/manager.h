@@ -55,6 +55,11 @@ public:
 	static void CManager::SetMode(MODE mode);						// モードの設定　mode:モードの種類
 	static MODE GetMode(void) { return m_mode; }					// デバイスの取得(モード)
 
+	// ポーズ
+	static void SetPause(void);										// ポーズの取得
+	static void SetPause(bool pause) { m_bPause = pause; }			// ポーズの取得
+	static bool GetPause(void) { return m_bPause; }					// ポーズの情報
+
 private:
 	// モード
 	static CTitle *m_pTitle;										// タイトル
@@ -66,6 +71,8 @@ private:
 	static CInputKeyboard *m_pInputKeyboard;						// キーボードのポインタ
 	static CSound *m_pSound;										// サウンドのポインタ
 	static CFade *m_pFade;											// フェードのポインタ
+
+	static bool m_bPause;											// ポーズ中かどうか
 };
 
 #endif

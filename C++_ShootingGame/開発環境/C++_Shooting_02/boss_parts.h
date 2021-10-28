@@ -22,8 +22,6 @@ class CEnemy;				// 敵
 
 #define PARTS_X			(382.0f*0.3f)				// パーツの幅
 #define PARTS_Y			(369.0f*0.3f)				// パーツの高さ
-#define PARTS_WIDTH		(120.0f)
-#define PARTS_HEIGHT	(120.0f)
 #define MOVECNT2		(400.0f)
 #define WAIT_Y			(600.0f)					// 待機
 
@@ -54,6 +52,7 @@ public:
 		PARTS_NORMAL = 0,	// 通常
 		PARTS_DAMAGE,		// ダメージ
 		PARTS_BREAK,		// 破損
+		PARTS_BREAKFALL,	// 落ちる
 		PARTS_MAX,
 	}PARTSSTATE;
 
@@ -92,6 +91,7 @@ private:
 	D3DXVECTOR3 m_move;											// 移動量
 	D3DXCOLOR m_Color;											// カラー
 	PARTSTYPE m_Partstype;										// パーツの種類
+	D3DXVECTOR3 m_EnemyV;											// プレイヤーに向く
 
 	PARTSSTATE m_state;											// 状態
 	int m_nLife;												// ライフ
@@ -99,19 +99,27 @@ private:
 	static CEnemy *m_pEnemy;									// 敵のポインタ
 	bool m_bShoot;												// 発射
 
-	int g_nTimeParts = 0;
-	int m_nMoveCnt;												// 移動カウント
-	float m_nMoveCnt2;											// 移動カウント2
-	int m_nCntShoot;											// 弾発射カウント
+	int m_nHitCnt;												// 当たってからのカウント
+	int m_nCntShoot;											// 弾発射カウント  (銃口4箇所)
 	int m_nBreakCnt;											// 破損カウント
 	int m_nExplosionCnt;										// 爆発カウント
+	float m_nSwingWidth;											// 振れ幅
+
+	int m_nMoveCnt;												// 移動カウント
+	float m_nMoveCnt2;											// 移動カウント2
+	float m_nMoveCnt3;											// 移動カウント3
 
 	int m_nLaserCnt;											// レーザーカウント  (次の発射までのタイミング)
 	int m_nLaserCnt2;											// レーザーカウント2 (弾の間隔)
 	int m_nLaserCnt3;											// レーザーカウント3 (撃ってる時間)
 
-	int m_nSoundCnt;											// サウンドカウント
-	int m_nSoundCnt2;											// サウンドカウント2
-	int m_nSoundCnt3;											// サウンドカウント3
+	int m_nCntShotHoming;										// ホーミング弾カウント  (発射間隔)
+	int m_nCntShotHoming2;										// ホーミング弾カウント2 (追従までの時間)
+
+	int m_nWingBreakCnt;										// 羽が壊れた時のカウント
+
+	int m_nSoundCnt;											// サウンドカウント  (警告音)
+	int m_nSoundCnt2;											// サウンドカウント2 (パーツ破損)
+	int m_nSoundCnt3;											// サウンドカウント3 (レーザー音)
 };
 #endif

@@ -22,6 +22,7 @@ LPDIRECT3DTEXTURE9 CLife::m_pTexture = NULL;
 //=============================================================================
 CLife::CLife(PRIORITY nPriority) : CScene(nPriority)
 {
+	// èâä˙âª
 	int m_nLife = 0;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
@@ -61,6 +62,7 @@ CLife *CLife::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 //=============================================================================
 HRESULT CLife::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
+	// ç¿ïW
 	m_pos = pos;
 
 	CLife *pLife = NULL;

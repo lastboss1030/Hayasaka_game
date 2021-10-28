@@ -12,7 +12,7 @@
 //=============================================================================
 CInputKeyboard::CInputKeyboard()
 {
-	// キー情報のクリア
+	// 初期化
 	for (int nData = 0; nData < MAX_KEY; nData++)
 	{
 		m_aKeyState[nData] = 0;				// 前回の入力情報

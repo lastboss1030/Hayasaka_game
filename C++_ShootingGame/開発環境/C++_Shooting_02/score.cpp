@@ -17,6 +17,7 @@ CNumber *CScore::m_apNumber[MAX_NUMBER] = {};
 //=============================================================================
 CScore::CScore(PRIORITY nPriority) :CScene(nPriority)
 {
+	// èâä˙âª
 	int nScore = 0;
 }
 

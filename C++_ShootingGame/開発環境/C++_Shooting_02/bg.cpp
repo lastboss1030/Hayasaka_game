@@ -22,6 +22,7 @@ LPDIRECT3DTEXTURE9 CBg::m_apTexture[] = {};
 //=============================================================================
 CBg::CBg(PRIORITY nPriority) : CScene(nPriority)
 {
+	// èâä˙âª
 	for (int nCnt = 0; nCnt < MAX_BG; nCnt++)
 	{
 		m_apScene2D[nCnt] = NULL;

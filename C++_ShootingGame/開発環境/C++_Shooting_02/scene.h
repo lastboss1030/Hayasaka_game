@@ -36,6 +36,7 @@ public:
 		PRIORITY_LIFE,				// ライフ
 		PRIORITY_SCORE,				// スコア
 		PRIORITY_FADE,				// フェード
+		PRIORITY_PAUSE,				// ポーズ
 		PRIORITY_MAX,
 	} PRIORITY;
 
@@ -43,11 +44,13 @@ public:
 	typedef enum
 	{
 		OBJTYPE_NONE = 0,
-		OBJTYPE_PLAYER,		// プレイヤー
-		OBJTYPE_ENEMY,		// 敵
-		OBJTYPE_BOSS,		// ボス
-		OBJTYPE_BULET,		// 弾
-		OBJTYPE_EFFECT,		// エフェクト
+		OBJTYPE_PLAYER,				// プレイヤー
+		OBJTYPE_ENEMY,				// 敵
+		OBJTYPE_BOSS,				// ボス
+		OBJTYPE_BOSSBREAK,			// ボス(破壊)
+		OBJTYPE_BULET,				// 弾
+		OBJTYPE_EFFECT,				// エフェクト
+		OBJTYPE_PAUSE,				// ポーズ
 		OBJTYPE_MAX,
 	}OBJTYPE;
 

@@ -23,13 +23,22 @@ public:
 		BULLETTYPE_PLAYER,		// プレイヤー
 		BULLETTYPE_ENEMY,		// 敵
 		BULLETTYPE_BOSSPARTS,	// ボス
+		BULLETTYPE_ENEMYHOMING,	// ホーミング
 		BULLETYPE_MAX
 	}BULLETTYPE;
+
+	// 攻撃方法の種類
+	typedef enum
+	{
+		ATTACKTYPE_NONE = 0,
+		ATTACKTYPE_NORMAL,	// ノーマル
+		ATTACKTYPE_HOMING,	// ホーミング
+	}ATTACKTYPE;
 
 	CBullet(PRIORITY nPriority = PRIORITY_BULLET);
 	~CBullet();
 
-	static CBullet *Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BULLETTYPE type, int nDamage);
+	static CBullet *Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BULLETTYPE type, ATTACKTYPE attacktype, int nDamage);
 
 	// テクスチャ
 	static HRESULT Load(void);
@@ -43,6 +52,12 @@ public:
 	BULLETTYPE GetBulletType(void) {return m_bulletType; };
 	void SetBulletType(BULLETTYPE BulletType) {m_bulletType = BulletType; };
 
+	ATTACKTYPE GetAttackType(void) { return m_AttackType; };
+	void SetAttackType(ATTACKTYPE AttackType) {m_AttackType = AttackType; }
+
+protected:
+	void OnHoming(void);					// ホーミング処理
+
 private:
 	int m_life;								// ライフ
 	D3DXVECTOR3 m_move;						// 移動量
@@ -50,7 +65,10 @@ private:
 	static LPDIRECT3DTEXTURE9 m_pTexture;	// テクスチャ
 
 	BULLETTYPE m_bulletType;				// 弾の種類
+	ATTACKTYPE m_AttackType;				// 攻撃の種類
 	int m_nDamage;							// ダメージ量
+
+	int m_nCntHoming;							// ホーミングカウント
 };
 
 #endif

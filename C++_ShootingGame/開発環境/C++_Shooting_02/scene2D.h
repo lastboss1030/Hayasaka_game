@@ -53,12 +53,14 @@ public:
 
 	void BindTexture(LPDIRECT3DTEXTURE9 pTexture);					// テクスチャ割り当て
 	bool Collision(D3DXVECTOR3 pos, D3DXVECTOR3 fsize, CScene::OBJTYPE Type, CScene **pScene);
+	D3DXVECTOR3 GetMove(void) { return m_move; }					//移動の取得
 
 private:
 	LPDIRECT3DTEXTURE9		m_pTexture = NULL;						// テクスチャへのポインタ
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff = NULL;						// 頂点バッファへのポインタ
 	D3DXVECTOR3				m_posPolygon;							// ポリゴンの位置(中心座標)
 	D3DXVECTOR3				m_size;									// 大きさ
+	D3DXVECTOR3				m_move;									// 移動
 
 	int m_nPatternAnim;												// アニメーションのパターンNo
 	float m_fsizeX, m_fsizeY;										// サイズ

@@ -9,6 +9,7 @@
 #include "renderer.h"
 #include "Input_Keyboard.h"
 #include "fade.h"
+#include "sound.h"
 
 //=============================================================================
 // 静的メンバ変数
@@ -85,6 +86,13 @@ CTitle *CTitle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 //=============================================================================
 HRESULT CTitle::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
+	// サウンドを取得
+	CSound *pSound;
+	pSound = CManager::GetSound();
+
+	// タイトルBGM
+	pSound->Play(CSound::SOUND_LABEL_BGM_TITLE);
+
 	// 動的確保(メモリの確保)
 	m_pScene2D = new CScene2D;
 
@@ -129,11 +137,21 @@ void CTitle::Update(void)
 	CFade *pFade;
 	pFade = CManager::GetFade();
 
+	// サウンドを取得
+	CSound *pSound;
+	pSound = CManager::GetSound();
+
+	// リザルトBGMオフ
+	pSound->Stop(CSound::SOUND_LABEL_BGM_RESULT);
+
 	// エンターを押したとき
 	if (pFade->GetFade() == CFade::FADE_NONE && pInputKeyboard->GetTrigger(DIK_RETURN) == true)
 	{
+		// タイトルBGM
+		pSound->Play(CSound::SOUND_LABEL_SE_ENTER);
+
 		// モードの設定
-		pFade->SetFade(CManager::MODE_GAME);
+		pFade->SetFade(CFade::FADE_OUT, CManager::MODE_GAME);
 	}
 }
 

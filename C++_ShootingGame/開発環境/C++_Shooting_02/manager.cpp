@@ -23,6 +23,7 @@
 #include "fade.h"			
 #include "number.h"			
 #include "polygon.h"	
+#include "fade.h"
 
 //=============================================================================
 // 静的メンバ変数
@@ -36,7 +37,8 @@ CTitle *CManager::m_pTitle = NULL;
 CGame *CManager::m_pGame = NULL;
 CResult *CManager::m_pResult = NULL;
 
-CManager::MODE CManager::m_mode = MODE_TITLE;	// 現在のモード
+CManager::MODE CManager::m_mode = MODE_TITLE;		// 現在のモード
+bool CManager::m_bPause = false;					// ポーズ使用変数
 
 //=============================================================================
 // コンストラクタ
@@ -58,7 +60,7 @@ CManager::~CManager()
 //=============================================================================
 HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 {
-	// レンダリングクラスの生成
+	// レンダリングクラス
 	if (m_pRenderer == NULL)
 	{
 		// 動的確保
@@ -71,7 +73,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 		}
 	}
 
-	// キーボードの生成
+	// キーボード
 	if (m_pInputKeyboard == NULL)
 	{
 		// 動的確保
@@ -83,7 +85,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 		}
 	}
 
-	// サウンドの生成
+	// サウンド
 	if (m_pSound == NULL)
 	{
 		// 動的確保
@@ -162,6 +164,14 @@ void CManager::Uninit(void)
 //=============================================================================
 void CManager::Update(void)
 {
+	if (m_mode == MODE_GAME)
+	{
+		if (m_pInputKeyboard->GetTrigger(DIK_P))
+		{
+			SetPause();
+		}
+	}
+
 	// キーボードの更新処理
 	if (m_pInputKeyboard != NULL)
 	{
@@ -268,5 +278,16 @@ void CManager::SetMode(MODE mode)
 			}
 		}
 		break;
+	}
+}
+
+//=============================================================================
+// ポーズの処理
+//=============================================================================
+void CManager::SetPause(void)
+{
+	if (m_pFade->GetFade() == CFade::FADE_NONE)
+	{
+		m_bPause = m_bPause ? false : true;
 	}
 }

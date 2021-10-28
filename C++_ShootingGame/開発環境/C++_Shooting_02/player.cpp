@@ -19,6 +19,7 @@
 #include "result.h"	
 #include "effect.h"
 #include "score.h"
+#include "enemy.h"
 
 //=============================================================================
 // 静的メンバ変数
@@ -42,7 +43,7 @@ bool g_bBumpedPlayer = false;		//無敵状態
 //=============================================================================
 CPlayer::CPlayer(PRIORITY nPriority) :CScene2D(nPriority)
 {
-	// 変数の初期化
+	// 初期化
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_fPosTexU = 0;
@@ -90,6 +91,7 @@ CPlayer *CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 //=============================================================================
 HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
+	// サイズ
 	m_size = size;
 
 	// CScene2Dの初期化処理
@@ -133,76 +135,76 @@ void CPlayer::Update(void)
 	//- - - - - - - - - - - - - - - - -
 	switch (m_state)
 	{
-		//何もない
+	//何もない
 	case PLAYERSTATE_NONE:
 
-		//初期色
+		// 初期色
 		m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-		//状態カウントを初期化
+		// 状態カウントを初期化
 		m_nStateCnt = 0;
 
-		//カウント初期化
+		// カウント初期化
 		m_nDispCnt = 0;
 
-		//表示する
+		// 表示する
 		m_bDisp = true;
 
 		break;
 
-		//出現
+	// 出現
 	case PLAYERSTATE_APPEAR:
 
-		//表示カウント加算
+		// 表示カウント加算
 		m_nDispCnt++;
 
-		//状態カウント加算
+		// 状態カウント加算
 		m_nStateCnt++;
 
-		//10の倍数になったら
+		// 10の倍数になったら
 		if ((m_nDispCnt % 3) == 0)
 		{
-			//点滅 true false切り替え
+			// 点滅 true false切り替え
 			m_bDisp = m_bDisp ? false : true;
 		}
 
-		//60の倍数になったら
+		// 60の倍数になったら
 		if (m_nStateCnt >= 120)
 		{
-			//普通状態に
+			// 普通状態に
 			m_state = PLAYERSTATE_NONE;
 		}
 
 		break;
 
-		//待機
+	// 待機
 	case PLAYERSTATE_WAIT:
 
-		//出現位置
+		// 出現位置
 		pos = D3DXVECTOR3(D3DXVECTOR3(SCREEN_CENTER_X, 700, 0.0f));
 
-		//非表示にする
+		// 非表示にする
 		m_bDisp = false;
 
-		//状態カウント加算
+		// 状態カウント加算
 		m_nStateCnt++;
 
-		//出現までの時間
+		// 出現までの時間
 		if (m_nStateCnt >= 30)
 		{
-			//出現にする
+			// 出現にする
 			m_state = PLAYERSTATE_APPEAR;
 
-			//状態カウントを初期化
+			// 状態カウントを初期化
 			m_nStateCnt = 0;
 		}
 
 		break;
-
-		//死亡
+		
+	// 死亡
 	case PLAYERSTATE_DEATH:
 
-		//状態カウント加算
+		// 状態カウント加算
 		m_nStateCnt++;
 
 		break;
@@ -301,11 +303,9 @@ void CPlayer::Update(void)
 						// 敵爆発の生成
 						CExplosion::Create(PosEnemy, D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
-						// SEの追加
-						pSound->Play(CSound::SOUND_LABEL_SE_EXPLOSION);
-
-						// 敵の破棄
-						pScene->Uninit();
+						// ライフ減少
+						CEnemy *pEnemy = (CEnemy*)pScene;
+						pEnemy->HitEnemy(1);
 
 						// ダメージ
 						HitPlayer(1);
@@ -386,6 +386,7 @@ void CPlayer::Update(void)
 		// 押した瞬間撃てるやつ
 		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
 		{
+			// カウントリセット
 			m_shootspeed = 0;
 		}
 
@@ -394,7 +395,7 @@ void CPlayer::Update(void)
 		{
 			if (m_shootspeed == 0)
 			{
-				CBullet::Create(D3DXVECTOR3(pos.x + 0.0f, pos.y - 10.0f, 1.0f), D3DXVECTOR3(0.0f, -8.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_PLAYER, 1);
+				CBullet::Create(D3DXVECTOR3(pos.x + 0.0f, pos.y - 10.0f, 1.0f), D3DXVECTOR3(0.0f, -8.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_PLAYER, CBullet::ATTACKTYPE_NORMAL, 1);
 				pSound->Play(pSound->SOUND_LABEL_SE_SHOTPLAYER);
 			}
 		}

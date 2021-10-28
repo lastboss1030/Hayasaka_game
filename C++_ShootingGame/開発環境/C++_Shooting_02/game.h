@@ -21,6 +21,7 @@ class CScore;				// スコア
 class CPolygon;				// ポリゴン
 class CLife;				// ライフ
 class CParts;				// ボスパーツ
+class CPause;				// ポーズ
 
 //=============================================================================
 // クラス
@@ -65,6 +66,7 @@ public:
 
 	static RESULTMODE GetResult(void) { return m_resultmode; }		// リザルトの取得
 	static void SetResult(RESULTMODE resultmode);					// リザルト受け取り
+	static CPause*GetPause(void) { return m_pPause; }			    // ポーズ情報の呼び出し
 
 private:
 	static CPlayer *m_pPlayer;										// プレイヤーのポインタ
@@ -75,10 +77,9 @@ private:
 	static CPolygon *m_pPolygon;									// ポリゴンのポインタ
 	static CLife *m_pLife;											// ライフのポインタ
 	static CParts *m_pParts;										// パーツ
+	static CPause*m_pPause;											// ポーズ
 
 	static RESULTMODE m_resultmode;									// リザルトモード
-
-	int nBossDeathCnt;												// ボス死亡カウント
 };
 
 #endif

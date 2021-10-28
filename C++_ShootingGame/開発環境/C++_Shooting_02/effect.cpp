@@ -49,6 +49,7 @@ void CEffect::Unload(void)
 //=============================================================================
 CEffect::CEffect(PRIORITY nPriority) : CScene2D(nPriority)
 {
+	// ‰Šú‰»
 	m_nLife = 70;
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -91,6 +92,7 @@ HRESULT CEffect::Init(D3DXVECTOR3 pos, int nLife, D3DXVECTOR3 size, D3DXCOLOR co
 	// ‘å‚«‚³‚ğİ’è
 	m_size = size;
 
+	// ƒ‰ƒCƒt‚Ìİ’è
 	m_nLife = nLife;
 
 	// CScene2D‚ğŒÄ‚Ño‚µ

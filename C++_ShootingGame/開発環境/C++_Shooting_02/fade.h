@@ -37,7 +37,7 @@ public:
 	void Update(void);
 	void Draw(void);
 
-	void SetFade(CManager::MODE modeNext);
+	void SetFade(FADE fade, CManager::MODE modeNext);
 	FADE GetFade(void);
 
 private:

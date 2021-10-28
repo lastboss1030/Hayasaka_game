@@ -101,6 +101,13 @@ HRESULT CResult::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	// 画像読み込み
 	Load();
 
+	// サウンドを取得
+	CSound *pSound;
+	pSound = CManager::GetSound();
+
+	// リザルトBGM
+	pSound->Play(CSound::SOUND_LABEL_BGM_RESULT);
+
 	if (m_pScene2D == NULL)
 	{
 		m_pScene2D = CScene2D::Create(CENTER_POS, D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f));
@@ -129,6 +136,10 @@ HRESULT CResult::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 //=============================================================================
 void CResult::Uninit(void)
 {
+	//サウンドを取得
+	CSound *pSound;
+	pSound = CManager::GetSound();
+
 	// 画像の破棄
 	Unload();
 
@@ -154,7 +165,7 @@ void CResult::Update(void)
 	if (pFade->GetFade() == CFade::FADE_NONE&& pInputKeyboard->GetTrigger(DIK_RETURN) == true)
 	{
 		// タイトルに移動
-		pFade->SetFade(CManager::MODE_TITLE);
+		pFade->SetFade(CFade::FADE_OUT, CManager::MODE_TITLE);
 	}
 }
 
