@@ -56,13 +56,13 @@ CPolygon *CPolygon::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 //=============================================================================
 HRESULT CPolygon::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
-	//変数宣言
+	// 変数宣言
 	VERTEX_2D *pVtx;
 
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-	//頂点バッファの生成
+	// 頂点バッファの生成
 	if (FAILED(pDevice->CreateVertexBuffer
 	(sizeof(VERTEX_2D) * 4,					// 確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,

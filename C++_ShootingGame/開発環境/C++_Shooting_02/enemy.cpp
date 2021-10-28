@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// “Gˆ— [enemy.cpp]
+// “G‚Ìˆ— [enemy.cpp]
 // Author : Taiki hayasaka
 //
 //=============================================================================
@@ -49,7 +49,7 @@ CEnemy::~CEnemy()
 //=============================================================================
 HRESULT CEnemy::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, D3DXVECTOR3 speed, ENEMYTYPE type, int nLife)
 {
-	//‰Šú‰»
+	// ‰Šú‰»
 	m_size = size;
 	m_move = move;
 	m_Enemytype = type;

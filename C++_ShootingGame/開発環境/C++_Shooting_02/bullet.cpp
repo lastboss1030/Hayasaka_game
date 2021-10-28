@@ -67,7 +67,7 @@ CBullet *CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BU
 		}
 	}
 
-	//UŒ‚Ží—Þî•ñ‚ÌŒÄ‚Ño‚µ
+	// UŒ‚Ží—Þî•ñ‚ÌŒÄ‚Ño‚µ
 	pBullet->SetAttackType(AttackType);
 
 	return pBullet;

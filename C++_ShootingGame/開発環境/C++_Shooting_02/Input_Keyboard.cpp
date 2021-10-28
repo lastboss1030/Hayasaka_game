@@ -73,10 +73,10 @@ void CInputKeyboard::Uninit(void)
 //=============================================================================
 void CInputKeyboard::Update(void)
 {
-	//変数宣言
+	// 変数宣言
 	BYTE aKeyState[256];		// 現在の入力
 
-	//デバイスからデータを取得
+	// デバイスからデータを取得
 	if (SUCCEEDED(m_pDevice->GetDeviceState(sizeof(aKeyState), &aKeyState[0])))
 	{
 		for (int nKey = 0; nKey < MAX_KEY; nKey++)

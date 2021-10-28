@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// エフェクト [bullet.cpp]
+// エフェクトの処理 [effect.cpp]
 // Author : Taiki Hayasaka
 //
 //=============================================================================
@@ -21,11 +21,11 @@ LPDIRECT3DTEXTURE9 CEffect::m_pTexture = NULL;			// テクスチャ
 //=============================================================================
 HRESULT CEffect::Load(void)
 {
-	//デバイスの設定
+	// デバイスの設定
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = CManager::GetRenderer()->GetDevice();
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/effect000.jpg", &m_pTexture);
 
 	return S_OK;
@@ -36,7 +36,7 @@ HRESULT CEffect::Load(void)
 //=============================================================================
 void CEffect::Unload(void)
 {
-	//テクスチャの開放
+	// テクスチャの開放
 	if (m_pTexture != NULL)
 	{
 		m_pTexture->Release();
@@ -137,7 +137,7 @@ void CEffect::Update()
 		Uninit();
 	}
 
-	//範囲外の場合
+	// 範囲外の場合
 	else if (pos.y <= 0)
 	{
 		Uninit();
@@ -161,17 +161,17 @@ void CEffect::Update()
 //=============================================================================
 void CEffect::Draw()
 {
-	//デバイスの取得
+	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = CManager::GetRenderer()->GetDevice();
 
-	//加算合成
+	// 加算合成
 	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
 	CScene2D::Draw();
 
-	//加算合成を外す
+	// 加算合成を外す
 	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }

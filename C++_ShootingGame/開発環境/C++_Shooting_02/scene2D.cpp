@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// オブジェクト処理 [scene.cpp]
+// オブジェクト処理 [scene2D.cpp]
 // Author : Taiki Hayasaka
 //
 //=============================================================================
@@ -38,7 +38,7 @@ CScene2D::~CScene2D()
 //=============================================================================
 HRESULT CScene2D::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
-	//変数宣言
+	// 変数宣言
 	VERTEX_2D *pVtx;
 
 	LPDIRECT3DDEVICE9 pDevice;
@@ -290,28 +290,29 @@ bool CScene2D::Collision(D3DXVECTOR3 pos, D3DXVECTOR3 fsize, OBJTYPE Type, CScen
 	{
 		for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
 		{
-			//sceneを取得
+			// sceneを取得
 			CScene *pScene;
 			pScene = CScene::GetScene(nCntPriority, nCntScene);
 
 			if (pScene != NULL)
 			{
-				//オブジェクトタイプを取得
+				// オブジェクトタイプを取得
 				OBJTYPE objType;
 				objType = pScene->GetObjType();
 
 				if (objType == Type)
 				{
 
-					//位置を取得
+					// 位置を取得
 					D3DXVECTOR3 Epos = pScene->GetPosition();
-					//取得した大きさを入れる変数
+
+					// 取得した大きさを入れる変数
 					D3DXVECTOR3 fSize;
 
-					//サイズを取得
+					// サイズを取得
 					fSize = pScene->GetSize();
 
-					//当たり判定処理
+					// 当たり判定処理
 					if (Epos.y + fSize.x >= pos.y - fsize.y &&  Epos.y - fSize.x <= pos.y + fsize.y&&
 						pos.x - fsize.x <= Epos.x + fSize.x && pos.x + fsize.x >= Epos.x - fSize.y)
 					{

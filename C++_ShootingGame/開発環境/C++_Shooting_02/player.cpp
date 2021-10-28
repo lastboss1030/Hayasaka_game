@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// プレイヤー処理[player.h]
+// プレイヤー処理[player.cpp]
 // Author : Taiki Hayasaka
 //
 //=============================================================================
@@ -331,6 +331,7 @@ void CPlayer::Update(void)
 
 			if (pScene != NULL)
 			{
+				// オブジェタイプ
 				CScene::OBJTYPE objType;
 				objType = pScene->GetObjType();
 
@@ -504,7 +505,7 @@ bool CPlayer::HitPlayer(int nDamage)
 	// 爆発生成
 	CExplosion::Create(pos, D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
-	//状態を待機状態に
+	// 状態を待機状態に
 	m_state = PLAYERSTATE_WAIT;
 
 	return false;

@@ -61,7 +61,7 @@ HRESULT CBg::Load(void)
 //=============================================================================
 void CBg::Unload(void)
 {
-	//テクスチャの破棄
+	// テクスチャの破棄
 	for (int nCntBg = 0; nCntBg < MAX_BG; nCntBg++)
 	{
 		if (m_apTexture[nCntBg] != NULL)

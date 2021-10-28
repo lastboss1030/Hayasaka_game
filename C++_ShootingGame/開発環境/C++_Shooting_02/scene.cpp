@@ -118,7 +118,7 @@ void CScene::Release(void)
 		int nID = m_nID;
 		int nPriority = m_nPriority;
 
-		//インスタンスの破棄
+		// インスタンスの破棄
 		delete m_apScene[nPriority][nID];
 		m_apScene[nPriority][nID] = NULL;
 		m_nNumAll--;

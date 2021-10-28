@@ -61,20 +61,20 @@ HRESULT CPause::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	// ポーズ画面の背景色を変える
 	m_apScene2D[PAUSE_NONE]->SetCol(D3DXCOLOR(0.0f, 0.1f, 0.3f, 0.2f));
 
-	//選択されているUIの保存
+	// 選択されているUIの保存
 	m_nSelectCnt = (int)PAUSE_CONTINUE;
 
-	//選択時のUIの色を設定
+	// 選択時のUIの色を設定
 	for (int nCntPauseUI = PAUSE_CONTINUE; nCntPauseUI < PAUSE_MAX; nCntPauseUI++)
 	{
 		if (m_nSelectCnt == nCntPauseUI)
 		{
-			//選択しているときの色
+			// 選択しているときの色
 			m_apScene2D[nCntPauseUI]->SetCol(D3DXCOLOR(1.0f, 0.2f, 0.2f, 1.0f));
 		}
 		else
 		{
-			//選択していないときの色
+			// 選択していないときの色
 			m_apScene2D[nCntPauseUI]->SetCol(D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f));
 
 		}
@@ -82,7 +82,7 @@ HRESULT CPause::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 
 	m_fMove = 0.0f;
 
-	//種類
+	// 種類
 	SetObjType(OBJTYPE_PAUSE);
 
 	// 値を返す
@@ -225,7 +225,7 @@ HRESULT CPause::Load(void)
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = CManager::GetRenderer()->GetDevice();
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause_bg.png", &m_apTexture[0]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause_continue.png", &m_apTexture[1]);
 	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause_retry.png", &m_apTexture[2]);

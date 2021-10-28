@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// “Gˆ— [boss_parts.cpp]
+// ƒ{ƒX‚Ìˆ— [boss_parts.cpp]
 // Author : Taiki hayasaka
 //
 //=============================================================================
@@ -76,7 +76,7 @@ CParts::~CParts()
 //=============================================================================
 HRESULT CParts::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, PARTSTYPE type, int nLife)
 {
-	//‰Šú‰»
+	// ‰Šú‰»
 	m_size = size;
 	m_move = move;
 	m_Partstype = type;
