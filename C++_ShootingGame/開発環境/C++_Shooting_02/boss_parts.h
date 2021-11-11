@@ -91,7 +91,6 @@ private:
 	D3DXVECTOR3 m_move;											// 移動量
 	D3DXCOLOR m_Color;											// カラー
 	PARTSTYPE m_Partstype;										// パーツの種類
-	D3DXVECTOR3 m_EnemyV;											// プレイヤーに向く
 
 	PARTSSTATE m_state;											// 状態
 	int m_nLife;												// ライフ
@@ -103,7 +102,7 @@ private:
 	int m_nCntShoot;											// 弾発射カウント  (銃口4箇所)
 	int m_nBreakCnt;											// 破損カウント
 	int m_nExplosionCnt;										// 爆発カウント
-	float m_nSwingWidth;											// 振れ幅
+	float m_nSwingWidth;										// 振れ幅
 
 	int m_nMoveCnt;												// 移動カウント
 	float m_nMoveCnt2;											// 移動カウント2

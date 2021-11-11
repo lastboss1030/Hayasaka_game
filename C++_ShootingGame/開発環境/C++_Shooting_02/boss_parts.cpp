@@ -124,12 +124,6 @@ void CParts::Update(void)
 	CSound *pSound;
 	pSound = CManager::GetSound();
 
-	// プレイヤーの移動量取得
-	D3DXVECTOR3 PlayerMove;
-	CPlayer *pPlayer;
-	pPlayer = CGame::GetPlayer();
-	PlayerMove = pPlayer->GetMove();
-
 	// 変数宣言
 	int EnemyCnt = m_pEnemy->GetEnemyCnt();		// 敵カウント
 
@@ -218,7 +212,7 @@ void CParts::Update(void)
 			}
 
 			// 暗くする
-			m_Color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+			m_Color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
 
 			// オブジェクトの種類設定
 			SetObjType(CScene::OBJTYPE_BOSSBREAK);
@@ -272,12 +266,12 @@ void CParts::Update(void)
 			{
 				// 4つの銃口の弾
 				// 発射カウント
-				if (m_nCntShoot >= 40)
+				if (m_nCntShoot >= 60)
 				{
 					// カウントリセット
 					m_nCntShoot = 0;
 
-					// パーツが銃口だったら
+					// パーツが4つの銃口だったら
 					if (m_Partstype == PARTSTYPE_SHOOT1 || m_Partstype == PARTSTYPE_SHOOT2 || m_Partstype == PARTSTYPE_SHOOT3 || m_Partstype == PARTSTYPE_SHOOT4)
 					{
 						// 発射音
@@ -287,18 +281,40 @@ void CParts::Update(void)
 						CBullet::Create(D3DXVECTOR3(pos.x, pos.y + 10.0f, 1.0f), D3DXVECTOR3(0.0f, 10.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_ENEMY, CBullet::ATTACKTYPE_NORMAL, 1);
 					}
 				}
-				else if (m_nCntShotHoming >= 60)
+				else if (m_nCntShotHoming >= 120)
 				{
-					// カウントリセット
-					m_nCntShotHoming = 0;
+					// プレイヤーの情報取得
+					int nPlayerState = CPlayer::GetPlayerState();
+					CPlayer *pPlayer;
+					pPlayer = CGame::GetPlayer();
 
-					if (m_Partstype == PARTSTYPE_LEFT || m_Partstype == PARTSTYPE_RIGHT)
+					if (nPlayerState == CPlayer::PLAYERSTATE_NORMAL)
 					{
-						// 発射音(ホーミング)
-						//pSound->Play(CSound::SOUND_LABEL_SE_HOMING);
 
-						// ホーミング弾の生成
-						//CBullet::Create(D3DXVECTOR3(pos.x, pos.y + 10.0f, 1.0f), D3DXVECTOR3(0.0f, -5.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_ENEMYHOMING, CBullet::ATTACKTYPE_HOMING, 1);					
+						// カウントリセット
+						m_nCntShotHoming = 0;
+
+						if (m_Partstype == PARTSTYPE_LEFT)
+						{
+							// ホーミング弾の生成
+							CBullet::Create(D3DXVECTOR3(pos.x, pos.y + 10.0f, 1.0f), D3DXVECTOR3(-2.0f, -5.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_ENEMYHOMING, CBullet::ATTACKTYPE_HOMING, 1);
+
+							m_nCntShotHoming2++;
+						}
+						else if (m_Partstype == PARTSTYPE_RIGHT)
+						{
+							// ホーミング弾の生成
+							CBullet::Create(D3DXVECTOR3(pos.x, pos.y + 10.0f, 1.0f), D3DXVECTOR3(2.0f, -5.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_ENEMYHOMING, CBullet::ATTACKTYPE_HOMING, 1);
+						}
+
+						if (m_nCntShotHoming2 >= 20)
+						{
+							// 追尾開始
+
+
+							// カウントリセット
+							m_nCntShotHoming2 = 0;
+						}
 					}
 				}
 
@@ -350,17 +366,22 @@ void CParts::Update(void)
 			//- - - - - - - - - - - - - - - - - - - - - - - -
 			// 一定時間で移動 (横移動)
 			//- - - - - - - - - - - - - - - - - - - - - - - -
-			if (m_nMoveCnt2 >= MOVECNT2)
+			
+			// 破損落下物以外
+			if (m_state != PARTS_BREAKFALL)
 			{
-				m_nMoveCnt2 = 0;
-				m_move *= -1.0;
-			}
+				if (m_nMoveCnt2 >= MOVECNT2)
+				{
+					m_nMoveCnt2 = 0;
+					m_move *= -1.0;
+				}
 
-			// 上下移動
-			if (m_nMoveCnt3 >= m_nSwingWidth)
-			{
-				m_nMoveCnt3 = 0;
-				m_move.y *= -1.0f;
+				// 上下移動
+				if (m_nMoveCnt3 >= m_nSwingWidth)
+				{
+					m_nMoveCnt3 = 0;
+					m_move.y *= -1.0f;
+				}
 			}
 		}
 	}

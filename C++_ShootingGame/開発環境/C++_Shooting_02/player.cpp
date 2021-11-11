@@ -25,7 +25,9 @@
 // 静的メンバ変数
 //=============================================================================
 LPDIRECT3DTEXTURE9 CPlayer::m_pTexture = NULL;
-CPlayer::PLAYERSTATE CPlayer::m_state = CPlayer::PLAYERSTATE_NONE;
+CPlayer::PLAYERSTATE CPlayer::m_state = CPlayer::PLAYERSTATE_NORMAL;
+
+D3DXVECTOR3 g_pos;	// 取得用
 
 //=============================================================================
 // マクロ定義
@@ -51,7 +53,7 @@ CPlayer::CPlayer(PRIORITY nPriority) :CScene2D(nPriority)
 
 	m_shootspeed = 0;
 	g_bBumpedPlayer = false;
-	m_state = PLAYERSTATE_NONE;
+	m_state = PLAYERSTATE_NORMAL;
 }
 
 //=============================================================================
@@ -101,7 +103,7 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	SetObjType(CScene::OBJTYPE_PLAYER);
 
 	// プレイヤーの状態
-	m_state = PLAYERSTATE_NONE;
+	m_state = PLAYERSTATE_NORMAL;
 
 	return S_OK;
 }
@@ -136,7 +138,7 @@ void CPlayer::Update(void)
 	switch (m_state)
 	{
 	//何もない
-	case PLAYERSTATE_NONE:
+	case PLAYERSTATE_NORMAL:
 
 		// 初期色
 		m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -172,7 +174,7 @@ void CPlayer::Update(void)
 		if (m_nStateCnt >= 120)
 		{
 			// 普通状態に
-			m_state = PLAYERSTATE_NONE;
+			m_state = PLAYERSTATE_NORMAL;
 		}
 
 		break;
@@ -215,7 +217,7 @@ void CPlayer::Update(void)
 	//- - - - - - - - - - - - - - - - - - - -
 	// 移動 (出現 & 通常時)
 	//- - - - - - - - - - - - - - - - - - - -
-	if (m_state == PLAYERSTATE_NONE || m_state == PLAYERSTATE_APPEAR)
+	if (m_state == PLAYERSTATE_NORMAL || m_state == PLAYERSTATE_APPEAR)
 	{
 		// 移動処理
 		if (pInputKeyboard->GetPress(DIK_W) == true)
@@ -280,7 +282,7 @@ void CPlayer::Update(void)
 				objType = pScene->GetObjType();
 
 				// 敵だったら
-				if (objType == CScene::OBJTYPE_ENEMY && m_state == PLAYERSTATE_NONE)
+				if (objType == CScene::OBJTYPE_ENEMY && m_state == PLAYERSTATE_NORMAL)
 				{
 					// 変数宣言
 					D3DXVECTOR3 PosEnemy;
@@ -336,7 +338,7 @@ void CPlayer::Update(void)
 				objType = pScene->GetObjType();
 
 				// ボスだったら
-				if (objType == CScene::OBJTYPE_BOSS && m_state == PLAYERSTATE_NONE)
+				if (objType == CScene::OBJTYPE_BOSS && m_state == PLAYERSTATE_NORMAL)
 				{
 					// 変数宣言
 					D3DXVECTOR3 PosParts;
@@ -373,7 +375,7 @@ void CPlayer::Update(void)
 	//- - - - - - - - - - - - - - - - -
 	// 普通状態
 	//- - - - - - - - - - - - - - - - -
-	if (m_state == PLAYERSTATE_NONE)
+	if (m_state == PLAYERSTATE_NORMAL)
 	{
 		// 弾発射
 		m_shootspeed++;
@@ -417,6 +419,9 @@ void CPlayer::Update(void)
 			pos = D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 3 / 4, 0.0f);
 		}
 	}
+
+	// 代入
+	g_pos = pos;
 
 	// 座標の設定
 	CScene2D::SetPosition(pos,m_size);
@@ -468,6 +473,14 @@ void CPlayer::Unload(void)
 D3DXVECTOR3 CPlayer::GetMove(void)
 {
 	return m_move;
+}
+
+//=============================================================================
+// プレイヤーの位置取得
+//=============================================================================
+D3DXVECTOR3 CPlayer::GetPlayerPos(void)
+{
+	return g_pos;
 }
 
 //=============================================================================

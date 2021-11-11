@@ -23,6 +23,7 @@
 // 静的メンバ変数
 //=============================================================================
 LPDIRECT3DTEXTURE9 CBullet::m_pTexture = NULL;
+float g_fSpeed = 0.0f;
 
 //=============================================================================
 // コンストラクタ
@@ -33,8 +34,7 @@ CBullet::CBullet(PRIORITY nPriority) :CScene2D(nPriority)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_bulletType = BULLETTYPE_NONE;
-	m_life = 40;
-
+	m_life = 0;
 	m_nCntHoming = 0;
 }
 
@@ -84,6 +84,19 @@ HRESULT CBullet::Init(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BULLE
 	m_bulletType = type;
 	m_nDamage = nDamage;
 
+	// 弾のライフ設定
+	if (m_bulletType != BULLETTYPE_ENEMYHOMING)
+	{
+		// 追尾以外の弾
+		m_life = 40;
+	}
+	else
+	{
+		// 追尾の弾
+		m_life = 140;
+	}
+
+
 	// CScene2Dの初期化処理
 	CScene2D::Init(pos, size);
 
@@ -114,6 +127,17 @@ void CBullet::Update(void)
 	// サウンド関係
 	CSound *pSound;
 	pSound = CManager::GetSound();
+
+
+	// 追尾カウント
+	m_nCntHoming++;
+
+	// 攻撃タイプが追尾だったら
+	if (m_AttackType == ATTACKTYPE_HOMING)
+	{
+		// 追尾処理
+		HomingBullet();
+	}
 
 	// posにmoveの値を毎秒+する
 	Pos += m_move;
@@ -154,31 +178,26 @@ void CBullet::Update(void)
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	if (m_bulletType == BULLETTYPE_PLAYER)
 	{
+		// プレイヤーの弾
 		CEffect::Create(Pos, 50, m_size*1.8f, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f));
 		CEffect::Create(Pos, 50, m_size*1.8f, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f));
 	}
 	else if (m_bulletType == BULLETTYPE_ENEMY)
 	{
+		// 敵の弾
 		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 	else if (m_bulletType == BULLETTYPE_BOSSPARTS)
 	{
+		// ボスの弾
 		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(0.5f, 1.0f, 1.0f, 1.0f));
 	}
 	else if (m_bulletType == BULLETTYPE_ENEMYHOMING)
 	{
-		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-		CEffect::Create(Pos, 20, m_size * 2, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-	}
-
-
-	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	// ホーミングだったら
-	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	if (m_AttackType == ATTACKTYPE_HOMING)
-	{
-		OnHoming();
+		// ボスの弾(追尾)
+		CEffect::Create(Pos, 40, m_size * 2, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+		CEffect::Create(Pos, 40, m_size * 2, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 
@@ -276,7 +295,7 @@ void CBullet::Update(void)
 				}
 
 				// プレイヤーだったら
-				if (objType == CScene::OBJTYPE_PLAYER && ( m_bulletType == BULLETTYPE_ENEMY || m_bulletType== BULLETTYPE_BOSSPARTS || m_bulletType == BULLETTYPE_ENEMYHOMING) && nPlayerState == CPlayer::PLAYERSTATE_NONE)
+				if (objType == CScene::OBJTYPE_PLAYER && ( m_bulletType == BULLETTYPE_ENEMY || m_bulletType== BULLETTYPE_BOSSPARTS || m_bulletType == BULLETTYPE_ENEMYHOMING) && nPlayerState == CPlayer::PLAYERSTATE_NORMAL)
 				{
 					// プレイヤーの情報
 					D3DXVECTOR3 posPlayer = pScene->GetPos();
@@ -354,54 +373,55 @@ void CBullet::Unload(void)
 //=============================================================================
 // 追尾処理
 //=============================================================================
-void CBullet::OnHoming(void)
+void CBullet::HomingBullet(void)
 {
+	// 座標
+	D3DXVECTOR3 pos;
+	pos = GetPosition();
+
 	// 変数宣言
-	D3DXVECTOR3 Pos;
-	Pos = GetPosition();
-
-	float fLengthMin = 10000.0f;
 	float fAngle = 0.0f;
+	float fAngleDest;
 
-	for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
+	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
 	{
-		// Scene呼び出し	
-		CScene*pScene;
-		pScene = CScene::GetScene(OBJTYPE_ENEMY, nCntScene);
-
-		if (pScene != NULL)
+		for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
 		{
-			// プレイヤーの弾だった場合
-			if (m_bulletType == BULLETTYPE_PLAYER)
+			// シーン
+			CScene *pScene;
+			pScene = CScene::GetScene(nCntPriority, nCntScene);
+
+			if (pScene != NULL)
 			{
-				// 位置の取得
-				CPlayer *pPlayer = (CPlayer*)pScene;
-				D3DXVECTOR3 PlayerPos;
-				PlayerPos = pPlayer->GetPosition();
+				// オブジェタイプ取得
+				CScene::OBJTYPE objType;
+				objType = pScene->GetObjType();
 
-				//CEnemy *pEnemy = (CEnemy*)pScene;
-				//D3DXVECTOR3 EnemyPos;
-				//EnemyPos = pEnemy->GetPosition();
+				// プレイヤーの情報取得
+				int nPlayerState = CPlayer::GetPlayerState();
+				CPlayer *pPlayer;
+				pPlayer = CGame::GetPlayer();
 
-				// 角度計算
-				float VectorX = PlayerPos.x - Pos.x;
-				float VectorY = PlayerPos.y - Pos.y;
-				float fLengthObj = sqrtf( (VectorX * VectorX) + (VectorY * VectorY) );
-
-				// 値が指定値より低い場合
-				if (fLengthObj <= fLengthMin)
+				// タイプがプレイヤーでノーマル状態だったら
+				if (objType == CScene::OBJTYPE_PLAYER && nPlayerState == CPlayer::PLAYERSTATE_NORMAL)
 				{
-					fLengthMin = fLengthObj;
+					// プレイヤーの情報
+					D3DXVECTOR3 posPlayer = pScene->GetPos();
 
-					fAngle = atan2f(VectorX, VectorY);
+					// 角度計算
+					float VecX = (posPlayer.x - pos.x);
+					float VecY = (posPlayer.y - pos.y);
 
-					// ホーミング計算
-					float moveX = sinf(fAngle) * 20.0f;
-					float moveY = cosf(fAngle) * 20.0f;
+				//	fAngleDest = atan2f(VecX, VecY);
+				//	fAngle = (fAngleDest - fAngle) * 0.5f;
 
-					// 移動値を換算
-					m_move.x = moveX;
-					m_move.y = moveY;
+					fAngle = atan2f(VecX, VecY);
+
+				//  fAngleDest = (目的の位置 - 現在の角度) * 目的地への速度
+
+					// 追尾計算
+					m_move.x = sinf(fAngle) * 6.0f;
+					m_move.y = cosf(fAngle) * 6.0f;
 				}
 			}
 		}

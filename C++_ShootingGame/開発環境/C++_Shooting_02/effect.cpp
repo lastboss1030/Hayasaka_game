@@ -125,13 +125,13 @@ void CEffect::Update()
 	// 更新
 	CScene2D::Update();
 
-	// 弾のライフを減らす
+	// ライフを減らす
 	m_nLife--;
 
 	// エフェクトをだんだん透明にする
 	SetEffect(m_col, (float)m_nLife);
 
-	// 弾のライフが0以下になったとき
+	// ライフが0以下になったとき
 	if (m_nLife <= 0)
 	{
 		Uninit();

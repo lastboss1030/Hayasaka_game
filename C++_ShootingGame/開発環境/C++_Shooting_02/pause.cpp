@@ -37,10 +37,10 @@ CPause::~CPause()
 //=============================================================================
 HRESULT CPause::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
-	D3DXVECTOR3 Pos[PAUSE_MAX] = { D3DXVECTOR3(pos.x,pos.y,pos.z),
-								   D3DXVECTOR3(pos.x + 400.0f,pos.y + 140.0f,pos.z) ,
-								   D3DXVECTOR3(pos.x + 400.0f,pos.y + 220.0f,pos.z) ,
-								   D3DXVECTOR3(pos.x + 400.0f,pos.y + 290.0f,pos.z) };
+	D3DXVECTOR3 Pos[PAUSE_MAX] =  { D3DXVECTOR3(pos.x,pos.y,pos.z),
+								    D3DXVECTOR3(pos.x + 400.0f,pos.y + 140.0f,pos.z) ,
+								    D3DXVECTOR3(pos.x + 400.0f,pos.y + 220.0f,pos.z) ,
+								    D3DXVECTOR3(pos.x + 400.0f,pos.y + 290.0f,pos.z) };
 
 	D3DXVECTOR3 Size[PAUSE_MAX] = { D3DXVECTOR3(size.x,size.y,size.z),
 									D3DXVECTOR3(300.0f,300.0f,0.0f) ,

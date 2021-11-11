@@ -38,6 +38,7 @@ public:
 	CBullet(PRIORITY nPriority = PRIORITY_BULLET);
 	~CBullet();
 
+	// 生成
 	static CBullet *Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BULLETTYPE type, ATTACKTYPE attacktype, int nDamage);
 
 	// テクスチャ
@@ -49,14 +50,16 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	// 弾のタイプ
 	BULLETTYPE GetBulletType(void) {return m_bulletType; };
 	void SetBulletType(BULLETTYPE BulletType) {m_bulletType = BulletType; };
 
+	// 攻撃タイプ
 	ATTACKTYPE GetAttackType(void) { return m_AttackType; };
 	void SetAttackType(ATTACKTYPE AttackType) {m_AttackType = AttackType; }
 
 protected:
-	void OnHoming(void);					// ホーミング処理
+	void HomingBullet(void);				// ホーミング処理
 
 private:
 	int m_life;								// ライフ
@@ -68,7 +71,7 @@ private:
 	ATTACKTYPE m_AttackType;				// 攻撃の種類
 	int m_nDamage;							// ダメージ量
 
-	int m_nCntHoming;							// ホーミングカウント
+	int m_nCntHoming;						// ホーミングカウント
 };
 
 #endif

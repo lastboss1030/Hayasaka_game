@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animation.cpp" />
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="boss_parts.cpp" />
     <ClCompile Include="bullet.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="Input_Keyboard.cpp" />
     <ClCompile Include="life.cpp" />
+    <ClCompile Include="logo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manager.cpp" />
     <ClCompile Include="number.cpp" />
@@ -179,6 +181,7 @@
     <ClCompile Include="title.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation.h" />
     <ClInclude Include="bg.h" />
     <ClInclude Include="boss_parts.h" />
     <ClInclude Include="bullet.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="Input_Keyboard.h" />
     <ClInclude Include="life.h" />
+    <ClInclude Include="logo.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="manager.h" />
     <ClInclude Include="number.h" />

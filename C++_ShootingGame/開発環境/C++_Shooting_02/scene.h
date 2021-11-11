@@ -35,8 +35,12 @@ public:
 		PRIORITY_BGFRONT,			// 手前側の背景	
 		PRIORITY_LIFE,				// ライフ
 		PRIORITY_SCORE,				// スコア
-		PRIORITY_FADE,				// フェード
 		PRIORITY_PAUSE,				// ポーズ
+
+		PRIORITY_LOGO,				// ロゴ
+		PRIORITY_ANIMATION,			// アニメーション
+
+		PRIORITY_FADE,				// フェード
 		PRIORITY_MAX,
 	} PRIORITY;
 
@@ -53,6 +57,25 @@ public:
 		OBJTYPE_PAUSE,				// ポーズ
 		OBJTYPE_MAX,
 	}OBJTYPE;
+
+	typedef enum
+	{
+		FRAME = 0,
+
+		TITLE_UI,
+		TITLE_UI_PRESS_ENTER,
+		TITLE_UI_GAMESTART,
+		TITLE_UI_TUTORIAL,
+		TITLE_UI_END,
+
+		GAMECLEAR01,
+
+		PAUSE_CONTINUE,
+		PAUSE_RESTART,
+		PAUSE_TITLE,
+
+		PAUSE01,
+	}UI;
 
 	CScene(PRIORITY nPriority = PRIORITY_DEFAULT);
 	virtual ~CScene();

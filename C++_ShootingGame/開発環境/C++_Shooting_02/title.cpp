@@ -10,6 +10,7 @@
 #include "Input_Keyboard.h"
 #include "fade.h"
 #include "sound.h"
+#include "animation.h"
 
 //=============================================================================
 // Ã“Iƒƒ“ƒo•Ï”

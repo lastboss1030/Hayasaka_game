@@ -167,10 +167,10 @@ void CScene2D::SetPosition(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	pVtx[0].pos = D3DXVECTOR3(m_posPolygon.x - size.x / 2.0f, m_posPolygon.y + size.y / 2.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(m_posPolygon.x - size.x / 2.0f, m_posPolygon.y - size.y / 2.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(m_posPolygon.x + size.x / 2.0f, m_posPolygon.y + size.y / 2.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(m_posPolygon.x + size.x / 2.0f, m_posPolygon.y - size.y / 2.0f, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, 0.0f);
 
 	// 頂点バッファをアンロックする
 	m_pVtxBuff->Unlock();
@@ -325,4 +325,41 @@ bool CScene2D::Collision(D3DXVECTOR3 pos, D3DXVECTOR3 fsize, OBJTYPE Type, CScen
 		}
 	}
 	return bCol;
+}
+
+//=============================================================================
+// アニメーション
+//=============================================================================
+void CScene2D::SetAnimation(float fPageX, float fPageY, int nX, int nY, int nAnime)
+{
+	VERTEX_2D *pVtx;
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//Xの計算
+	if ((nX - 1) == nAnime)
+	{
+		m_nCountX += nX;
+
+	}
+
+	m_nAnimeX = nAnime - m_nCountX;
+
+	//Yの計算
+	if (nAnime % nX == 0)
+	{
+		m_nCountY++;
+	}
+
+	m_nAnimeY = m_nCountY;
+
+	//テクスチャ座標
+	pVtx[0].tex = D3DXVECTOR2(0.0f + (fPageX * m_nAnimeX), fPageY + (fPageY * m_nAnimeY));
+	pVtx[1].tex = D3DXVECTOR2(0.0f + (fPageX * m_nAnimeX), 0.0f + (fPageY * m_nAnimeY));
+	pVtx[2].tex = D3DXVECTOR2(fPageX + (fPageX * m_nAnimeX), fPageY + (fPageY * m_nAnimeY));
+	pVtx[3].tex = D3DXVECTOR2(fPageX + (fPageX * m_nAnimeX), 0.0f + (fPageY * m_nAnimeY));
+
+	// 頂点バッファをアンロックする
+	m_pVtxBuff->Unlock();
 }
