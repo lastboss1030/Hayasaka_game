@@ -412,8 +412,8 @@ void CBullet::HomingBullet(void)
 					float VecX = (posPlayer.x - pos.x);
 					float VecY = (posPlayer.y - pos.y);
 
-				//	fAngleDest = atan2f(VecX, VecY);
-				//	fAngle = (fAngleDest - fAngle) * 0.5f;
+					//fAngleDest = atan2f(VecX, VecY);
+					//fAngle = (fAngleDest - fAngle) * 0.6f;
 
 					fAngle = atan2f(VecX, VecY);
 

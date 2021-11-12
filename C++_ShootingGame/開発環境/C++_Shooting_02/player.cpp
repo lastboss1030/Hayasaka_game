@@ -265,6 +265,17 @@ void CPlayer::Update(void)
 	}
 
 
+	// 画面左右反対から出てくる
+	if (pos.x + m_size.x / 2 > SCREEN_WIDTH)
+	{
+		pos.x = m_size.x / 2;
+	}
+	else if (pos.x - m_size.x / 2 < 0)
+	{
+		pos.x = SCREEN_WIDTH - m_size.x / 2;
+	}
+
+
 	//- - - - - - - - - - - - - - - - - - - -
 	// プレイヤーと敵の当たり判定
 	//- - - - - - - - - - - - - - - - - - - -
@@ -353,10 +364,10 @@ void CPlayer::Update(void)
 					pParts = (CParts*)pScene;
 
 					// プレイヤーと敵の当たり判定
-					if (pos.x - (m_size.x / 2) < PosParts.x + (PartsSize.x / 2) &&
-						pos.x + (m_size.x / 2) > PosParts.x - (PartsSize.x / 2) &&
-						pos.y - (m_size.y / 2) < PosParts.y + (PartsSize.y / 2) &&
-						pos.y + (m_size.y / 2) > PosParts.y - (PartsSize.y / 2))
+					if (pos.x - (m_size.x / 4) < PosParts.x + (PartsSize.x / 4) &&
+						pos.x + (m_size.x / 4) > PosParts.x - (PartsSize.x / 4) &&
+						pos.y - (m_size.y / 4) < PosParts.y + (PartsSize.y / 4) &&
+						pos.y + (m_size.y / 4) > PosParts.y - (PartsSize.y / 4))
 					{
 						// SEの追加
 						pSound->Play(CSound::SOUND_LABEL_SE_EXPLOSION);

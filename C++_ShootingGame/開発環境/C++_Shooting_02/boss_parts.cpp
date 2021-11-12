@@ -281,7 +281,7 @@ void CParts::Update(void)
 						CBullet::Create(D3DXVECTOR3(pos.x, pos.y + 10.0f, 1.0f), D3DXVECTOR3(0.0f, 10.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_ENEMY, CBullet::ATTACKTYPE_NORMAL, 1);
 					}
 				}
-				else if (m_nCntShotHoming >= 120)
+				else if (m_nCntShotHoming >= 400)
 				{
 					// プレイヤーの情報取得
 					int nPlayerState = CPlayer::GetPlayerState();
@@ -290,7 +290,6 @@ void CParts::Update(void)
 
 					if (nPlayerState == CPlayer::PLAYERSTATE_NORMAL)
 					{
-
 						// カウントリセット
 						m_nCntShotHoming = 0;
 
