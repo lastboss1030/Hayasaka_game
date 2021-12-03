@@ -24,6 +24,10 @@
 #include "number.h"			
 #include "polygon.h"	
 #include "fade.h"
+#include "tutorial.h"
+#include "logo.h"
+#include "animation.h"
+#include "pause.h"
 
 //=============================================================================
 // 静的メンバ変数
@@ -32,8 +36,10 @@ CRenderer *CManager::m_pRenderer = NULL;
 CInputKeyboard *CManager::m_pInputKeyboard = NULL;
 CSound *CManager::m_pSound = NULL;
 CFade *CManager::m_pFade = NULL;
+CPause *CManager::m_pPause = NULL;
 
 CTitle *CManager::m_pTitle = NULL;
+CTutorial *CManager::m_pTutorial = NULL;
 CGame *CManager::m_pGame = NULL;
 CResult *CManager::m_pResult = NULL;
 
@@ -96,10 +102,15 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 			m_pSound->Init(hWnd);
 		}
 	}
+	//ロゴのテクスチャの読み込み
+	CLogo::Load();
+
+	// アニメーション画像ロード
+	CAnimation::Load();
 
 	// フェードの生成
 	m_pFade = CFade::Create(D3DXVECTOR3(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0.0f),
-							D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f), MODE_TITLE);
+							D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f), m_mode);
 
 	// サウンド関係
 	CSound *pSound;
@@ -113,23 +124,26 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 //=============================================================================
 void CManager::Uninit(void)
 {
-	// ナンバーの終了処理
+	// ナンバーの破棄
 	CNumber::Unload();
 
-	// 敵の終了処理
+	// 敵の破棄
 	CEnemy::Unload();
 
-	// 背景の終了処理
+	// 背景の破棄
 	CBg::Unload();
 
-	// プレイヤーの終了処理
+	// プレイヤーの破棄
 	CPlayer::Unload();
 
-	// 爆発の終了処理
+	// 爆発の破棄
 	CExplosion::Unload();
 
-	// 弾の終了処理
+	// 弾の破棄
 	CBullet::Unload();
+
+	// アニメーションの破棄
+	CAnimation::Unload();
 
 	//レンダラーの破棄
 	if (m_pRenderer != NULL)
@@ -164,14 +178,6 @@ void CManager::Uninit(void)
 //=============================================================================
 void CManager::Update(void)
 {
-	if (m_mode == MODE_GAME)
-	{
-		if (m_pInputKeyboard->GetTrigger(DIK_P))
-		{
-			SetPause();
-		}
-	}
-
 	// キーボードの更新処理
 	if (m_pInputKeyboard != NULL)
 	{
@@ -182,6 +188,28 @@ void CManager::Update(void)
 	if (m_pRenderer != NULL)
 	{
 		m_pRenderer->Update();
+	}
+
+	//ゲーム画面時のみにポーズを描画＆更新できる
+	if (CManager::m_mode == MODE_GAME)
+	{
+		//ポーズの切り替えオン
+		if (m_bPause == false)
+		{
+			if (m_pInputKeyboard->GetTrigger(DIK_P) == true)
+			{
+				m_bPause = true;
+			}
+		}
+
+		//ポーズの切り替えオフ
+		else if (m_bPause == true)
+		{
+			if (m_pInputKeyboard->GetTrigger(DIK_P) == true)
+			{
+				m_bPause = false;
+			}
+		}
 	}
 }
 
@@ -202,6 +230,8 @@ void CManager::Draw(void)
 //=============================================================================
 void CManager::SetMode(MODE mode)
 {
+	m_bPause = false;
+
 	// 現在のモードの破棄
 	switch (m_mode)
 	{
@@ -210,6 +240,14 @@ void CManager::SetMode(MODE mode)
 		{
 			m_pTitle->Uninit();
 			m_pTitle = NULL;
+		}
+		break;
+
+	case MODE_TUTORIAL:	// チュートリアル画面
+		if (m_pTutorial != NULL)
+		{
+			m_pTutorial->Uninit();
+			m_pTutorial = NULL;
 		}
 		break;
 
@@ -247,6 +285,19 @@ void CManager::SetMode(MODE mode)
 			{
 				// 初期化処理
 				m_pTitle->Init({ SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2,0.0f }, { SCREEN_WIDTH,SCREEN_HEIGHT,0.0f });
+			}
+		}
+		break;
+
+	case MODE_TUTORIAL:
+		if (m_pTutorial == NULL)
+		{
+			// 動的確保
+			m_pTutorial = new CTutorial;
+			if (m_pTutorial != NULL)
+			{
+				// 初期化処理
+				m_pTutorial->Init({ SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2,0.0f }, { SCREEN_WIDTH,SCREEN_HEIGHT,0.0f });
 			}
 		}
 		break;

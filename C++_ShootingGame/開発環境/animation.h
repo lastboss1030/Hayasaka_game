@@ -47,9 +47,9 @@ protected:
 
 	int m_nType;											// タイプ　テクスチャ識別
 	int m_nTypeBuulet;										// 特殊移動時に使用
-	int m_nCounterAnime;									// アニメーションカウンター
+	int m_nCounterAnime;									// アニメーションカウンター 
 	int m_nPatternAnime;									// アニメーションパターン
-	int m_fCriss;											// ループ判定
+	int m_floop;											// ループ判定
 
 	float m_fAnimeX;										// 画像分割X
 	float m_fAnimeY;										// 画像分割Y

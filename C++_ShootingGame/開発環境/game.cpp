@@ -24,6 +24,7 @@
 #include "effect.h"
 #include "boss_parts.h"
 #include "pause.h"
+#include "particle.h"
 
 //=============================================================================
 // 静的メンバ変数
@@ -99,9 +100,6 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	// ライフの生成
 	m_pLife = CLife::Create(D3DXVECTOR3(130.0f, 40.0f, 0.0f), D3DXVECTOR3(LIFE_WIDTH, LIFE_HEIGHT, 0));
 
-	//ポーズの作成
-//	m_pPause = CPause::Create(D3DXVECTOR3(640, 360, 0), D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0));
-
 	// 敵生成
 	CGame::EnemyAll();
 
@@ -147,8 +145,8 @@ void CGame::Update(void)
 	// 敵 & ボスのカウント
 	int EnemyCnt = m_pEnemy->GetEnemyCnt();
 
-	// タイトルBGMオフ
-	pSound->Stop(CSound::SOUND_LABEL_BGM_TITLE);
+	// チュートリアルBGMオフ
+	pSound->Stop(CSound::SOUND_LABEL_BGM_TUTORIAL);
 
 	// ライフが0になったら
 	if (m_pLife->GetLife() == 0 && pFade->GetFade() == CFade::FADE_NONE)
@@ -198,7 +196,7 @@ void CGame::LoadAll(void)
 	CLife::Load();
 	CEffect::Load();
 	CParts::Load();
-	CPause::Load();
+	CParticle::Load();
 }
 
 //=============================================================================
@@ -216,7 +214,7 @@ void CGame::UnloadAll(void)
 	CLife::Unload();
 	CEffect::Unload();
 	CParts::Unload();
-	CPause::Unload();
+	CParticle::Unload();
 }
 
 //=============================================================================

@@ -34,10 +34,12 @@ public:
 
 		// SE (システム)
 		SOUND_LABEL_SE_ENTER,			// エンター時
+		SOUND_LABEL_SE_PAUSE,			// ポーズ音
 
 		// BGM
 		SOUND_LABEL_BGM_NORMAL,			// 通常BGM
 		SOUND_LABEL_BGM_TITLE,			// タイトルBGM
+		SOUND_LABEL_BGM_TUTORIAL,		// チュートリアルBGM
 		SOUND_LABEL_BGM_RESULT,			// リザルトBGM
 
 		SOUND_LABEL_MAX,

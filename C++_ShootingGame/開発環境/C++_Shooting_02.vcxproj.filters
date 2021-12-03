@@ -129,6 +129,12 @@
     <ClCompile Include="logo.cpp">
       <Filter>ソース ファイル\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="tutorial.cpp">
+      <Filter>ソース ファイル\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="particle.cpp">
+      <Filter>ソース ファイル\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h">
@@ -173,9 +179,6 @@
     <ClInclude Include="number.h">
       <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
-    <ClInclude Include="pause.h">
-      <Filter>ヘッダー ファイル\UI</Filter>
-    </ClInclude>
     <ClInclude Include="player.h">
       <Filter>ヘッダー ファイル\GameParts</Filter>
     </ClInclude>
@@ -207,6 +210,15 @@
       <Filter>ヘッダー ファイル\Animation</Filter>
     </ClInclude>
     <ClInclude Include="logo.h">
+      <Filter>ヘッダー ファイル\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial.h">
+      <Filter>ヘッダー ファイル\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Animation</Filter>
     </ClInclude>
   </ItemGroup>

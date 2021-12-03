@@ -145,6 +145,7 @@ void CBg::Update(void)
 	CInputKeyboard *plnputKeyboard;
 	plnputKeyboard = CManager::GetInputKeyboard();
 
+
 	for (int nCnt = 0; nCnt < MAX_BG; nCnt++)
 	{
 		if (plnputKeyboard->GetPress(DIK_D) == true)

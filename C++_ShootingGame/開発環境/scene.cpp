@@ -9,12 +9,15 @@
 #include "renderer.h"
 #include "scene2D.h"
 #include "manager.h"
+#include "Input_Keyboard.h"
+#include "sound.h"
 
 //=============================================================================
 // 静的メンバ変数
 //=============================================================================
 CScene *CScene::m_apScene[PRIORITY_MAX][MAX_POLYGON] = {};		// 画面に表示するオブジェクト数
 int CScene::m_nNumAll = 0;										// 最大数
+bool CScene::m_bPause = false;
 
 //=============================================================================
 // コンストラクタ
@@ -37,6 +40,8 @@ CScene::CScene(CScene::PRIORITY Priority)
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_nLife = 100;
+
+	m_bPause = false;
 }
 
 //=============================================================================
@@ -76,16 +81,44 @@ void CScene::ReleaseAll()
 //=============================================================================
 void CScene::UpdateAll()
 {
-	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
+	// キーボード情報の取得
+	CInputKeyboard *pInputKeyboard;
+	pInputKeyboard = CManager::GetInputKeyboard();
+
+	// サウンド関係
+	CSound *pSound;
+	pSound = CManager::GetSound();
+
+	// ポーズオフの時
+	if (m_bPause == false)
 	{
-		for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
+		for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
 		{
-			if (m_apScene[nCntPriority][nCntScene] != NULL)
+			for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
 			{
-				 // 更新処理
-				m_apScene[nCntPriority][nCntScene]->Update();
+				if (m_apScene[nCntPriority][nCntScene] != NULL)
+				{
+					// 更新処理
+					m_apScene[nCntPriority][nCntScene]->Update();
+				}
 			}
 		}
+	}
+
+	// ポーズ(仮)
+	if (pInputKeyboard->GetTrigger(DIK_P) == true)
+	{
+		if (m_bPause == false)
+		{
+			m_bPause = true;	// 止まるほう
+		}
+		else if (m_bPause == true)
+		{
+			m_bPause = false;	// 動くほう
+		}
+
+		// SEの追加
+		pSound->Play(CSound::SOUND_LABEL_SE_PAUSE);
 	}
 }
 
@@ -100,7 +133,7 @@ void CScene::DrawAll()
 		{
 			if (m_apScene[nCntPriority][nCntScene] != NULL)
 			{
-				 // 描画処理
+				// 描画処理
 				m_apScene[nCntPriority][nCntScene]->Draw();
 			}
 		}

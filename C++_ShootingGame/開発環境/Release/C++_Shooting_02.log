@@ -1,8 +1,19 @@
-﻿  game.cpp
+﻿  boss_parts.cpp
+  bullet.cpp
+  enemy.cpp
+  game.cpp
+  manager.cpp
+  particle.cpp
+  player.cpp
+  result.cpp
+  scene.cpp
+  sound.cpp
+  title.cpp
+  tutorial.cpp
   コード生成しています。
-  8 of 300 functions ( 2.7%) were compiled, the rest were copied from previous compilation.
+  28 of 331 functions ( 8.5%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    25 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
-  C++_Shooting_02.vcxproj -> C:\Users\student\Desktop\C++\Shooting\10_早坂大輝\開発環境\C++_Shooting_02\Release\C++_Shooting_02.exe
-  C++_Shooting_02.vcxproj -> C:\Users\student\Desktop\C++\Shooting\10_早坂大輝\開発環境\C++_Shooting_02\Release\C++_Shooting_02.pdb (Full PDB)
+  C++_Shooting_02.vcxproj -> C:\Users\student\Desktop\C++\Shooting\10_早坂大輝\開発環境\Release\C++_Shooting_02.exe
+  C++_Shooting_02.vcxproj -> C:\Users\student\Desktop\C++\Shooting\10_早坂大輝\開発環境\Release\C++_Shooting_02.pdb (Full PDB)

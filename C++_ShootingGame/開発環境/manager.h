@@ -19,8 +19,10 @@ class CInputKeyboard;		// キーボードクラス
 class CSound;				// サウンドクラス
 class CGame;				// ゲームシーン
 class CTitle;				// タイトルシーン
+class CTutorial;			// チュートリアル
 class CResult;				// リザルトシーン
 class CFade;				// フェード
+class CPause;				// ポーズ
 
 //=============================================================================
 // クラス
@@ -32,6 +34,7 @@ public:
 	typedef enum
 	{
 		MODE_TITLE = 0,
+		MODE_TUTORIAL,
 		MODE_GAME,
 		MODE_RESULT,
 		MODE_MAX,
@@ -64,6 +67,7 @@ public:
 private:
 	// モード
 	static CTitle *m_pTitle;										// タイトル
+	static CTutorial *m_pTutorial;									// チュートリアル
 	static CGame *m_pGame;											// ゲーム
 	static CResult *m_pResult;										// リザルト
 	static MODE m_mode;												// モード
@@ -72,6 +76,7 @@ private:
 	static CInputKeyboard *m_pInputKeyboard;						// キーボードのポインタ
 	static CSound *m_pSound;										// サウンドのポインタ
 	static CFade *m_pFade;											// フェードのポインタ
+	static CPause *m_pPause;										// ポーズのポインタ
 
 	static bool m_bPause;											// ポーズ中かどうか
 };

@@ -28,10 +28,11 @@ public:
 		PRIORITY_BGBEHING, 			// 後ろ側の背景
 		PRIORITY_BULLET,			// 弾
 		PRIORITY_ENEMY,				// 敵
-		PRIORITY_BOSS,				// ボス
 		PRIORITY_EFFECT,			// エフェクト
+		PRIORITY_BOSS,				// ボス
 		PRIORITY_PLAYER,			// プレイヤー
 		PRIORITY_EXPLOSION,			// 爆破
+		PRIORITY_PARTICLE,			// パーティクル
 		PRIORITY_BGFRONT,			// 手前側の背景	
 		PRIORITY_LIFE,				// ライフ
 		PRIORITY_SCORE,				// スコア
@@ -54,6 +55,7 @@ public:
 		OBJTYPE_BOSSBREAK,			// ボス(破壊)
 		OBJTYPE_BULET,				// 弾
 		OBJTYPE_EFFECT,				// エフェクト
+		OBJTYPE_PARTICLE,			// パーティクル
 		OBJTYPE_PAUSE,				// ポーズ
 		OBJTYPE_MAX,
 	}OBJTYPE;
@@ -62,7 +64,7 @@ public:
 	{
 		FRAME = 0,
 
-		TITLE_UI,
+		TITLE_UI_LOGO,
 		TITLE_UI_PRESS_ENTER,
 		TITLE_UI_GAMESTART,
 		TITLE_UI_TUTORIAL,
@@ -72,7 +74,7 @@ public:
 
 		PAUSE_CONTINUE,
 		PAUSE_RESTART,
-		PAUSE_TITLE,
+		PAUSE_QUIT,
 
 		PAUSE01,
 	}UI;
@@ -121,5 +123,7 @@ private:
 	D3DXVECTOR3 m_pos;		// 位置
 	D3DXVECTOR3 m_size;		// サイズ
 	OBJTYPE m_objType;		// オブジェクトの種類
+
+	static bool m_bPause;			// ポーズ仮
 };
 #endif

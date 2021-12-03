@@ -50,6 +50,8 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	void HitParticle(void);	// 当たった時のパーティクル
+
 	// 弾のタイプ
 	BULLETTYPE GetBulletType(void) {return m_bulletType; };
 	void SetBulletType(BULLETTYPE BulletType) {m_bulletType = BulletType; };

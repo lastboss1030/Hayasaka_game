@@ -6,7 +6,6 @@
 //=============================================================================
 #include "animation.h"
 #include "manager.h"
-#include "player.h"
 #include "renderer.h"
 
 //=============================================================================
@@ -52,173 +51,20 @@ HRESULT CAnimation::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size, int nAnime, int nTyp
 
 	if (nType == 0)
 	{
-		m_fAnimeX = 1.0f;			// テクスチャ分割
-		m_fAnimeY = 0.05f;			// テクスチャ分割
-		m_nX = 1;
-		m_nY = 20;
-		m_fCriss = 0;				// ループなし
+		m_fAnimeX = 0.2f;
+		m_fAnimeY = 0.5f;
+		m_nX = 5;
+		m_nY = 2;
+		m_floop = 1;
 	}
 
 	if (nType == 1)
 	{
-		m_fAnimeX = 0.333f;			// テクスチャ分割
-		m_fAnimeY = 0.333f;			// テクスチャ分割
-		m_nX = 3;
-		m_nY = 3;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 2)
-	{
-		m_fAnimeX = 1.0f;			// テクスチャ分割
-		m_fAnimeY = 0.1f;			// テクスチャ分割
+		m_fAnimeX = 1.0f;
+		m_fAnimeY = 0.090909f;
 		m_nX = 1;
-		m_nY = 10;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 3)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.166f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 6;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 4)
-	{
-		m_fAnimeX = 0.5f;			// テクスチャ分割
-		m_fAnimeY = 0.2f;			// テクスチャ分割
-		m_nX = 2;
-		m_nY = 5;
-		m_fCriss = 1;				// ループあり
-
-		// 色変更
-		CScene2D::SetCol(D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f));
-	}
-
-	if (nType == 5)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.5f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 2;
-		m_fCriss = 1;				// ループあり
-	}
-
-	if (nType == 6)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.1666f;		// テクスチャ分割
-		m_nX = 5;
-		m_nY = 2;
-		m_fCriss = 1;				// ループあり
-	}
-
-	if (nType == 7)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.3333f;		// テクスチャ分割
-		m_nX = 5;
-		m_nY = 3;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 8)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.3333f;		// テクスチャ分割
-		m_nX = 5;
-		m_nY = 3;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 9)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.5f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 2;
-		m_fCriss = 1;				// ループあり
-	}
-
-	if (nType == 10)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.25f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 4;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 11)
-	{
-		m_fAnimeX = 0.20f;			// テクスチャ分割
-		m_fAnimeY = 0.3333f;		// テクスチャ分割
-		m_nX = 5;
-		m_nY = 3;
-		m_fCriss = 1;				// ループなし
-	}
-
-	if (nType == 12)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.5f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 2;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 13)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.1666f;		// テクスチャ分割
-		m_nX = 5;
-		m_nY = 6;
-		m_fCriss = 1;				// ループなし
-	}
-
-	if (nType == 14)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.25f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 4;
-		m_fCriss = 0;				// ループなし
-	}
-
-	if (nType == 15)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.5f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 2;
-		m_fCriss = 1;				// ループあり
-	}
-
-	if (nType == 16)
-	{
-		m_fAnimeX = 0.2f;			// テクスチャ分割
-		m_fAnimeY = 0.5f;			// テクスチャ分割
-		m_nX = 5;
-		m_nY = 2;
-		m_fCriss = 1;				// ループあり
-	}
-
-	if (nType == 17)
-	{
-		m_fAnimeX = 0.5f;			// テクスチャ分割
-		m_fAnimeY = 0.1f;			// テクスチャ分割
-		m_nX = 2;
-		m_nY = 10;
-		m_fCriss = 1;				// ループあり
-	}
-
-	if (m_nType == 6 || m_nType == 9 || m_nType == 11 || m_nType == 5 || m_nType == 13)
-	{
-		// 色変更
-		CScene2D::SetCol(D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f));
+		m_nY = 11;
+		m_floop = 1;
 	}
 
 	return S_OK;
@@ -237,37 +83,6 @@ void CAnimation::Uninit(void)
 //==============================================================================
 void CAnimation::Update(void)
 {
-	// プレイヤー用アニメーション
-	if (m_nType == 6 || m_nType == 9 || m_nType == 11 || m_nType == 5 || m_nType == 13)
-	{
-		// 現在の位置の取得
-		D3DXVECTOR3 pos = m_pPlayer->GetPos();
-		D3DXVECTOR3 size = m_pPlayer->GetSize();
-
-		D3DXVECTOR3 objective = D3DXVECTOR3(pos.x + m_pos.x, pos.y + m_pos.y, pos.z);
-
-		// 移動させる
-		SetPosition(objective, D3DXVECTOR3(5.0f,5.0f,0.0f));
-	}
-
-	// 途中変更Uninit
-	if (m_nType == g_nUninitType)
-	{
-		m_fCriss = 0;
-		m_nAnime = 1;
-	}
-
-	// アイテム取得時のエフェクトアニメーション
-	if (m_nType == 7 || m_nType == 8)
-	{
-		// 現在の位置の取得
-		D3DXVECTOR3 pos = m_pPlayer->GetPos();
-		D3DXVECTOR3 size = m_pPlayer->GetSize();
-
-		// 移動させる
-		SetPosition(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR3(size.x, size.y, size.z));
-	}
-
 	// アニメーションの更新条件
 	if ((m_nCounterAnime % m_nAnime) == 0)
 	{
@@ -291,7 +106,7 @@ void CAnimation::Update(void)
 		m_nPatternAnime = 0;
 
 		// ループさせないとき
-		if (m_fCriss == 0)
+		if (m_floop == 0)
 		{
 			// 終了される
 			Uninit();
@@ -351,8 +166,8 @@ HRESULT CAnimation::Load(void)
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 	// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/frameeffects006test.png", &m_pTexture[4]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/animation000.png", &m_pTexture[10]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/ptranp.png", &m_pTexture[0]);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/magic.png", &m_pTexture[1]);
 
 	return S_OK;
 }

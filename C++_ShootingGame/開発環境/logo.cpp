@@ -171,9 +171,12 @@ HRESULT CLogo::Load(void)
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 	// テクスチャの読み込み	
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover1.jpg", &m_apTextureLogo[PAUSE_RESTART]);		// ポーズリスタート
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover2.jpg", &m_apTextureLogo[PAUSE_CONTINUE]);		// ポーズコンティニュー
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover3.jpg", &m_apTextureLogo[PAUSE_TITLE]);		// ポーズタイトル
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/title_logo002.png", &m_apTextureLogo[TITLE_UI_LOGO]);				// タイトルロゴ
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/press_enter.png", &m_apTextureLogo[TITLE_UI_PRESS_ENTER]);		// PressEnter
+
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover1.jpg", &m_apTextureLogo[PAUSE_RESTART]);				// ポーズリスタート
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover2.jpg", &m_apTextureLogo[PAUSE_CONTINUE]);				// ポーズコンティニュー
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/gameover3.jpg", &m_apTextureLogo[PAUSE_QUIT]);					// ポーズタイトル
 
 	return S_OK;
 }
@@ -218,7 +221,6 @@ void CLogo::TypeChangeCollar(D3DXCOLOR col, int nTypeCollar)
 	g_nTypeCollarLogo = nTypeCollar;
 	g_col = col;
 }
-
 
 
 //=============================================================================

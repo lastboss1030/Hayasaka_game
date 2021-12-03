@@ -86,7 +86,7 @@ CEffect *CEffect::Create(D3DXVECTOR3 pos, int nLife, D3DXVECTOR3 size, D3DXCOLOR
 //=============================================================================
 HRESULT CEffect::Init(D3DXVECTOR3 pos, int nLife, D3DXVECTOR3 size, D3DXCOLOR col)
 {
-	// ˆÚ“®’l‚ğİ’è
+	// ƒJƒ‰[‚ğİ’è
 	m_col = col;
 
 	// ‘å‚«‚³‚ğİ’è

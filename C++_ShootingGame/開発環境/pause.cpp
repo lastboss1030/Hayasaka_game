@@ -10,6 +10,8 @@
 #include "renderer.h"
 #include "Input_Keyboard.h"
 #include "fade.h"
+#include "animation.h"
+#include "logo.h"
 
 //=============================================================================
 // 静的メンバ変数
@@ -21,7 +23,15 @@ LPDIRECT3DTEXTURE9 CPause::m_apTexture[PAUSE_MAX] = {};
 //=============================================================================
 CPause::CPause(PRIORITY nPriority) :CScene(nPriority)
 {
+	float m_fMove = 0;
+	float m_fAnim = 0;
+	int	  m_ColorCnt = 0;
+	int   m_nSelectCnt = 0;
 
+	int nTimeGamePause = 0;
+	int nTimeCounterPause = 0;
+	int g_nPointerPauseX = 0;
+	bool g_bButtonDownPause = false;
 }
 
 //=============================================================================
@@ -37,53 +47,24 @@ CPause::~CPause()
 //=============================================================================
 HRESULT CPause::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
-	D3DXVECTOR3 Pos[PAUSE_MAX] =  { D3DXVECTOR3(pos.x,pos.y,pos.z),
-								    D3DXVECTOR3(pos.x + 400.0f,pos.y + 140.0f,pos.z) ,
-								    D3DXVECTOR3(pos.x + 400.0f,pos.y + 220.0f,pos.z) ,
-								    D3DXVECTOR3(pos.x + 400.0f,pos.y + 290.0f,pos.z) };
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-	D3DXVECTOR3 Size[PAUSE_MAX] = { D3DXVECTOR3(size.x,size.y,size.z),
-									D3DXVECTOR3(300.0f,300.0f,0.0f) ,
-									D3DXVECTOR3(300.0f,300.0f,0.0f) ,
-									D3DXVECTOR3(300.0f,300.0f,0.0f) };
+	// アニメーション画像ロード
+	CAnimation::Load();
 
+	// 背景
+	CLogoPause::Create(D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.0f), D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.0f), PAUSE01);
 
-	for (int nCnt = 0; nCnt < PAUSE_MAX; nCnt++)
-	{
-		if (m_apScene2D[nCnt] == NULL)
-		{
-			m_apScene2D[nCnt] = new CScene2D();
-			m_apScene2D[nCnt]->Init(Pos[nCnt], Size[nCnt]);
-			m_apScene2D[nCnt]->BindTexture(m_apTexture[nCnt]);
-		}
-	}
+	// ロゴ
+	CLogoPause::Create(D3DXVECTOR3(SCREEN_WIDTH / 2, 350.0f, 0.0f), D3DXVECTOR3(190, 40, 0.0f), PAUSE_CONTINUE);
 
-	// ポーズ画面の背景色を変える
-	m_apScene2D[PAUSE_NONE]->SetCol(D3DXCOLOR(0.0f, 0.1f, 0.3f, 0.2f));
+	CLogoPause::Create(D3DXVECTOR3(SCREEN_WIDTH / 2, 600.0f, 0.0f), D3DXVECTOR3(190, 40, 0.0f), PAUSE_RESTART);
 
-	// 選択されているUIの保存
-	m_nSelectCnt = (int)PAUSE_CONTINUE;
+	CLogoPause::Create(D3DXVECTOR3(SCREEN_WIDTH / 2, 850.0f, 0.0f), D3DXVECTOR3(120, 40, 0.0f), PAUSE_QUIT);
 
-	// 選択時のUIの色を設定
-	for (int nCntPauseUI = PAUSE_CONTINUE; nCntPauseUI < PAUSE_MAX; nCntPauseUI++)
-	{
-		if (m_nSelectCnt == nCntPauseUI)
-		{
-			// 選択しているときの色
-			m_apScene2D[nCntPauseUI]->SetCol(D3DXCOLOR(1.0f, 0.2f, 0.2f, 1.0f));
-		}
-		else
-		{
-			// 選択していないときの色
-			m_apScene2D[nCntPauseUI]->SetCol(D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f));
-
-		}
-	}
-
-	m_fMove = 0.0f;
-
-	// 種類
-	SetObjType(OBJTYPE_PAUSE);
+	// パトランプ
+	//	CAnimasion::Create(D3DXVECTOR3(550.0f, 125.0f, 0.0f), 100, 80, 5, 18);
 
 	// 値を返す
 	return S_OK;
@@ -214,38 +195,4 @@ CPause *CPause::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 
 	// 値を返す
 	return pPause;
-}
-
-//=============================================================================
-// テクスチャ読み込み
-//=============================================================================
-HRESULT CPause::Load(void)
-{
-	// デバイスの設定
-	LPDIRECT3DDEVICE9 pDevice;
-	pDevice = CManager::GetRenderer()->GetDevice();
-
-	// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause_bg.png", &m_apTexture[0]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause_continue.png", &m_apTexture[1]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause_retry.png", &m_apTexture[2]);
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/pause_title.png", &m_apTexture[3]);
-
-	return S_OK;
-}
-
-//=============================================================================
-// テクスチャ破棄
-//=============================================================================
-void CPause::Unload(void)
-{
-	for (int nCnt = 0; nCnt < MAX_PAUSE; nCnt++)
-	{
-		// テクスチャの開放
-		if (m_apTexture[nCnt] != NULL)
-		{
-			m_apTexture[nCnt]->Release();
-			m_apTexture[nCnt] = NULL;
-		}
-	}
 }

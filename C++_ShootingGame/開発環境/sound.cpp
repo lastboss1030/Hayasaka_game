@@ -24,10 +24,12 @@ CSound::SOUNDPARAM CSound::m_aParam[SOUND_LABEL_MAX] =
 
 	// SE (システム)
 	{ "data/SE/press_enter.wav", 0},				// エンター		
+	{ "data/SE/pause.wav", 0},						// ポーズ
 
 	// BGM
 	{ "data/BGM/bgm_normal.wav", 0 },				// 通常BGM
 	{ "data/BGM/bgm_title.wav", 0 },				// タイトルBGM
+	{ "data/BGM/bgm_tutorial.wav", 0},				// チュートリアルBGM
 	{ "data/BGM/bgm_result.wav", 0 },				// リザルトBGM
 };
 

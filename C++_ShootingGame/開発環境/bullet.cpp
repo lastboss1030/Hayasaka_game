@@ -18,12 +18,15 @@
 #include "game.h"
 #include "player.h"
 #include "boss_parts.h"
+#include "particle.h"
 
 //=============================================================================
 // 静的メンバ変数
 //=============================================================================
 LPDIRECT3DTEXTURE9 CBullet::m_pTexture = NULL;
 float g_fSpeed = 0.0f;
+
+int nCntEffectEnemy = 0;
 
 //=============================================================================
 // コンストラクタ
@@ -180,7 +183,6 @@ void CBullet::Update(void)
 	{
 		// プレイヤーの弾
 		CEffect::Create(Pos, 50, m_size*1.8f, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f));
-		CEffect::Create(Pos, 50, m_size*1.8f, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f));
 	}
 	else if (m_bulletType == BULLETTYPE_ENEMY)
 	{
@@ -226,7 +228,7 @@ void CBullet::Update(void)
 				CPlayer *pPlayer;
 				pPlayer = CGame::GetPlayer();
 
-				// 敵だったら
+				// 敵に当たったら
 				if (objType == CScene::OBJTYPE_ENEMY && m_bulletType == BULLETTYPE_PLAYER)
 				{
 					// 変数宣言
@@ -246,6 +248,26 @@ void CBullet::Update(void)
 						// 爆発の生成
 						CExplosion::Create(PosEnemy, D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
+						nCntEffectEnemy++;
+
+						if (nCntEffectEnemy % 1 == 0)
+						{
+							for (int nCntEffect = 0; nCntEffect < 20; nCntEffect++) // 個数
+							{
+								//角度の設定
+								float fAngle = ((float)(rand() % 800)) / 100.0f;
+								float fmove = (float)(rand() % 8);
+
+								// パーティクル生成
+								CParticle::Create(Pos, 
+									D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5), 
+									D3DXVECTOR3(15, 15, 0), 
+									D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+									5.0f, 
+									0.01f);
+							}
+						}
+
 						// ライフ減少
 						CEnemy *pEnemy = (CEnemy*)pScene;
 						pEnemy->HitEnemy(1);
@@ -260,7 +282,7 @@ void CBullet::Update(void)
 					}
 				}
 
-				// ボスだったら
+				// ボスに当たったら
   				if (objType == CScene::OBJTYPE_BOSS && m_bulletType == BULLETTYPE_PLAYER)
 				{
 					// 変数宣言
@@ -280,6 +302,9 @@ void CBullet::Update(void)
 						// 爆発の生成
 						CExplosion::Create(D3DXVECTOR3(Pos.x, Pos.y, 0.0f), D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
+						// パーティクル生成
+						HitParticle();
+
 						// ライフ減少
 						CParts *pParts = (CParts*)pScene;
 						pParts->HitBossParts(1);
@@ -294,7 +319,7 @@ void CBullet::Update(void)
 					}
 				}
 
-				// プレイヤーだったら
+				// プレイヤーに当たったら
 				if (objType == CScene::OBJTYPE_PLAYER && ( m_bulletType == BULLETTYPE_ENEMY || m_bulletType== BULLETTYPE_BOSSPARTS || m_bulletType == BULLETTYPE_ENEMYHOMING) && nPlayerState == CPlayer::PLAYERSTATE_NORMAL)
 				{
 					// プレイヤーの情報
@@ -381,7 +406,7 @@ void CBullet::HomingBullet(void)
 
 	// 変数宣言
 	float fAngle = 0.0f;
-	float fAngleDest;
+	//float fAngleDest;
 
 	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
 	{
@@ -420,10 +445,40 @@ void CBullet::HomingBullet(void)
 				//  fAngleDest = (目的の位置 - 現在の角度) * 目的地への速度
 
 					// 追尾計算
-					m_move.x = sinf(fAngle) * 6.0f;
-					m_move.y = cosf(fAngle) * 6.0f;
+					m_move.x = sinf(fAngle) * 5.5f;
+					m_move.y = cosf(fAngle) * 5.5f;
 				}
 			}
+		}
+	}
+}
+
+//=============================================================================
+// 当たった時のパーティクル
+//=============================================================================
+void CBullet::HitParticle(void)
+{
+	// 座標
+	D3DXVECTOR3 Pos;
+	Pos = GetPosition();
+
+	nCntEffectEnemy++;
+
+	if (nCntEffectEnemy % 1 == 0)
+	{
+		for (int nCntEffect = 0; nCntEffect < 20; nCntEffect++) // 個数
+		{
+			//角度の設定
+			float fAngle = ((float)(rand() % 800)) / 100.0f;
+			float fmove = (float)(rand() % 8);
+
+			// パーティクル生成
+			CParticle::Create(Pos,
+				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),
+				D3DXVECTOR3(18, 18, 0),
+				D3DXCOLOR(1.0f, 0.6f, 0.0f, 1.0f),	// 赤
+				5.0f,
+				0.01f);
 		}
 	}
 }
