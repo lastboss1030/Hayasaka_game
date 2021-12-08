@@ -4,6 +4,7 @@
 // Author : Taiki Hayasaka
 //
 //=============================================================================
+#define _CRT_SECURE_NO_WARNINGS
 #include "player.h"
 #include "input.h"
 #include "manager.h"
@@ -15,6 +16,10 @@
 #include "effect.h"
 #include "particle.h"
 #include "bullet.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 //=============================================================================
 // 静的メンバ変数
@@ -32,6 +37,7 @@ int CPlayer::m_nAngle = NULL;		// 角度
 int CPlayer::m_nRange = NULL;		// 範囲
 
 D3DXVECTOR3 g_pos;	// 取得用
+#define PARTICLE_FILE_NAME "particle.txt"	// テキスト
 
 //=============================================================================
 // マクロ定義
@@ -105,6 +111,17 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
 	// サイズ
 	m_size = size;
+
+	// パーティクル用数値初期化
+	m_nCreateNum = 20;
+	m_nSpeed = 8;
+	m_fRadius = 20.0f;
+	m_nLife = 70;
+	m_fInertia = 1.00f;
+	m_nRange = 800;
+	m_nAngle = 100;
+
+	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// CScene2Dの初期化処理
 	CScene2D::Init(pos, size);
@@ -234,6 +251,18 @@ void CPlayer::Update(void)
 				m_nLife,														// 寿命
 				m_fInertia);													// 慣性
 		}
+	}
+
+	// セーブ
+	if (pInputKeyboard->GetPress(DIK_F1) == true)
+	{
+		SaveData();
+	}
+
+	// ロード
+	if (pInputKeyboard->GetPress(DIK_F2) == true)
+	{
+		LoadData();
 	}
 
 	// 座標の設定
@@ -374,12 +403,15 @@ void CPlayer::ChangeParticle(void)
 	// リセット
 	if (pInputKeyboard->GetTrigger(DIK_1) == true)
 	{
-		m_nCreateNum = 20;		// 生成数
-		m_nSpeed = 8;			// 速度
-		m_fRadius = 20.0f;		// 半径
-		m_nLife = 70;			// 寿命
-		m_fInertia = 1.00f;		// 慣性
-		
+		// パーティクル用数値初期化
+		m_nCreateNum = 20;
+		m_nSpeed = 8;
+		m_fRadius = 20.0f;
+		m_nLife = 70;
+		m_fInertia = 1.00f;
+		m_nRange = 800;
+		m_nAngle = 100;
+
 		m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
@@ -549,4 +581,66 @@ int CPlayer::GetLife(void)
 float CPlayer::GetInertia(void)
 {
 	return m_fInertia;
+}
+
+
+//=============================================================================
+// セーブ
+//=============================================================================
+void CPlayer::SaveData(void)
+{
+	FILE *pFile;
+	pFile = fopen(PARTICLE_FILE_NAME, "w");
+
+	if (pFile != NULL)
+	{
+		fprintf(pFile, "%d\n", m_nCreateNum);		// 生成数
+		fprintf(pFile, "%d\n", m_nSpeed);			// 速度
+		fprintf(pFile, "%.0f\n", m_fRadius);		// 半径
+		fprintf(pFile, "%d\n", m_nLife);			// 寿命
+
+		fprintf(pFile, "%.2f\n", m_fInertia);		// 慣性
+
+		fprintf(pFile, "%.1f\n", m_col.r);			// R
+		fprintf(pFile, "%.1f\n", m_col.g);			// G
+		fprintf(pFile, "%.1f\n", m_col.b);			// B
+	}
+	else
+	{ // ファイルが開けなかったら
+		printf("ファイルを開けませんでした\n");
+	}
+
+	fclose(pFile);
+}
+
+//=============================================================================
+// ロード
+//=============================================================================
+void CPlayer::LoadData(void)
+{
+	FILE *pFile;
+
+	pFile = fopen(PARTICLE_FILE_NAME, "r");
+
+	if (pFile != NULL)
+	{
+		// ファイルが開けたら
+		fscanf(pFile, "%d\n", &m_nCreateNum);		// 生成数
+		fscanf(pFile, "%d\n", &m_nSpeed);			// 速度
+		fscanf(pFile, "%f\n", &m_fRadius);			// 半径
+		fscanf(pFile, "%d\n", &m_nLife);			// 寿命
+
+		fscanf(pFile, "%f\n", &m_fInertia);			// 慣性
+
+		fscanf(pFile, "%f\n", &m_col.r);			// R
+		fscanf(pFile, "%f\n", &m_col.g);			// G
+		fscanf(pFile, "%f\n", &m_col.b);			// B
+	}
+
+	else
+	{ // ファイルが開けなかったら
+		printf("ファイルを開けませんでした\n");
+	}
+
+	fclose(pFile);
 }

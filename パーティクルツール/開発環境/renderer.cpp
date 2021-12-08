@@ -212,7 +212,9 @@ void CRenderer::DrawValue(void)
 	// 各数値表示
 	int nNum = wsprintf(&str[0], "【スペースキーで生成】 \n");
 	nNum += wsprintf(&str[nNum], "【 Ｐキーで一時停止 】 \n");
-	nNum += wsprintf(&str[nNum], "【 １で数値リセット 】 \n\n");
+	nNum += wsprintf(&str[nNum], "【 数値リセット[１] 】 \n\n");
+
+	nNum += wsprintf(&str[nNum], "【 セーブ[F1] / ロード[F2] 】\n\n");
 
 	nNum += wsprintf(&str[nNum], " 生成数 [↑][↓] : %d\n", CPlayer::GetCreateNum());
 	nNum += wsprintf(&str[nNum], " 速  度 [Ｔ][Ｇ] : %d\n", CPlayer::GetSpeed());

@@ -52,6 +52,10 @@ public:
 	static int GetLife(void);
 	static float GetInertia(void);
 
+	// 外部ファイル
+	void SaveData(void);	
+	void LoadData(void);	
+
 private:
 	D3DXVECTOR3 m_size;							// 大きさ
 	D3DXVECTOR3 m_move;							// 移動量
