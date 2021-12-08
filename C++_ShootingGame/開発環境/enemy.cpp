@@ -162,7 +162,7 @@ void CEnemy::Update(void)
 		pSound->Play(CSound::SOUND_LABEL_SE_SHOTENEMY);
 
 		// íeÇÃê∂ê¨
-	//	CBullet::Create(D3DXVECTOR3(pos.x, pos.y + 10.0f, 1.0f), D3DXVECTOR3(0.0f, 8.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_ENEMY, CBullet::ATTACKTYPE_NORMAL, 1);
+		CBullet::Create(D3DXVECTOR3(pos.x, pos.y + 10.0f, 1.0f), D3DXVECTOR3(0.0f, 8.0f, 0.0f), D3DXVECTOR3(15.0f, 15.0f, 0.0f), CBullet::BULLETTYPE_ENEMY, CBullet::ATTACKTYPE_NORMAL, 1);
 	}
 
 	// ìGÇÃÉâÉCÉtÇ™0Ç…Ç»Ç¡ÇΩÇÁè¡Ç∑
