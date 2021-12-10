@@ -164,6 +164,10 @@ void CRenderer::Update(void)
 	// ƒ|ƒŠƒSƒ“‚ÌXVˆ—
 	CScene::UpdateAll();
 
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// •¶š•\¦
+	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// •\¦ƒJƒEƒ“ƒg
 	m_nCntDraw++;
 
 	// ƒZ[ƒu•\¦
@@ -261,21 +265,21 @@ void CRenderer::DrawValue(void)
 
 	// Še”’l•\¦
 
-	int nNum = wsprintf(&str[0], " \n");
-	nNum += wsprintf(&str[nNum], "y EnterƒL[ ‚Å¶¬ z \n");
+	int nNum = wsprintf(&str[0], "y EnterƒL[ ‚Å¶¬ z \n");
 	nNum += wsprintf(&str[nNum], "y ‚oƒL[‚Åˆê’â~ z \n");
 	nNum += wsprintf(&str[nNum], "y ”’lƒŠƒZƒbƒg[‚P] z \n\n");
 
 	nNum += wsprintf(&str[nNum], "y ƒZ[ƒu[F1] / ƒ[ƒh[F2] z\n\n");
 
+	nNum += wsprintf(&str[nNum], " ”Ô@† [©][¨] : %d\n", CPlayer::GetIndexParticle());
 	nNum += wsprintf(&str[nNum], " ¶¬” [ª][«] : %d\n", CPlayer::GetCreateNum());
 	nNum += wsprintf(&str[nNum], " ‘¬  “x [‚s][‚f] : %d\n", CPlayer::GetSpeed());
 	nNum +=  sprintf(&str[nNum], " ”¼  Œa [‚x][‚g] : %.0f\n", CPlayer::GetRadius());
 	nNum += wsprintf(&str[nNum], " õ  –½ [‚t][‚i] : %d\n\n", CPlayer::GetLife());
 
 	nNum +=  sprintf(&str[nNum], " Šµ  « [‡T][‚j] : %.2f\n", CPlayer::GetInertia());
-	nNum += wsprintf(&str[nNum], " ”Í  ˆÍ [©][¨] : %d\n", CPlayer::GetRange());
-	nNum +=  sprintf(&str[nNum], " Šp  “x [‚q][‚e] : %.2f\n\n", CPlayer::GetAngle());
+	nNum += wsprintf(&str[nNum], " ”Í  ˆÍ [‚y][‚b] : %d\n", CPlayer::GetRange());
+	nNum +=  sprintf(&str[nNum], " Šp  “x [‚q][‚e] : %.1f\n\n", CPlayer::GetAngle());
 
 	nNum +=  sprintf(&str[nNum], " F (R) [‚V][‚X] : %.1f\n", CPlayer::GetCol().r);
 	nNum +=  sprintf(&str[nNum], " F (G) [‚S][‚U] : %.1f\n", CPlayer::GetCol().g);

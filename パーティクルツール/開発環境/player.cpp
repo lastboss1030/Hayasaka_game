@@ -25,16 +25,21 @@
 // 静的メンバ変数
 //=============================================================================
 LPDIRECT3DTEXTURE9 CPlayer::m_pTexture = NULL;
-D3DXCOLOR CPlayer::m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 // パーティクル用
-int CPlayer::m_nCreateNum = NULL;	// 生成数
-int CPlayer::m_nSpeed = NULL;		// 速度
-float CPlayer::m_fRadius = NULL;	// 半径
-int CPlayer::m_nLife = NULL;		// 寿命
-float CPlayer::m_fInertia = NULL;	// 慣性
-float CPlayer::m_fAngle = NULL;		// 角度
-int CPlayer::m_nRange = NULL;		// 範囲
+CPlayer::PARTICLE CPlayer::m_aParticle[MAX_PARTICLE] = 
+{
+	20,								 // 生成数
+	8,								 // 速度
+	20.0f,							 // 半径
+	70,								 // 寿命
+	628,							 // 範囲
+	1.00f,							 // 慣性
+	1.0f,							 // 角度
+	D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),	 // 色
+};
+
+int CPlayer::m_nIndexParticle = 0;
 
 D3DXVECTOR3 g_pos;	// 取得用
 #define PARTICLE_FILE_NAME "particle.txt"	// テキスト
@@ -58,18 +63,21 @@ CPlayer::CPlayer(PRIORITY nPriority) :CScene2D(nPriority)
 	// 初期化
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	m_fPosTexU = 0;
 	m_fPosTexV = 0;
 
 	// パーティクル用数値初期化
-	m_nCreateNum = 20;
-	m_nSpeed = 8;
-	m_fRadius = 20.0f;
-	m_nLife = 70;
-	m_fInertia = 1.00f;
-	m_nRange = 628;
-	m_fAngle = 1.0f;
+	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
+	{
+		m_aParticle[nCnt].nCreateNum = 20;
+		m_aParticle[nCnt].nSpeed = 8;
+		m_aParticle[nCnt].fRadius = 20.0f;
+		m_aParticle[nCnt].nLife = 70;
+		m_aParticle[nCnt].fInertia = 1.00f;
+		m_aParticle[nCnt].nRange = 628;
+		m_aParticle[nCnt].fAngle = 1.0f;
+		m_aParticle[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 }
 
 //=============================================================================
@@ -113,15 +121,15 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	m_size = size;
 
 	// パーティクル用数値初期化
-	m_nCreateNum = 20;
-	m_nSpeed = 8;
-	m_fRadius = 20.0f;
-	m_nLife = 70;
-	m_fInertia = 1.00f;
-	m_nRange = 628;
-	m_fAngle = 1.0;
+	m_aParticle[m_nIndexParticle].nCreateNum = 20;
+	m_aParticle[m_nIndexParticle].nSpeed = 8;
+	m_aParticle[m_nIndexParticle].fRadius = 20.0f;
+	m_aParticle[m_nIndexParticle].nLife = 70;
+	m_aParticle[m_nIndexParticle].fInertia = 1.00f;
+	m_aParticle[m_nIndexParticle].nRange = 628;
+	m_aParticle[m_nIndexParticle].fAngle = 1.0;
 
-	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	m_aParticle[m_nIndexParticle].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// CScene2Dの初期化処理
 	CScene2D::Init(pos, size);
@@ -153,7 +161,7 @@ void CPlayer::Update(void)
 	D3DXVECTOR3 pos = GetPosition();
 
 	// カラー設定
-	SetCol(m_col);
+	SetCol(m_aParticle[m_nIndexParticle].col);
 
 	// 移動処理
 	if (pInputKeyboard->GetPress(DIK_W) == true)
@@ -218,19 +226,19 @@ void CPlayer::Update(void)
 	// パーティクル生成
 	if (pInputKeyboard->GetTrigger(DIK_RETURN) == true)
 	{
-		for (int nCntEffect = 0; nCntEffect < m_nCreateNum; nCntEffect++)						// 個数
+		for (int nCntEffect = 0; nCntEffect < m_aParticle[m_nIndexParticle].nCreateNum; nCntEffect++)						// 個数
 		{
 			//角度の設定
-			float fAngle = ((float)(rand() % m_nRange - (m_nRange / 2))) / 100 + D3DX_PI * m_fAngle;					// 角度
-			float fmove = (float)(rand() % m_nSpeed);											// 速度
+			float fAngle = ((float)(rand() % m_aParticle[m_nIndexParticle].nRange - (m_aParticle[m_nIndexParticle].nRange / 2))) / 100 + D3DX_PI * m_aParticle[m_nIndexParticle].fAngle;					// 角度
+			float fmove = (float)(rand() % m_aParticle[m_nIndexParticle].nSpeed);											// 速度
 
 			// パーティクル生成
 			CParticle::Create(pos,																// 座標
 				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),						// 移動量
-				D3DXVECTOR3(m_fRadius, m_fRadius, 0),											// サイズ
-				D3DXCOLOR(m_col.r, m_col.g, m_col.b, 1.0f),										// カラー
-				m_nLife,																		// 寿命
-				m_fInertia);																	// 慣性
+				D3DXVECTOR3(m_aParticle[m_nIndexParticle].fRadius, m_aParticle[m_nIndexParticle].fRadius, 0),											// サイズ
+				m_aParticle[m_nIndexParticle].col,										// カラー
+				m_aParticle[m_nIndexParticle].nLife,																		// 寿命
+				m_aParticle[m_nIndexParticle].fInertia);																	// 慣性
 		}
 	}
 
@@ -293,104 +301,104 @@ void CPlayer::Unload(void)
 void CPlayer::PlayerLimit(void)
 {
 	// 赤
-	if (m_col.r > 1.0f)
+	if (m_aParticle[m_nIndexParticle].col.r > 1.0f)
 	{
-		m_col.r = 1.0f;
+		m_aParticle[m_nIndexParticle].col.r = 1.0f;
 	}
-	else if (m_col.r < 0.0f)
+	else if (m_aParticle[m_nIndexParticle].col.r < 0.0f)
 	{
-		m_col.r = 0.0f;
+		m_aParticle[m_nIndexParticle].col.r = 0.0f;
 	}
 
 	// 緑
-	if (m_col.g > 1.0f)
+	if (m_aParticle[m_nIndexParticle].col.g > 1.0f)
 	{
-		m_col.g = 1.0f;
+		m_aParticle[m_nIndexParticle].col.g = 1.0f;
 	}
-	else if (m_col.g < 0.0f)
+	else if (m_aParticle[m_nIndexParticle].col.g < 0.0f)
 	{
-		m_col.g = 0.0f;
+		m_aParticle[m_nIndexParticle].col.g = 0.0f;
 	}
 
 	// 青
-	if (m_col.b > 1.0f)
+	if (m_aParticle[m_nIndexParticle].col.b > 1.0f)
 	{
-		m_col.b = 1.0f;
+		m_aParticle[m_nIndexParticle].col.b = 1.0f;
 	}
-	else if (m_col.b < 0.0f)
+	else if (m_aParticle[m_nIndexParticle].col.b < 0.0f)
 	{
-		m_col.b = 0.0f;
+		m_aParticle[m_nIndexParticle].col.b = 0.0f;
 	}
 
 	// 生成数
-	if (m_nCreateNum > 500)
+	if (m_aParticle[m_nIndexParticle].nCreateNum > 500)
 	{
-		m_nCreateNum = 500;
+		m_aParticle[m_nIndexParticle].nCreateNum = 500;
 	}
-	if (m_nCreateNum < 10)
+	if (m_aParticle[m_nIndexParticle].nCreateNum < 10)
 	{
-		m_nCreateNum = 10;
+		m_aParticle[m_nIndexParticle].nCreateNum = 10;
 	}
 
 	// 速度
-	if (m_nSpeed > 30)
+	if (m_aParticle[m_nIndexParticle].nSpeed > 30)
 	{
-		m_nSpeed = 30;
+		m_aParticle[m_nIndexParticle].nSpeed = 30;
 	}
-	if (m_nSpeed < 2)
+	if (m_aParticle[m_nIndexParticle].nSpeed < 2)
 	{
-		m_nSpeed = 2;
+		m_aParticle[m_nIndexParticle].nSpeed = 2;
 	}
 
 	// 半径
-	if (m_fRadius > 70)
+	if (m_aParticle[m_nIndexParticle].fRadius > 70)
 	{
-		m_fRadius = 70;
+		m_aParticle[m_nIndexParticle].fRadius = 70;
 	}
-	if (m_fRadius < 10)
+	if (m_aParticle[m_nIndexParticle].fRadius < 10)
 	{
-		m_fRadius = 10;
+		m_aParticle[m_nIndexParticle].fRadius = 10;
 	}
 
 	// 寿命
-	if (m_nLife > 150)
+	if (m_aParticle[m_nIndexParticle].nLife > 150)
 	{
-		m_nLife = 150;
+		m_aParticle[m_nIndexParticle].nLife = 150;
 	}
-	if (m_nLife < 20)
+	if (m_aParticle[m_nIndexParticle].nLife < 20)
 	{
-		m_nLife = 20;
+		m_aParticle[m_nIndexParticle].nLife = 20;
 	}
 
 	// 慣性
-	if (m_fInertia > 1.0f)
+	if (m_aParticle[m_nIndexParticle].fInertia > 1.0f)
 	{
-		m_fInertia = 1.0f;
+		m_aParticle[m_nIndexParticle].fInertia = 1.0f;
 	}
-	if (m_fInertia < 0.8f)
+	if (m_aParticle[m_nIndexParticle].fInertia < 0.8f)
 	{
-		m_fInertia = 0.8f;
+		m_aParticle[m_nIndexParticle].fInertia = 0.8f;
 	}
 
 	// 範囲
-	if (m_nRange > 628)
+	if (m_aParticle[m_nIndexParticle].nRange > 628)
 	{
-		m_nRange = 628;
+		m_aParticle[m_nIndexParticle].nRange = 628;
 	}
 
-	if (m_nRange < 40)
+	if (m_aParticle[m_nIndexParticle].nRange < 40)
 	{
-		m_nRange = 40;
+		m_aParticle[m_nIndexParticle].nRange = 40;
 	}
 
 	// 角度
-	if (m_fAngle > 1.00f)
+	if (m_aParticle[m_nIndexParticle].fAngle > 1.00f)
 	{
-		m_fAngle = 1.00f;
+		m_aParticle[m_nIndexParticle].fAngle = 1.00f;
 	}
-	if (m_fAngle < -1.00)
+	if (m_aParticle[m_nIndexParticle].fAngle < -1.00)
 	{
-		m_fAngle = 1.00f;
+		m_aParticle[m_nIndexParticle].fAngle = 1.00f;
 	}
 
 }
@@ -407,87 +415,87 @@ void CPlayer::ChangeParticle(void)
 	if (pInputKeyboard->GetTrigger(DIK_1) == true)
 	{
 		// パーティクル用数値初期化
-		m_nCreateNum = 20;
-		m_nSpeed = 8;
-		m_fRadius = 20.0f;
-		m_nLife = 70;
-		m_fInertia = 1.00f;
-		m_nRange = 628;
-		m_fAngle = 1.0;
+		m_aParticle[m_nIndexParticle].nCreateNum = 20;
+		m_aParticle[m_nIndexParticle].nSpeed = 8;
+		m_aParticle[m_nIndexParticle].fRadius = 20.0f;
+		m_aParticle[m_nIndexParticle].nLife = 70;
+		m_aParticle[m_nIndexParticle].fInertia = 1.00f;
+		m_aParticle[m_nIndexParticle].nRange = 628;
+		m_aParticle[m_nIndexParticle].fAngle = 1.0;
 
-		m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		m_aParticle[m_nIndexParticle].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// 生成数
 	if (pInputKeyboard->GetTrigger(DIK_UP) == true)
 	{
-		m_nCreateNum += 10;
+		m_aParticle[m_nIndexParticle].nCreateNum += 10;
 	}
 	else if (pInputKeyboard->GetTrigger(DIK_DOWN) == true)
 	{
-		m_nCreateNum -= 10;
+		m_aParticle[m_nIndexParticle].nCreateNum -= 10;
 	}
 
 	// 速度
 	if (pInputKeyboard->GetTrigger(DIK_T) == true)
 	{
-		m_nSpeed += 1;
+		m_aParticle[m_nIndexParticle].nSpeed += 1;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_G) == true)
 	{
-		m_nSpeed -= 1;
+		m_aParticle[m_nIndexParticle].nSpeed -= 1;
 	}
 
 	// 半径
 	if (pInputKeyboard->GetTrigger(DIK_Y) == true)
 	{
-		m_fRadius += 2;
+		m_aParticle[m_nIndexParticle].fRadius += 2;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_H) == true)
 	{
-		m_fRadius -= 2;
+		m_aParticle[m_nIndexParticle].fRadius -= 2;
 	}
 
 	// 寿命
 	if (pInputKeyboard->GetTrigger(DIK_U) == true)
 	{
-		m_nLife += 10;
+		m_aParticle[m_nIndexParticle].nLife += 10;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_J) == true)
 	{
-		m_nLife -= 10;
+		m_aParticle[m_nIndexParticle].nLife -= 10;
 	}
 
 	// 慣性
 	if (pInputKeyboard->GetTrigger(DIK_I) == true)
 	{
-		m_fInertia += 0.01f;
+		m_aParticle[m_nIndexParticle].fInertia += 0.01f;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_K) == true)
 	{
-		m_fInertia -= 0.01f;
+		m_aParticle[m_nIndexParticle].fInertia -= 0.01f;
 	}
 
 	// 範囲
-	if (pInputKeyboard->GetTrigger(DIK_LEFT) == true)
+	if (pInputKeyboard->GetTrigger(DIK_Z) == true)
 	{
-		m_nRange -= 10;
+		m_aParticle[m_nIndexParticle].nRange -= m_aParticle[m_nIndexParticle].nRange / 2;
 	}
 
-	if (pInputKeyboard->GetTrigger(DIK_RIGHT) == true)
+	if (pInputKeyboard->GetTrigger(DIK_C) == true)
 	{
-		m_nRange += 10;
+		m_aParticle[m_nIndexParticle].nRange = m_aParticle[m_nIndexParticle].nRange * 2;
 	}
 
 	// 角度
 	if (pInputKeyboard->GetTrigger(DIK_R) == true)
 	{
-		m_fAngle += 0.05f;
+		m_aParticle[m_nIndexParticle].fAngle += 0.1f;
 	}
 
 	if (pInputKeyboard->GetTrigger(DIK_F) == true)
 	{
-		m_fAngle -= 0.05f;
+		m_aParticle[m_nIndexParticle].fAngle -= 0.1f;
 	}
 
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -497,31 +505,41 @@ void CPlayer::ChangeParticle(void)
 	// カラーR
 	if (pInputKeyboard->GetTrigger(DIK_NUMPAD7) == true)
 	{
-		m_col.r -= 0.1f;
+		m_aParticle[m_nIndexParticle].col.r -= 0.1f;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_NUMPAD9) == true)
 	{
-		m_col.r += 0.1f;
+		m_aParticle[m_nIndexParticle].col.r += 0.1f;
 	}
 
 	// カラーG
 	if (pInputKeyboard->GetTrigger(DIK_NUMPAD4) == true)
 	{
-		m_col.g -= 0.1f;
+		m_aParticle[m_nIndexParticle].col.g -= 0.1f;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_NUMPAD6) == true)
 	{
-		m_col.g += 0.1f;
+		m_aParticle[m_nIndexParticle].col.g += 0.1f;
 	}
 
 	// カラーB
 	if (pInputKeyboard->GetTrigger(DIK_NUMPAD1) == true)
 	{
-		m_col.b -= 0.1f;
+		m_aParticle[m_nIndexParticle].col.b -= 0.1f;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_NUMPAD3) == true)
 	{
-		m_col.b += 0.1f;
+		m_aParticle[m_nIndexParticle].col.b += 0.1f;
+	}
+
+	// 保存番号
+	if (pInputKeyboard->GetTrigger(DIK_RIGHT) == true)
+	{
+		m_nIndexParticle = (m_nIndexParticle + 1) % MAX_PARTICLE;
+	}
+	if (pInputKeyboard->GetTrigger(DIK_LEFT) == true)
+	{
+		m_nIndexParticle = (m_nIndexParticle + MAX_PARTICLE - 1) % MAX_PARTICLE;
 	}
 }
 
@@ -558,6 +576,13 @@ void CPlayer::SetMove(D3DXVECTOR3 move)
 	m_move = move;
 }
 
+//=============================================================================
+// パーティクル構造体取得
+//=============================================================================
+CPlayer::PARTICLE CPlayer::GetParticle(void)
+{
+	return m_aParticle[m_nIndexParticle];
+}
 
 //=============================================================================
 // パーティクル用取得
@@ -565,7 +590,7 @@ void CPlayer::SetMove(D3DXVECTOR3 move)
 //=============================================================================
 D3DXCOLOR CPlayer::GetCol(void)
 {
-	return m_col;
+	return m_aParticle[m_nIndexParticle].col;
 }
 
 //=============================================================================
@@ -573,7 +598,7 @@ D3DXCOLOR CPlayer::GetCol(void)
 //=============================================================================
 int CPlayer::GetCreateNum(void)
 {
-	return m_nCreateNum;
+	return m_aParticle[m_nIndexParticle].nCreateNum;
 }
 
 //=============================================================================
@@ -581,7 +606,7 @@ int CPlayer::GetCreateNum(void)
 //=============================================================================
 int CPlayer::GetSpeed(void)
 {
-	return m_nSpeed;
+	return m_aParticle[m_nIndexParticle].nSpeed;
 }
 
 //=============================================================================
@@ -589,7 +614,7 @@ int CPlayer::GetSpeed(void)
 //=============================================================================
 float CPlayer::GetRadius(void)
 {
-	return m_fRadius;
+	return m_aParticle[m_nIndexParticle].fRadius;
 }
 
 //=============================================================================
@@ -597,7 +622,7 @@ float CPlayer::GetRadius(void)
 //=============================================================================
 int CPlayer::GetLife(void)
 {
-	return m_nLife;
+	return m_aParticle[m_nIndexParticle].nLife;
 }
 
 //=============================================================================
@@ -605,7 +630,7 @@ int CPlayer::GetLife(void)
 //=============================================================================
 float CPlayer::GetInertia(void)
 {
-	return m_fInertia;
+	return m_aParticle[m_nIndexParticle].fInertia;
 }
 
 //=============================================================================
@@ -613,7 +638,7 @@ float CPlayer::GetInertia(void)
 //=============================================================================
 int CPlayer::GetRange(void)
 {
-	return m_nRange;
+	return m_aParticle[m_nIndexParticle].nRange;
 }
 
 //=============================================================================
@@ -621,7 +646,15 @@ int CPlayer::GetRange(void)
 //=============================================================================
 float CPlayer::GetAngle(void)
 {
-	return m_fAngle;
+	return m_aParticle[m_nIndexParticle].fAngle;
+}
+
+//=============================================================================
+// 保存番号
+//=============================================================================
+int CPlayer::GetIndexParticle(void)
+{
+	return m_nIndexParticle;
 }
 
 
@@ -635,19 +668,22 @@ void CPlayer::SaveData(void)
 
 	if (pFile != NULL)
 	{
-		fprintf(pFile, "%d\n", m_nCreateNum);		// 生成数
-		fprintf(pFile, "%d\n", m_nSpeed);			// 速度
-		fprintf(pFile, "%.0f\n", m_fRadius);		// 半径
-		fprintf(pFile, "%d\n", m_nLife);			// 寿命
+		// ファイルが開けたら
+		for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
+		{
+			fprintf(pFile, "%d\n", m_aParticle[nCnt].nCreateNum);		// 生成数
+			fprintf(pFile, "%d\n", m_aParticle[nCnt].nSpeed);			// 速度
+			fprintf(pFile, "%.0f\n", m_aParticle[nCnt].fRadius);		// 半径
+			fprintf(pFile, "%d\n", m_aParticle[nCnt].nLife);			// 寿命
 
-		fprintf(pFile, "%.2f\n", m_fInertia);		// 慣性
-		fprintf(pFile, "%d\n", m_nRange);			// 範囲
-		fprintf(pFile, "%.2f\n", m_fAngle);			// 角度
+			fprintf(pFile, "%.2f\n", m_aParticle[nCnt].fInertia);		// 慣性
+			fprintf(pFile, "%d\n", m_aParticle[nCnt].nRange);			// 範囲
+			fprintf(pFile, "%.1f\n", m_aParticle[nCnt].fAngle);			// 角度
 
-		fprintf(pFile, "%.1f\n", m_col.r);			// R
-		fprintf(pFile, "%.1f\n", m_col.g);			// G
-		fprintf(pFile, "%.1f\n", m_col.b);			// B
+			fprintf(pFile, "%.1f %.1f %.1f\n", m_aParticle[nCnt].col.r, m_aParticle[nCnt].col.g, m_aParticle[nCnt].col.b);
+		}
 	}
+
 	else
 	{ // ファイルが開けなかったら
 		printf("ファイルを開けませんでした\n");
@@ -668,18 +704,19 @@ void CPlayer::LoadData(void)
 	if (pFile != NULL)
 	{
 		// ファイルが開けたら
-		fscanf(pFile, "%d\n", &m_nCreateNum);		// 生成数
-		fscanf(pFile, "%d\n", &m_nSpeed);			// 速度
-		fscanf(pFile, "%f\n", &m_fRadius);			// 半径
-		fscanf(pFile, "%d\n", &m_nLife);			// 寿命
+		for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
+		{
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nCreateNum);		// 生成数
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nSpeed);			// 速度
+			fscanf(pFile, "%f\n", &m_aParticle[nCnt].fRadius);			// 半径
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nLife);			// 寿命
 
-		fscanf(pFile, "%f\n", &m_fInertia);			// 慣性
-		fscanf(pFile, "%d\n", &m_nRange);			// 範囲
-		fscanf(pFile, "%f\n", &m_fAngle);			// 角度
+			fscanf(pFile, "%f\n", &m_aParticle[nCnt].fInertia);			// 慣性
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nRange);			// 範囲
+			fscanf(pFile, "%f\n", &m_aParticle[nCnt].fAngle);			// 角度
 
-		fscanf(pFile, "%f\n", &m_col.r);			// R
-		fscanf(pFile, "%f\n", &m_col.g);			// G
-		fscanf(pFile, "%f\n", &m_col.b);			// B
+			fscanf(pFile, "%f %f %f\n", &m_aParticle[nCnt].col.r, &m_aParticle[nCnt].col.g, &m_aParticle[nCnt].col.b);			// R
+		}
 	}
 
 	else

@@ -15,6 +15,7 @@
 //=============================================================================
 #define MAX_PLAYER_X			(50.0f)		//プレイヤーの幅  
 #define MAX_PLAYER_Y			(50.0f)		//プレイヤーの高さ  
+#define MAX_PARTICLE			(8)			// パーティクル最大数
 
 //=============================================================================
 // クラス
@@ -22,6 +23,19 @@
 class CPlayer : public CScene2D
 {
 public:
+
+	typedef struct
+	{
+		int nCreateNum;					// 生成数
+		int nSpeed;						// 速度
+		float fRadius;					// 半径
+		int nLife;						// 寿命
+		int nRange;						// 範囲
+		float fInertia;					// 慣性
+		float fAngle;					// 角度
+		D3DXCOLOR col;					// 色
+	}PARTICLE;
+
 	CPlayer(PRIORITY nPriority = PRIORITY_PLAYER);
 	~CPlayer();
 
@@ -44,6 +58,7 @@ public:
 	void SetMove(D3DXVECTOR3 move);
 	static D3DXVECTOR3 GetPlayerPos(void);
 	static D3DXCOLOR GetCol(void);
+	static PARTICLE GetParticle(void);
 
 	// パーティクル情報取得
 	static int GetCreateNum(void);
@@ -53,6 +68,7 @@ public:
 	static float GetInertia(void);
 	static int GetRange(void);
 	static float GetAngle(void);
+	static int GetIndexParticle(void);
 
 	// 外部ファイル
 	void SaveData(void);	
@@ -61,20 +77,14 @@ public:
 private:
 	D3DXVECTOR3 m_size;							// 大きさ
 	D3DXVECTOR3 m_move;							// 移動量
-	static D3DXCOLOR m_col;						// 色
 		
 	static LPDIRECT3DTEXTURE9 m_pTexture;		// 共有テクスチャのポインタ
 	float m_fPosTexU;							// テクスチャのU座標
 	float m_fPosTexV;							// テクスチャのV座標
 
-	// パーティクル用
-	static int m_nCreateNum;					// 生成数
-	static int m_nSpeed;						// 速度
-	static float m_fRadius;						// 半径
-	static int m_nLife;							// 寿命
-	static int m_nRange;						// 範囲
-	static float m_fInertia;					// 慣性
-	static float m_fAngle;						// 角度
+	static PARTICLE m_aParticle[MAX_PARTICLE];					// パーティクル構造体
+
+	static int m_nIndexParticle;
 };
 
 #endif

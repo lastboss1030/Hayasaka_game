@@ -5,8 +5,8 @@
   player.cpp
   renderer.cpp
   コード生成しています。
-  22 of 161 functions (13.7%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
+  35 of 164 functions (21.3%) were compiled, the rest were copied from previous compilation.
+    4 functions were new in current compilation
     7 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   Particle_Tools_02.vcxproj -> C:\Users\student\Desktop\C++\パーティクルツール\Particle_Tools_02\Release\Particle_Tools_02.exe
