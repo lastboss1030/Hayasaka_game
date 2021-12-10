@@ -438,11 +438,11 @@ void CPlayer::ChangeParticle(void)
 	// ”¼Œa
 	if (pInputKeyboard->GetTrigger(DIK_Y) == true)
 	{
-		m_fRadius += 1;
+		m_fRadius += 2;
 	}
 	if (pInputKeyboard->GetTrigger(DIK_H) == true)
 	{
-		m_fRadius -= 1;
+		m_fRadius -= 2;
 	}
 
 	// Žõ–½

@@ -11,6 +11,8 @@
 #include "main.h"
 #include "particle.h"
 #include "player.h"
+#include "Input_Keyboard.h"
+#include "manager.h"
 #include <stdio.h>
 
 //=============================================================================
@@ -18,7 +20,11 @@
 //=============================================================================
 CRenderer::CRenderer()
 {
-
+	// ‰Šú‰»
+	m_bSaveDraw = false;
+	m_bLoadDraw = false;
+	m_bResetDraw = false;
+	m_nCntDraw = 0;
 }
 
 //=============================================================================
@@ -149,8 +155,49 @@ void CRenderer::Uninit(void)
 //=============================================================================
 void CRenderer::Update(void)
 {
+	// CInputKeyboardƒCƒ“ƒXƒ^ƒ“ƒX‚ÌŽæ“¾
+	CInputKeyboard *pInputKeyboard = CManager::GetInputKeyboard();
+
+	// ƒ|[ƒYî•ñŽæ“¾
+	bool bPause = CScene::GetPause();
+
 	// ƒ|ƒŠƒSƒ“‚ÌXVˆ—
 	CScene::UpdateAll();
+
+	m_nCntDraw++;
+
+	// ƒZ[ƒu•\Ž¦
+	if (pInputKeyboard->GetTrigger(DIK_F1) == true)
+	{
+		m_bSaveDraw = true;
+		m_nCntDraw = 0;
+	}
+
+	// ƒ[ƒh•\Ž¦
+	if (pInputKeyboard->GetPress(DIK_F2) == true)
+	{
+		m_bLoadDraw = true;
+		m_nCntDraw = 0;
+	}
+
+	// ƒŠƒZƒbƒg•\Ž¦
+	if (pInputKeyboard->GetPress(DIK_1) == true && bPause == false)
+	{
+		m_bResetDraw = true;
+		m_nCntDraw = 0;
+	}
+
+	// ˆê’èŽžŠÔ‚Å•\Ž¦Á‚·
+	if (m_nCntDraw > 60)
+	{
+		// •\Ž¦ƒIƒt
+		m_bSaveDraw = false;
+		m_bLoadDraw = false;
+		m_bResetDraw = false;
+
+		// ƒJƒEƒ“ƒg‰Šú‰»
+		m_nCntDraw = 0;
+	}
 }
 
 //=============================================================================
@@ -175,6 +222,9 @@ void CRenderer::Draw(void)
 
 		// î•ñ•\Ž¦
 		DrawInfo();
+
+		// ƒZ[ƒuƒ[ƒh•\Ž¦
+		DrawSaveLoad();
 
 		// Direct3D‚É‚æ‚é•`‰æ‚ÌI—¹
 		m_pD3DDevice->EndScene();
@@ -210,7 +260,9 @@ void CRenderer::DrawValue(void)
 	char str[512];
 
 	// Še”’l•\Ž¦
-	int nNum = wsprintf(&str[0], "yƒXƒy[ƒXƒL[‚Å¶¬z \n");
+
+	int nNum = wsprintf(&str[0], " \n");
+	nNum += wsprintf(&str[nNum], "yƒXƒy[ƒXƒL[‚Å¶¬z \n");
 	nNum += wsprintf(&str[nNum], "y ‚oƒL[‚ÅˆêŽž’âŽ~ z \n");
 	nNum += wsprintf(&str[nNum], "y ”’lƒŠƒZƒbƒg[‚P] z \n\n");
 
@@ -218,16 +270,16 @@ void CRenderer::DrawValue(void)
 
 	nNum += wsprintf(&str[nNum], " ¶¬” [ª][«] : %d\n", CPlayer::GetCreateNum());
 	nNum += wsprintf(&str[nNum], " ‘¬  “x [‚s][‚f] : %d\n", CPlayer::GetSpeed());
-	nNum += sprintf(&str[nNum], " ”¼  Œa [‚x][‚g] : %.0f\n", CPlayer::GetRadius());
+	nNum +=  sprintf(&str[nNum], " ”¼  Œa [‚x][‚g] : %.0f\n", CPlayer::GetRadius());
 	nNum += wsprintf(&str[nNum], " Žõ  –½ [‚t][‚i] : %d\n\n", CPlayer::GetLife());
 
-	nNum += sprintf(&str[nNum], " Šµ  « [‡T][‚j] : %.2f\n\n", CPlayer::GetInertia());
+	nNum +=  sprintf(&str[nNum], " Šµ  « [‡T][‚j] : %.2f\n\n", CPlayer::GetInertia());
 //	nNum += wsprintf(&str[nNum], " ”Í  ˆÍ : \n");
 //	nNum += wsprintf(&str[nNum], " Šp  “x : \n\n");
 
-	nNum += sprintf(&str[nNum], " F (R) [‚V][‚X] : %.1f\n", CPlayer::GetCol().r);
-	nNum += sprintf(&str[nNum], " F (G) [‚S][‚U] : %.1f\n", CPlayer::GetCol().g);
-	nNum += sprintf(&str[nNum], " F (B) [‚P][‚R] : %.1f\n", CPlayer::GetCol().b);
+	nNum +=  sprintf(&str[nNum], " F (R) [‚V][‚X] : %.1f\n", CPlayer::GetCol().r);
+	nNum +=  sprintf(&str[nNum], " F (G) [‚S][‚U] : %.1f\n", CPlayer::GetCol().g);
+	nNum +=  sprintf(&str[nNum], " F (B) [‚P][‚R] : %.1f\n", CPlayer::GetCol().b);
 
 	// ƒeƒLƒXƒg•`‰æ
 	m_pFont->DrawText(NULL, str, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0xff, 0xff));
@@ -258,4 +310,38 @@ void CRenderer::DrawInfo(void)
 
 	// ƒeƒLƒXƒg•`‰æ
 	m_pFont->DrawText(NULL, str, -1, &rect, DT_CENTER, D3DCOLOR_ARGB(0xff, 0xff, 0xff, 0xff));
+}
+
+//=============================================================================
+// ƒZ[ƒuƒ[ƒh
+//=============================================================================
+void CRenderer::DrawSaveLoad(void)
+{
+	// CInputKeyboardƒCƒ“ƒXƒ^ƒ“ƒX‚ÌŽæ“¾
+	CInputKeyboard *pInputKeyboard = CManager::GetInputKeyboard();
+
+	RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	char str[512];
+
+	// ƒeƒLƒXƒg•`‰æ	
+	// ƒZ[ƒu•\Ž¦
+	if (m_bSaveDraw == true)
+	{
+		int nNum = wsprintf(&str[0], "y ƒZ[ƒu‚µ‚Ü‚µ‚½ z");
+		m_pFont->DrawText(NULL, str, -1, &rect, DT_CHARSTREAM, D3DCOLOR_ARGB(0xff, 0x00, 0xbf, 0xff));
+	}
+
+	// ƒ[ƒh•\Ž¦
+	if (m_bLoadDraw == true)
+	{
+		int nNum = wsprintf(&str[0], "\n\ny ƒ[ƒh‚µ‚Ü‚µ‚½ z");
+		m_pFont->DrawText(NULL, str, -1, &rect, DT_CHARSTREAM, D3DCOLOR_ARGB(0xff, 0xff, 0xa5, 0x00));
+	}
+
+	// ƒŠƒZƒbƒg•\Ž¦
+	if (m_bResetDraw == true)
+	{
+		int nNum = wsprintf(&str[0], "\n\n\n\ny ƒŠƒZƒbƒg‚µ‚Ü‚µ‚½ z");
+		m_pFont->DrawText(NULL, str, -1, &rect, DT_CHARSTREAM, D3DCOLOR_ARGB(0xff, 0xff, 0x45, 0x00));
+	}
 }

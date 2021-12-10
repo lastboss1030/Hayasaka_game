@@ -1,8 +1,18 @@
-﻿  player.cpp
+﻿  bullet.cpp
+  effect.cpp
+  game.cpp
+  main.cpp
+  manager.cpp
+  particle.cpp
+  player.cpp
+  polygon.cpp
+  renderer.cpp
+  scene.cpp
+  scene2D.cpp
   コード生成しています。
-  4 of 153 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
+  14 of 154 functions ( 9.1%) were compiled, the rest were copied from previous compilation.
     1 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+    4 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   Particle_Tools_02.vcxproj -> C:\Users\student\Desktop\C++\パーティクルツール\Particle_Tools_02\Release\Particle_Tools_02.exe
   Particle_Tools_02.vcxproj -> C:\Users\student\Desktop\C++\パーティクルツール\Particle_Tools_02\Release\Particle_Tools_02.pdb (Full PDB)
