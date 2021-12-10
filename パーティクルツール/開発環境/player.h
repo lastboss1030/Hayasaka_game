@@ -51,6 +51,8 @@ public:
 	static float GetRadius(void);
 	static int GetLife(void);
 	static float GetInertia(void);
+	static int GetRange(void);
+	static float GetAngle(void);
 
 	// 外部ファイル
 	void SaveData(void);	
@@ -72,7 +74,7 @@ private:
 	static int m_nLife;							// 寿命
 	static int m_nRange;						// 範囲
 	static float m_fInertia;					// 慣性
-	static int m_nAngle;						// 角度
+	static float m_fAngle;						// 角度
 };
 
 #endif

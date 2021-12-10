@@ -32,11 +32,25 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	void LoadParticle(void);
+
 private:
 	int m_life;								// ライフ
 	D3DXVECTOR3 m_move;						// 移動量
 	D3DXVECTOR3 m_size;						// 大きさ
 	static LPDIRECT3DTEXTURE9 m_pTexture;	// テクスチャ
+
+	int m_nCreateP;			// パーティクル生成数
+	int m_nSpeedP;			// パーティクル速度
+	float m_fRadiusP;			// パーティクル半径
+	int m_nLifeP;			// パーティクル寿命
+
+	float m_fInertiaP;		// パーティクル慣性
+	int m_nRangeP;			// パーティクル範囲
+	float m_fAngleP;		// パーティクル角度
+
+	D3DXCOLOR m_ColP;		// パーティクルカラー
+			
 };
 
 #endif

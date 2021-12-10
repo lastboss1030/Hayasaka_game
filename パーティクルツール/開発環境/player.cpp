@@ -33,7 +33,7 @@ int CPlayer::m_nSpeed = NULL;		// 速度
 float CPlayer::m_fRadius = NULL;	// 半径
 int CPlayer::m_nLife = NULL;		// 寿命
 float CPlayer::m_fInertia = NULL;	// 慣性
-int CPlayer::m_nAngle = NULL;		// 角度
+float CPlayer::m_fAngle = NULL;		// 角度
 int CPlayer::m_nRange = NULL;		// 範囲
 
 D3DXVECTOR3 g_pos;	// 取得用
@@ -68,8 +68,8 @@ CPlayer::CPlayer(PRIORITY nPriority) :CScene2D(nPriority)
 	m_fRadius = 20.0f;
 	m_nLife = 70;
 	m_fInertia = 1.00f;
-	m_nRange = 800;
-	m_nAngle = 100;
+	m_nRange = 628;
+	m_fAngle = 1.0f;
 }
 
 //=============================================================================
@@ -118,8 +118,8 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	m_fRadius = 20.0f;
 	m_nLife = 70;
 	m_fInertia = 1.00f;
-	m_nRange = 800;
-	m_nAngle = 100;
+	m_nRange = 628;
+	m_fAngle = 1.0;
 
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -207,49 +207,30 @@ void CPlayer::Update(void)
 	// 座標代入
 	g_pos = pos;
 
-	//// 弾の発射
-	//if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
-	//{
-	//	CBullet::Create(D3DXVECTOR3(pos.x + 0.0f, pos.y - 10.0f, 1.0f), 
-	//					D3DXVECTOR3(0.0f, -8.0f, 0.0f), 
-	//					D3DXVECTOR3(15.0f, 15.0f, 0.0f));
-	//}
-
-	// パーティクル生成
+	// 弾の発射
 	if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
 	{
-		for (int nCntEffect = 0; nCntEffect < m_nCreateNum; nCntEffect++)		// 個数
-		{
-			//角度の設定
-			float fAngle = ((float)(rand() % 800)) / 100;						// 角度
-			float fmove = (float)(rand() % m_nSpeed);
-
-			// パーティクル生成
-			CParticle::Create(pos,												// 座標
-				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),		// 移動量
-				D3DXVECTOR3(m_fRadius, m_fRadius, 0),							// サイズ
-				D3DXCOLOR(m_col.r, m_col.g, m_col.b, 1.0f),						// カラー
-				m_nLife,														// 寿命
-				m_fInertia);													// 慣性
-		}
+		CBullet::Create(D3DXVECTOR3(pos.x + 0.0f, pos.y - 10.0f, 1.0f), 
+						D3DXVECTOR3(0.0f, -8.0f, 0.0f), 
+						D3DXVECTOR3(15.0f, 15.0f, 0.0f));
 	}
 
-	// パーティクル生成(長押し)
-	if (pInputKeyboard->GetPress(DIK_B) == true)
+	// パーティクル生成
+	if (pInputKeyboard->GetTrigger(DIK_RETURN) == true)
 	{
-		for (int nCntEffect = 0; nCntEffect < m_nCreateNum; nCntEffect++)		// 個数
+		for (int nCntEffect = 0; nCntEffect < m_nCreateNum; nCntEffect++)						// 個数
 		{
 			//角度の設定
-			float fAngle = ((float)(rand() % 800)) / 100;						// 角度
-			float fmove = (float)(rand() % m_nSpeed);
+			float fAngle = ((float)(rand() % m_nRange - (m_nRange / 2))) / 100 + D3DX_PI * m_fAngle;					// 角度
+			float fmove = (float)(rand() % m_nSpeed);											// 速度
 
 			// パーティクル生成
-			CParticle::Create(pos,												// 座標
-				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),		// 移動量
-				D3DXVECTOR3(m_fRadius, m_fRadius, 0),							// サイズ
-				D3DXCOLOR(m_col.r, m_col.g, m_col.b, 1.0f),						// カラー
-				m_nLife,														// 寿命
-				m_fInertia);													// 慣性
+			CParticle::Create(pos,																// 座標
+				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),						// 移動量
+				D3DXVECTOR3(m_fRadius, m_fRadius, 0),											// サイズ
+				D3DXCOLOR(m_col.r, m_col.g, m_col.b, 1.0f),										// カラー
+				m_nLife,																		// 寿命
+				m_fInertia);																	// 慣性
 		}
 	}
 
@@ -390,6 +371,28 @@ void CPlayer::PlayerLimit(void)
 	{
 		m_fInertia = 0.8f;
 	}
+
+	// 範囲
+	if (m_nRange > 628)
+	{
+		m_nRange = 628;
+	}
+
+	if (m_nRange < 40)
+	{
+		m_nRange = 40;
+	}
+
+	// 角度
+	if (m_fAngle > 1.00f)
+	{
+		m_fAngle = 1.00f;
+	}
+	if (m_fAngle < -1.00)
+	{
+		m_fAngle = 1.00f;
+	}
+
 }
 
 //=============================================================================
@@ -409,8 +412,8 @@ void CPlayer::ChangeParticle(void)
 		m_fRadius = 20.0f;
 		m_nLife = 70;
 		m_fInertia = 1.00f;
-		m_nRange = 800;
-		m_nAngle = 100;
+		m_nRange = 628;
+		m_fAngle = 1.0;
 
 		m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
@@ -463,6 +466,28 @@ void CPlayer::ChangeParticle(void)
 	if (pInputKeyboard->GetTrigger(DIK_K) == true)
 	{
 		m_fInertia -= 0.01f;
+	}
+
+	// 範囲
+	if (pInputKeyboard->GetTrigger(DIK_LEFT) == true)
+	{
+		m_nRange -= 10;
+	}
+
+	if (pInputKeyboard->GetTrigger(DIK_RIGHT) == true)
+	{
+		m_nRange += 10;
+	}
+
+	// 角度
+	if (pInputKeyboard->GetTrigger(DIK_R) == true)
+	{
+		m_fAngle += 0.05f;
+	}
+
+	if (pInputKeyboard->GetTrigger(DIK_F) == true)
+	{
+		m_fAngle -= 0.05f;
 	}
 
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -583,6 +608,22 @@ float CPlayer::GetInertia(void)
 	return m_fInertia;
 }
 
+//=============================================================================
+// パーティクル範囲取得
+//=============================================================================
+int CPlayer::GetRange(void)
+{
+	return m_nRange;
+}
+
+//=============================================================================
+// パーティクル角度取得
+//=============================================================================
+float CPlayer::GetAngle(void)
+{
+	return m_fAngle;
+}
+
 
 //=============================================================================
 // セーブ
@@ -600,6 +641,8 @@ void CPlayer::SaveData(void)
 		fprintf(pFile, "%d\n", m_nLife);			// 寿命
 
 		fprintf(pFile, "%.2f\n", m_fInertia);		// 慣性
+		fprintf(pFile, "%d\n", m_nRange);			// 範囲
+		fprintf(pFile, "%.2f\n", m_fAngle);			// 角度
 
 		fprintf(pFile, "%.1f\n", m_col.r);			// R
 		fprintf(pFile, "%.1f\n", m_col.g);			// G
@@ -631,6 +674,8 @@ void CPlayer::LoadData(void)
 		fscanf(pFile, "%d\n", &m_nLife);			// 寿命
 
 		fscanf(pFile, "%f\n", &m_fInertia);			// 慣性
+		fscanf(pFile, "%d\n", &m_nRange);			// 範囲
+		fscanf(pFile, "%f\n", &m_fAngle);			// 角度
 
 		fscanf(pFile, "%f\n", &m_col.r);			// R
 		fscanf(pFile, "%f\n", &m_col.g);			// G

@@ -4,6 +4,7 @@
 // Author : Taiki Hayasaka
 //
 //=============================================================================
+#define _CRT_SECURE_NO_WARNINGS
 #include "bullet.h"
 #include "manager.h"
 #include "renderer.h"
@@ -13,6 +14,10 @@
 #include "game.h"
 #include "player.h"
 #include "particle.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 //=============================================================================
 // 静的メンバ変数
@@ -29,6 +34,16 @@ CBullet::CBullet(PRIORITY nPriority) :CScene2D(nPriority)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_life = 0;
+
+	// パーティクル用
+	m_nCreateP = 0;
+	m_nSpeedP = 0;
+	m_fRadiusP = 0;
+	m_nLifeP = 0;
+	m_fInertiaP = 0;
+	m_nRangeP = 0;
+	m_fAngleP = 0;
+	m_ColP = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 //=============================================================================
@@ -120,12 +135,29 @@ void CBullet::Update(void)
 		return;
 	}
 
+	// パーティクル数値読み込み
+	LoadParticle();
 
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	// 弾のライフが減ったら
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	if (m_life <= 0)
 	{
+		for (int nCntEffect = 0; nCntEffect < m_nCreateP; nCntEffect++)		// 個数
+		{
+			//角度の設定
+			float fAngle = ((float)(rand() % 800)) / 100;						// 角度
+			float fmove = (float)(rand() % m_nSpeedP);							// 速度
+
+			// パーティクル生成
+			CParticle::Create(Pos,													// 座標
+				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),			// 移動量
+				D3DXVECTOR3(m_fRadiusP, m_fRadiusP, 0),								// サイズ
+				D3DXCOLOR(m_ColP.r, m_ColP.g, m_ColP.b, 1.0f),						// カラー
+				m_nLifeP,															// 寿命
+				m_fInertiaP);														// 慣性
+		}
+
 		// 弾を消す
 		Uninit();
 
@@ -168,4 +200,40 @@ void CBullet::Unload(void)
 		m_pTexture->Release();
 		m_pTexture = NULL;
 	}
+}
+
+//=============================================================================
+// パーティクル数値ロード
+//=============================================================================
+void CBullet::LoadParticle(void)
+{
+	FILE *pFile;
+
+	// ファイル開く
+	pFile = fopen("particle.txt", "r");
+
+	if (pFile != NULL)
+	{
+		// ファイルが開けたら
+		fscanf(pFile, "%d\n", &m_nCreateP);			// 生成数
+		fscanf(pFile, "%d\n", &m_nSpeedP);			// 速度
+		fscanf(pFile, "%f\n", &m_fRadiusP);			// 半径
+		fscanf(pFile, "%d\n", &m_nLifeP);			// 寿命
+
+		fscanf(pFile, "%f\n", &m_fInertiaP);		// 慣性
+		fscanf(pFile, "%d\n", &m_nRangeP);			// 範囲
+		fscanf(pFile, "%f\n", &m_fAngleP);			// 角度
+
+		fscanf(pFile, "%f\n", &m_ColP.r);			// R
+		fscanf(pFile, "%f\n", &m_ColP.g);			// G
+		fscanf(pFile, "%f\n", &m_ColP.b);			// B
+	}
+
+	else
+	{ // ファイルが開けなかったら
+		printf("ファイルを開けませんでした\n");
+	}
+
+	// ファイル閉じる
+	fclose(pFile);
 }

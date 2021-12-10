@@ -262,7 +262,7 @@ void CRenderer::DrawValue(void)
 	// Še”’l•\¦
 
 	int nNum = wsprintf(&str[0], " \n");
-	nNum += wsprintf(&str[nNum], "yƒXƒy[ƒXƒL[‚Å¶¬z \n");
+	nNum += wsprintf(&str[nNum], "y EnterƒL[ ‚Å¶¬ z \n");
 	nNum += wsprintf(&str[nNum], "y ‚oƒL[‚Åˆê’â~ z \n");
 	nNum += wsprintf(&str[nNum], "y ”’lƒŠƒZƒbƒg[‚P] z \n\n");
 
@@ -273,9 +273,9 @@ void CRenderer::DrawValue(void)
 	nNum +=  sprintf(&str[nNum], " ”¼  Œa [‚x][‚g] : %.0f\n", CPlayer::GetRadius());
 	nNum += wsprintf(&str[nNum], " õ  –½ [‚t][‚i] : %d\n\n", CPlayer::GetLife());
 
-	nNum +=  sprintf(&str[nNum], " Šµ  « [‡T][‚j] : %.2f\n\n", CPlayer::GetInertia());
-//	nNum += wsprintf(&str[nNum], " ”Í  ˆÍ : \n");
-//	nNum += wsprintf(&str[nNum], " Šp  “x : \n\n");
+	nNum +=  sprintf(&str[nNum], " Šµ  « [‡T][‚j] : %.2f\n", CPlayer::GetInertia());
+	nNum += wsprintf(&str[nNum], " ”Í  ˆÍ [©][¨] : %d\n", CPlayer::GetRange());
+	nNum +=  sprintf(&str[nNum], " Šp  “x [‚q][‚e] : %.2f\n\n", CPlayer::GetAngle());
 
 	nNum +=  sprintf(&str[nNum], " F (R) [‚V][‚X] : %.1f\n", CPlayer::GetCol().r);
 	nNum +=  sprintf(&str[nNum], " F (G) [‚S][‚U] : %.1f\n", CPlayer::GetCol().g);
