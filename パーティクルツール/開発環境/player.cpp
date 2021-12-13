@@ -13,9 +13,7 @@
 #include "Input_Keyboard.h"	
 #include "game.h"			
 #include "fade.h"			
-#include "effect.h"
 #include "particle.h"
-#include "bullet.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -26,21 +24,20 @@
 //=============================================================================
 LPDIRECT3DTEXTURE9 CPlayer::m_pTexture = NULL;
 
-// パーティクル用
+// パーティクル
 CPlayer::PARTICLE CPlayer::m_aParticle[MAX_PARTICLE] = 
 {
-	20,								 // 生成数
-	8,								 // 速度
-	20.0f,							 // 半径
-	70,								 // 寿命
-	628,							 // 範囲
-	1.00f,							 // 慣性
-	1.0f,							 // 角度
-	D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),	 // 色
+	20,										// 生成数
+	8,										// 速度
+	20.0f,									// 半径
+	70,										// 寿命
+	1.00f,									// 慣性
+	628,									// 範囲
+	1.0f,									// 角度
+	D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),			// 色(R,G,B,A)
 };
 
-int CPlayer::m_nIndexParticle = 0;
-
+int CPlayer::m_nIndexParticle = 0;			// 保存番号
 D3DXVECTOR3 g_pos;	// 取得用
 #define PARTICLE_FILE_NAME "particle.txt"	// テキスト
 
@@ -49,11 +46,6 @@ D3DXVECTOR3 g_pos;	// 取得用
 //=============================================================================
 #define PLAYER_RIGHT	(5.0f)			// プレイヤーの移動量(右)
 #define PLAYER_LEFT		(-5.0f)			// プレイヤーの移動量(左)
-
-//=============================================================================
-// グローバル変数
-//=============================================================================
-bool g_bBumpedPlayer = false;		//無敵状態
 
 //=============================================================================
 // コンストラクタ
@@ -69,14 +61,14 @@ CPlayer::CPlayer(PRIORITY nPriority) :CScene2D(nPriority)
 	// パーティクル用数値初期化
 	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
 	{
-		m_aParticle[nCnt].nCreateNum = 20;
-		m_aParticle[nCnt].nSpeed = 8;
-		m_aParticle[nCnt].fRadius = 20.0f;
-		m_aParticle[nCnt].nLife = 70;
-		m_aParticle[nCnt].fInertia = 1.00f;
-		m_aParticle[nCnt].nRange = 628;
-		m_aParticle[nCnt].fAngle = 1.0f;
-		m_aParticle[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		m_aParticle[nCnt].nCreateNum = 20;							// 生成数
+		m_aParticle[nCnt].nSpeed = 8;								// 速度
+		m_aParticle[nCnt].fRadius = 20.0f;							// 半径
+		m_aParticle[nCnt].nLife = 70;								// 寿命
+		m_aParticle[nCnt].fInertia = 1.00f;							// 慣性
+		m_aParticle[nCnt].nRange = 628;								// 範囲
+		m_aParticle[nCnt].fAngle = 1.0f;							// 角度
+		m_aParticle[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色(R,G,B,A)
 	}
 }
 
@@ -121,15 +113,15 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	m_size = size;
 
 	// パーティクル用数値初期化
-	m_aParticle[m_nIndexParticle].nCreateNum = 20;
-	m_aParticle[m_nIndexParticle].nSpeed = 8;
-	m_aParticle[m_nIndexParticle].fRadius = 20.0f;
-	m_aParticle[m_nIndexParticle].nLife = 70;
-	m_aParticle[m_nIndexParticle].fInertia = 1.00f;
-	m_aParticle[m_nIndexParticle].nRange = 628;
-	m_aParticle[m_nIndexParticle].fAngle = 1.0;
+	m_aParticle[m_nIndexParticle].nCreateNum = 20;	// 生成数
+	m_aParticle[m_nIndexParticle].nSpeed = 8;		// 速度
+	m_aParticle[m_nIndexParticle].fRadius = 20.0f;	// 半径
+	m_aParticle[m_nIndexParticle].nLife = 70;		// 寿命
+	m_aParticle[m_nIndexParticle].fInertia = 1.00f;	// 慣性
+	m_aParticle[m_nIndexParticle].nRange = 628;		// 範囲
+	m_aParticle[m_nIndexParticle].fAngle = 1.0;		// 角度
 
-	m_aParticle[m_nIndexParticle].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	m_aParticle[m_nIndexParticle].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色(R,G,B,A)
 
 	// CScene2Dの初期化処理
 	CScene2D::Init(pos, size);
@@ -188,7 +180,7 @@ void CPlayer::Update(void)
 	// 座標の設定
 	pos += m_move;
 
-	// 画面外処理
+	// 画面端処理
 	if (pos.x - m_size.x / 2 <= 0.0f)
 	{
 		pos.x = m_size.x / 2;
@@ -215,30 +207,22 @@ void CPlayer::Update(void)
 	// 座標代入
 	g_pos = pos;
 
-	// 弾の発射
+	// パーティクル生成
 	if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
 	{
-		CBullet::Create(D3DXVECTOR3(pos.x + 0.0f, pos.y - 10.0f, 1.0f), 
-						D3DXVECTOR3(0.0f, -8.0f, 0.0f), 
-						D3DXVECTOR3(15.0f, 15.0f, 0.0f));
-	}
-
-	// パーティクル生成
-	if (pInputKeyboard->GetTrigger(DIK_RETURN) == true)
-	{
-		for (int nCntEffect = 0; nCntEffect < m_aParticle[m_nIndexParticle].nCreateNum; nCntEffect++)						// 個数
+		for (int nCntEffect = 0; nCntEffect < m_aParticle[m_nIndexParticle].nCreateNum; nCntEffect++)	// 個数
 		{
 			//角度の設定
-			float fAngle = ((float)(rand() % m_aParticle[m_nIndexParticle].nRange - (m_aParticle[m_nIndexParticle].nRange / 2))) / 100 + D3DX_PI * m_aParticle[m_nIndexParticle].fAngle;					// 角度
-			float fmove = (float)(rand() % m_aParticle[m_nIndexParticle].nSpeed);											// 速度
+			float fAngle = ((float)(rand() % m_aParticle[m_nIndexParticle].nRange - (m_aParticle[m_nIndexParticle].nRange / 2))) / 100 + D3DX_PI * m_aParticle[m_nIndexParticle].fAngle;	// 角度
+			float fmove = (float)(rand() % m_aParticle[m_nIndexParticle].nSpeed);	// 速度
 
 			// パーティクル生成
 			CParticle::Create(pos,																// 座標
 				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),						// 移動量
-				D3DXVECTOR3(m_aParticle[m_nIndexParticle].fRadius, m_aParticle[m_nIndexParticle].fRadius, 0),											// サイズ
-				m_aParticle[m_nIndexParticle].col,										// カラー
-				m_aParticle[m_nIndexParticle].nLife,																		// 寿命
-				m_aParticle[m_nIndexParticle].fInertia);																	// 慣性
+				D3DXVECTOR3(m_aParticle[m_nIndexParticle].fRadius, m_aParticle[m_nIndexParticle].fRadius, 0),	// サイズ
+				m_aParticle[m_nIndexParticle].col,												// カラー
+				m_aParticle[m_nIndexParticle].nLife,											// 寿命
+				m_aParticle[m_nIndexParticle].fInertia);										// 慣性
 		}
 	}
 
@@ -277,7 +261,7 @@ HRESULT CPlayer::Load(void)
 	pDevice = CManager::GetRenderer()->GetDevice();
 
 	// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/player.png", &m_pTexture);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/ParticlePlayer.png", &m_pTexture);
 
 	return S_OK;
 }
@@ -300,7 +284,7 @@ void CPlayer::Unload(void)
 //=============================================================================
 void CPlayer::PlayerLimit(void)
 {
-	// 赤
+	// 色(R)
 	if (m_aParticle[m_nIndexParticle].col.r > 1.0f)
 	{
 		m_aParticle[m_nIndexParticle].col.r = 1.0f;
@@ -310,7 +294,7 @@ void CPlayer::PlayerLimit(void)
 		m_aParticle[m_nIndexParticle].col.r = 0.0f;
 	}
 
-	// 緑
+	// 色(G)
 	if (m_aParticle[m_nIndexParticle].col.g > 1.0f)
 	{
 		m_aParticle[m_nIndexParticle].col.g = 1.0f;
@@ -320,7 +304,7 @@ void CPlayer::PlayerLimit(void)
 		m_aParticle[m_nIndexParticle].col.g = 0.0f;
 	}
 
-	// 青
+	// 色(B)
 	if (m_aParticle[m_nIndexParticle].col.b > 1.0f)
 	{
 		m_aParticle[m_nIndexParticle].col.b = 1.0f;
@@ -479,7 +463,7 @@ void CPlayer::ChangeParticle(void)
 	// 範囲
 	if (pInputKeyboard->GetTrigger(DIK_Z) == true)
 	{
-		m_aParticle[m_nIndexParticle].nRange -= m_aParticle[m_nIndexParticle].nRange / 2;
+		m_aParticle[m_nIndexParticle].nRange -= m_aParticle[m_nIndexParticle].nRange / 4;
 	}
 
 	if (pInputKeyboard->GetTrigger(DIK_C) == true)
@@ -594,7 +578,7 @@ D3DXCOLOR CPlayer::GetCol(void)
 }
 
 //=============================================================================
-// 発生数取得
+// パーティクル発生数取得
 //=============================================================================
 int CPlayer::GetCreateNum(void)
 {
@@ -618,7 +602,7 @@ float CPlayer::GetRadius(void)
 }
 
 //=============================================================================
-// パーティクルライフ取得
+// パーティクル寿命取得
 //=============================================================================
 int CPlayer::GetLife(void)
 {
@@ -650,7 +634,7 @@ float CPlayer::GetAngle(void)
 }
 
 //=============================================================================
-// 保存番号
+// パーティクル保存番号取得
 //=============================================================================
 int CPlayer::GetIndexParticle(void)
 {
@@ -664,6 +648,8 @@ int CPlayer::GetIndexParticle(void)
 void CPlayer::SaveData(void)
 {
 	FILE *pFile;
+
+	// ファイル開く
 	pFile = fopen(PARTICLE_FILE_NAME, "w");
 
 	if (pFile != NULL)
@@ -699,6 +685,7 @@ void CPlayer::LoadData(void)
 {
 	FILE *pFile;
 
+	// ファイル開く
 	pFile = fopen(PARTICLE_FILE_NAME, "r");
 
 	if (pFile != NULL)
@@ -715,7 +702,7 @@ void CPlayer::LoadData(void)
 			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nRange);			// 範囲
 			fscanf(pFile, "%f\n", &m_aParticle[nCnt].fAngle);			// 角度
 
-			fscanf(pFile, "%f %f %f\n", &m_aParticle[nCnt].col.r, &m_aParticle[nCnt].col.g, &m_aParticle[nCnt].col.b);			// R
+			fscanf(pFile, "%f %f %f\n", &m_aParticle[nCnt].col.r, &m_aParticle[nCnt].col.g, &m_aParticle[nCnt].col.b);	// 色(R,G,B,A)
 		}
 	}
 

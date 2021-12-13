@@ -9,7 +9,6 @@
 #include "renderer.h"
 #include "Input_Keyboard.h"
 #include "scene.h"
-#include "effect.h"
 #include "game.h"
 #include "player.h"
 
@@ -28,9 +27,9 @@ CParticle::CParticle(PRIORITY nPriority) :CScene2D(nPriority)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	m_life = 0;
-	m_fRadius = 0;
-	m_fInertia = 1.00f;
+	m_life = 0;				// éıñΩ
+	m_fRadius = 0;			// îºåa
+	m_fInertia = 1.00f;		// äµê´
 }
 
 //=============================================================================
@@ -74,7 +73,7 @@ HRESULT CParticle::Init(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, D3D
 	m_move = move;
 	m_size = size;
 	m_life = nLife;
-	m_fInertia = fInertia;
+	m_fInertia = fInertia; 
 	m_col = col;
 
 	// CScene2DÇÃèâä˙âªèàóù

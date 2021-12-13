@@ -13,9 +13,7 @@
 #include "game.h"			
 #include "Input_Keyboard.h"	
 #include "fade.h"
-#include "effect.h"
 #include "particle.h"
-#include "bullet.h"
 
 //=============================================================================
 // 静的メンバ変数
@@ -46,6 +44,7 @@ CGame *CGame::Create()
 {
 	CGame *pGame = new CGame;
 
+	// 変数宣言
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 size;
 
@@ -113,9 +112,7 @@ void CGame::Draw(void)
 void CGame::LoadAll(void)
 {
 	// テクスチャの読み込み
-	CBullet::Load();
 	CPlayer::Load();
-	CEffect::Load();
 	CParticle::Load();
 }
 
@@ -125,8 +122,6 @@ void CGame::LoadAll(void)
 void CGame::UnloadAll(void)
 {
 	// テクスチャを破棄
-	CBullet::Unload();
 	CPlayer::Unload();
-	CEffect::Unload();
 	CParticle::Unload();
 }

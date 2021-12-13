@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Effect">
-      <UniqueIdentifier>{80d184aa-24e4-4868-9fa0-26d32ba34ef6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Input">
       <UniqueIdentifier>{49bee008-350c-47fa-a03a-a36ffd86ea03}</UniqueIdentifier>
     </Filter>
@@ -27,9 +24,6 @@
     </Filter>
     <Filter Include="ソース ファイル\System">
       <UniqueIdentifier>{233c56e3-75c9-46e0-8111-d9c674858e20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Effect">
-      <UniqueIdentifier>{de4a0737-9715-4f0f-a1e3-734e577dae88}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Input">
       <UniqueIdentifier>{23254855-3049-4ce8-9041-7acfbe961c22}</UniqueIdentifier>
@@ -43,11 +37,14 @@
     <Filter Include="ヘッダー ファイル\Player">
       <UniqueIdentifier>{6c282ecc-2082-4abd-8140-c73905306c6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Particle">
+      <UniqueIdentifier>{80d184aa-24e4-4868-9fa0-26d32ba34ef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Particle">
+      <UniqueIdentifier>{de4a0737-9715-4f0f-a1e3-734e577dae88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="effect.cpp">
-      <Filter>ソース ファイル\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="fade.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
@@ -67,7 +64,7 @@
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="particle.cpp">
-      <Filter>ソース ファイル\Effect</Filter>
+      <Filter>ソース ファイル\Particle</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>ソース ファイル\Player</Filter>
@@ -84,14 +81,8 @@
     <ClCompile Include="scene2D.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="bullet.cpp">
-      <Filter>ソース ファイル\Player</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="effect.h">
-      <Filter>ヘッダー ファイル\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="fade.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
@@ -111,7 +102,7 @@
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="particle.h">
-      <Filter>ヘッダー ファイル\Effect</Filter>
+      <Filter>ヘッダー ファイル\Particle</Filter>
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>ヘッダー ファイル\Player</Filter>
@@ -127,9 +118,6 @@
     </ClInclude>
     <ClInclude Include="scene2D.h">
       <Filter>ヘッダー ファイル\System</Filter>
-    </ClInclude>
-    <ClInclude Include="bullet.h">
-      <Filter>ヘッダー ファイル\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

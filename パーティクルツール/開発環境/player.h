@@ -24,14 +24,15 @@ class CPlayer : public CScene2D
 {
 public:
 
+	// パーティクル構造体
 	typedef struct
 	{
 		int nCreateNum;					// 生成数
 		int nSpeed;						// 速度
 		float fRadius;					// 半径
 		int nLife;						// 寿命
-		int nRange;						// 範囲
 		float fInertia;					// 慣性
+		int nRange;						// 範囲
 		float fAngle;					// 角度
 		D3DXCOLOR col;					// 色
 	}PARTICLE;
@@ -61,14 +62,14 @@ public:
 	static PARTICLE GetParticle(void);
 
 	// パーティクル情報取得
-	static int GetCreateNum(void);
-	static int GetSpeed(void);
-	static float GetRadius(void);
-	static int GetLife(void);
-	static float GetInertia(void);
-	static int GetRange(void);
-	static float GetAngle(void);
-	static int GetIndexParticle(void);
+	static int GetCreateNum(void);				// 生成数
+	static int GetSpeed(void);					// 速度
+	static float GetRadius(void);				// 半径
+	static int GetLife(void);					// 寿命
+	static float GetInertia(void);				// 慣性
+	static int GetRange(void);					// 範囲
+	static float GetAngle(void);				// 角度
+	static int GetIndexParticle(void);			// 番号
 
 	// 外部ファイル
 	void SaveData(void);	
@@ -82,9 +83,9 @@ private:
 	float m_fPosTexU;							// テクスチャのU座標
 	float m_fPosTexV;							// テクスチャのV座標
 
-	static PARTICLE m_aParticle[MAX_PARTICLE];					// パーティクル構造体
+	static PARTICLE m_aParticle[MAX_PARTICLE];	// パーティクル構造体
 
-	static int m_nIndexParticle;
+	static int m_nIndexParticle;				// パーティクル番号
 };
 
 #endif
