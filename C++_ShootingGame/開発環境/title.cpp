@@ -171,9 +171,6 @@ void CTitle::Update(void)
 	CSound *pSound;
 	pSound = CManager::GetSound();
 
-	// リザルトBGMオフ
-	pSound->Stop(CSound::SOUND_LABEL_BGM_RESULT);
-
 	// Enterロゴの表示
 	if (g_bPressEnter == false)
 	{
@@ -249,17 +246,6 @@ void CTitle::Update(void)
 		//カウンターを戻す
 		nTimeCounterTitle = 0;
 	}
-
-
-	//// エンターを押したとき
-	//if (pFade->GetFade() == CFade::FADE_NONE && pInputKeyboard->GetTrigger(DIK_RETURN) == true)
-	//{
-	//	// EnterSE
-	//	pSound->Play(CSound::SOUND_LABEL_SE_ENTER);
-
-	//	// モードの設定
-	//	pFade->SetFade(CFade::FADE_OUT, CManager::MODE_TUTORIAL);
-	//}
 }
 
 //=============================================================================

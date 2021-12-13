@@ -230,6 +230,11 @@ void CManager::Draw(void)
 //=============================================================================
 void CManager::SetMode(MODE mode)
 {
+	// サウンドを取得
+	CSound *pSound;
+	pSound = CManager::GetSound();
+
+	// ポーズ
 	m_bPause = false;
 
 	// 現在のモードの破棄
@@ -238,6 +243,9 @@ void CManager::SetMode(MODE mode)
 	case MODE_TITLE:	// タイトル画面
 		if (m_pTitle != NULL)
 		{
+			// タイトルBGMオフ
+			pSound->Stop(CSound::SOUND_LABEL_BGM_TITLE);
+
 			m_pTitle->Uninit();
 			m_pTitle = NULL;
 		}
@@ -246,6 +254,9 @@ void CManager::SetMode(MODE mode)
 	case MODE_TUTORIAL:	// チュートリアル画面
 		if (m_pTutorial != NULL)
 		{
+			// チュートリアルBGMオフ
+			pSound->Stop(CSound::SOUND_LABEL_BGM_TUTORIAL);
+
 			m_pTutorial->Uninit();
 			m_pTutorial = NULL;
 		}
@@ -254,6 +265,9 @@ void CManager::SetMode(MODE mode)
 	case MODE_GAME:		// ゲーム画面
 		if (m_pGame != NULL)
 		{
+			// 通常BGMオフ
+			pSound->Stop(CSound::SOUND_LABEL_BGM_NORMAL);
+
 			m_pGame->Uninit();
 			m_pGame = NULL;
 		}
@@ -262,6 +276,9 @@ void CManager::SetMode(MODE mode)
 	case MODE_RESULT:	// リザルト画面
 		if (m_pResult != NULL)
 		{
+			// リザルトBGMオフ
+			pSound->Stop(CSound::SOUND_LABEL_BGM_RESULT);
+
 			m_pResult->Uninit();
 			m_pResult = NULL;
 		}

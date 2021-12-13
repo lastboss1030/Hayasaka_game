@@ -4,6 +4,7 @@
 // Author : Taiki Hayasaka
 //
 //=============================================================================
+#define _CRT_SECURE_NO_WARNINGS
 #include "particle.h"
 #include "manager.h"
 #include "renderer.h"
@@ -19,10 +20,29 @@
 #include "player.h"
 #include "boss_parts.h"
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 //=============================================================================
 // 静的メンバ変数
 //=============================================================================
 LPDIRECT3DTEXTURE9 CParticle::m_pTexture = NULL;
+
+// パーティクル
+CParticle::PARTICLE CParticle::m_aParticle[MAX_PARTICLE] =
+{
+	20,										// 生成数
+	8,										// 速度
+	20.0f,									// 半径
+	70,										// 寿命
+	1.00f,									// 慣性
+	628,									// 範囲
+	1.0f,									// 角度
+	D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),			// 色(R,G,B,A)
+};
+
+int CParticle::m_nIndexParticle = 0;			// 保存番号
 
 //=============================================================================
 // コンストラクタ
@@ -32,11 +52,19 @@ CParticle::CParticle(PRIORITY nPriority) :CScene2D(nPriority)
 	// 初期化
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_life = 0;
-	m_fRadius = 0;
-	m_fCntAlpha = 0;
 
-	m_fInertia = 0.95f;
+	// パーティクル用数値初期化
+	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
+	{
+		m_aParticle[nCnt].nCreateNum = 20;							// 生成数
+		m_aParticle[nCnt].nSpeed = 8;								// 速度
+		m_aParticle[nCnt].fRadius = 20.0f;							// 半径
+		m_aParticle[nCnt].nLife = 70;								// 寿命
+		m_aParticle[nCnt].fInertia = 1.00f;							// 慣性
+		m_aParticle[nCnt].nRange = 628;								// 範囲
+		m_aParticle[nCnt].fAngle = 1.0f;							// 角度
+		m_aParticle[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色(R,G,B,A)
+	}
 }
 
 //=============================================================================
@@ -50,7 +78,7 @@ CParticle::~CParticle()
 //=============================================================================
 // 生成処理
 //=============================================================================
-CParticle *CParticle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, D3DXCOLOR col, float fRadius, float fCntAlpha)
+CParticle *CParticle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, D3DXCOLOR col, int nLife, float fInertia)
 {
 	// ポインタ
 	CParticle *pParticle = NULL;
@@ -62,7 +90,7 @@ CParticle *CParticle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size
 
 		if (pParticle != NULL)
 		{
-			pParticle->Init(pos, move, size, col, fRadius, fCntAlpha);
+			pParticle->Init(pos, move, size, col, nLife, fInertia);
 
 			pParticle->BindTexture(m_pTexture);
 		}
@@ -74,16 +102,24 @@ CParticle *CParticle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size
 //=============================================================================
 // 初期化処理
 //=============================================================================
-HRESULT CParticle::Init(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, D3DXCOLOR col, float fRadius, float fCntAlpha)
+HRESULT CParticle::Init(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, D3DXCOLOR col, int nLife, float fInertia)
 {
 	// メンバ変数の初期化
 	m_move = move;
 	m_size = size;
-	m_fCntAlpha = fCntAlpha;
+	m_life = m_aParticle[m_nIndexParticle].nLife;
+	m_fInertia = fInertia;
 	m_col = col;
 
-	// パーティクルのライフ
-	m_life = 60;
+	// パーティクル用数値初期化
+	m_aParticle[m_nIndexParticle].nCreateNum = 20;	// 生成数
+	m_aParticle[m_nIndexParticle].nSpeed = 8;		// 速度
+	m_aParticle[m_nIndexParticle].fRadius = 20.0f;	// 半径
+	m_aParticle[m_nIndexParticle].nLife = 70;		// 寿命
+	m_aParticle[m_nIndexParticle].fInertia = 0.95f;	// 慣性
+	m_aParticle[m_nIndexParticle].nRange = 628;		// 範囲
+	m_aParticle[m_nIndexParticle].fAngle = 1.0;		// 角度
+	m_aParticle[m_nIndexParticle].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色(R,G,B,A)
 
 	// CScene2Dの初期化処理
 	CScene2D::Init(pos, size);
@@ -116,6 +152,9 @@ void CParticle::Update(void)
 	CSound *pSound;
 	pSound = CManager::GetSound();
 
+	// カラー設定
+	SetCol(m_aParticle[m_nIndexParticle].col);
+
 	// posにmoveの値を毎秒+する
 	Pos += m_move;
 
@@ -130,6 +169,9 @@ void CParticle::Update(void)
 
 	// ライフ減少
 	m_life--;
+
+	// ファイルロード
+	LoadData();
 
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - -
 	// ライフが0以下になったとき
@@ -198,4 +240,121 @@ void CParticle::Unload(void)
 		m_pTexture->Release();
 		m_pTexture = NULL;
 	}
+}
+
+//=============================================================================
+// パーティクル構造体取得
+//=============================================================================
+CParticle::PARTICLE CParticle::GetParticle(void)
+{
+	return m_aParticle[m_nIndexParticle];
+}
+
+//=============================================================================
+// パーティクル用取得
+// 色情報取得
+//=============================================================================
+D3DXCOLOR CParticle::GetCol(void)
+{
+	return m_aParticle[m_nIndexParticle].col;
+}
+
+//=============================================================================
+// パーティクル発生数取得
+//=============================================================================
+int CParticle::GetCreateNum(void)
+{
+	return m_aParticle[m_nIndexParticle].nCreateNum;
+}
+
+//=============================================================================
+// パーティクル速度取得
+//=============================================================================
+int CParticle::GetSpeed(void)
+{
+	return m_aParticle[m_nIndexParticle].nSpeed;
+}
+
+//=============================================================================
+// パーティクル半径取得
+//=============================================================================
+float CParticle::GetRadius(void)
+{
+	return m_aParticle[m_nIndexParticle].fRadius;
+}
+
+//=============================================================================
+// パーティクル寿命取得
+//=============================================================================
+int CParticle::GetLife(void)
+{
+	return m_aParticle[m_nIndexParticle].nLife;
+}
+
+//=============================================================================
+// パーティクル慣性取得
+//=============================================================================
+float CParticle::GetInertia(void)
+{
+	return m_aParticle[m_nIndexParticle].fInertia;
+}
+
+//=============================================================================
+// パーティクル範囲取得
+//=============================================================================
+int CParticle::GetRange(void)
+{
+	return m_aParticle[m_nIndexParticle].nRange;
+}
+
+//=============================================================================
+// パーティクル角度取得
+//=============================================================================
+float CParticle::GetAngle(void)
+{
+	return m_aParticle[m_nIndexParticle].fAngle;
+}
+
+//=============================================================================
+// パーティクル保存番号取得
+//=============================================================================
+int CParticle::GetIndexParticle(void)
+{
+	return m_nIndexParticle;
+}
+
+//=============================================================================
+// ファイルロード処理
+//=============================================================================
+void CParticle::LoadData(void)
+{
+	FILE *pFile;
+
+	// ファイル開く
+	pFile = fopen(PARTICLE_FILE_NAME, "r");
+
+	if (pFile != NULL)
+	{
+		// ファイルが開けたら
+		for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
+		{
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nCreateNum);		// 生成数
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nSpeed);			// 速度
+			fscanf(pFile, "%f\n", &m_aParticle[nCnt].fRadius);			// 半径
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nLife);			// 寿命
+
+			fscanf(pFile, "%f\n", &m_aParticle[nCnt].fInertia);			// 慣性
+			fscanf(pFile, "%d\n", &m_aParticle[nCnt].nRange);			// 範囲
+			fscanf(pFile, "%f\n", &m_aParticle[nCnt].fAngle);			// 角度
+
+			fscanf(pFile, "%f %f %f\n", &m_aParticle[nCnt].col.r, &m_aParticle[nCnt].col.g, &m_aParticle[nCnt].col.b);	// 色(R,G,B,A)
+		}
+	}
+
+	else
+	{ // ファイルが開けなかったら
+		printf("ファイルを開けませんでした\n");
+	}
+
+	fclose(pFile);
 }

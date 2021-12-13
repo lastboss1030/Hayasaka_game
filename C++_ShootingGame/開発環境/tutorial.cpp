@@ -91,7 +91,7 @@ HRESULT CTutorial::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	CSound *pSound;
 	pSound = CManager::GetSound();
 
-	// タイトルBGM
+	// チュートリアルBGM
 	pSound->Play(CSound::SOUND_LABEL_BGM_TUTORIAL);
 
 	// 動的確保(メモリの確保)
@@ -142,13 +142,10 @@ void CTutorial::Update(void)
 	CSound *pSound;
 	pSound = CManager::GetSound();
 
-	// タイトルBGMオフ
-	pSound->Stop(CSound::SOUND_LABEL_BGM_TITLE);
-
 	// エンターを押したとき
 	if (pFade->GetFade() == CFade::FADE_NONE && pInputKeyboard->GetTrigger(DIK_RETURN) == true)
 	{
-		// タイトルBGM
+		// エンターSE
 		pSound->Play(CSound::SOUND_LABEL_SE_ENTER);
 
 		// モードの設定

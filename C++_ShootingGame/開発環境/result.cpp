@@ -136,10 +136,6 @@ HRESULT CResult::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 //=============================================================================
 void CResult::Uninit(void)
 {
-	//ƒTƒEƒ“ƒh‚ðŽæ“¾
-	CSound *pSound;
-	pSound = CManager::GetSound();
-
 	// ‰æ‘œ‚Ì”jŠü
 	Unload();
 

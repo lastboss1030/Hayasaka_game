@@ -80,6 +80,8 @@ private:
 	static CPause*m_pPause;											// ポーズ
 
 	static RESULTMODE m_resultmode;									// リザルトモード
+
+	static int m_nCounterGame;
 };
 
 #endif

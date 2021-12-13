@@ -248,25 +248,8 @@ void CBullet::Update(void)
 						// 爆発の生成
 						CExplosion::Create(PosEnemy, D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
-						nCntEffectEnemy++;
-
-						if (nCntEffectEnemy % 1 == 0)
-						{
-							for (int nCntEffect = 0; nCntEffect < 20; nCntEffect++) // 個数
-							{
-								//角度の設定
-								float fAngle = ((float)(rand() % 800)) / 100.0f;
-								float fmove = (float)(rand() % 8);
-
-								// パーティクル生成
-								CParticle::Create(Pos, 
-									D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5), 
-									D3DXVECTOR3(15, 15, 0), 
-									D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-									5.0f, 
-									0.01f);
-							}
-						}
+						// パーティクル生成
+						HitParticle(0);
 
 						// ライフ減少
 						CEnemy *pEnemy = (CEnemy*)pScene;
@@ -303,7 +286,7 @@ void CBullet::Update(void)
 						CExplosion::Create(D3DXVECTOR3(Pos.x, Pos.y, 0.0f), D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
 
 						// パーティクル生成
-						HitParticle();
+						HitParticle(1);
 
 						// ライフ減少
 						CParts *pParts = (CParts*)pScene;
@@ -339,6 +322,9 @@ void CBullet::Update(void)
 					{
 						// 爆発の生成
 						CExplosion::Create(posPlayer, D3DXVECTOR3(50, 50, 0), D3DXVECTOR3(0, 0, 0));
+
+						// パーティクル生成
+						HitParticle(2);
 
 						// SEの追加
 						pSound->Play(CSound::SOUND_LABEL_SE_EXPLOSION);
@@ -456,7 +442,7 @@ void CBullet::HomingBullet(void)
 //=============================================================================
 // 当たった時のパーティクル
 //=============================================================================
-void CBullet::HitParticle(void)
+void CBullet::HitParticle(int nNum)
 {
 	// 座標
 	D3DXVECTOR3 Pos;
@@ -464,21 +450,69 @@ void CBullet::HitParticle(void)
 
 	nCntEffectEnemy++;
 
-	if (nCntEffectEnemy % 1 == 0)
+	// 番号が0の時(雑魚敵)
+	if (nNum == 0)
 	{
-		for (int nCntEffect = 0; nCntEffect < 20; nCntEffect++) // 個数
+		if (nCntEffectEnemy % 1 == 0)
 		{
-			//角度の設定
-			float fAngle = ((float)(rand() % 800)) / 100.0f;
-			float fmove = (float)(rand() % 8);
+			for (int nCntEffect = 0; nCntEffect < 50; nCntEffect++)	// 個数
+			{
+				//角度の設定
+				float fAngle = ((float)(rand() % 96 - (96 / 2))) / 100 + D3DX_PI * 0.0f;	// 角度
+				float fmove = (float)(rand() % 13);	// 速度
 
-			// パーティクル生成
-			CParticle::Create(Pos,
-				D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),
-				D3DXVECTOR3(18, 18, 0),
-				D3DXCOLOR(1.0f, 0.6f, 0.0f, 1.0f),	// 赤
-				5.0f,
-				0.01f);
+				// パーティクル生成
+				CParticle::Create(Pos,													// 座標
+					D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),			// 移動量
+					D3DXVECTOR3(20, 20, 0),		// サイズ
+					D3DXCOLOR(0.3f, 1.0f, 0.2f, 1.0f),
+					70,												// 寿命
+					0.95f);											// 慣性
+			}
+		}
+	}
+
+	// 番号が1の時(ボス)
+	if (nNum == 1)
+	{
+		if (nCntEffectEnemy % 1 == 0)
+		{
+			for (int nCntEffect = 0; nCntEffect < 60; nCntEffect++)	// 個数
+			{
+				//角度の設定
+				float fAngle = ((float)(rand() % 72 - (72 / 2))) / 100 + D3DX_PI * -0.0f;	// 角度
+				float fmove = (float)(rand() % 30);	// 速度
+
+				// パーティクル生成
+				CParticle::Create(Pos,												// 座標
+					D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),		// 移動量
+					D3DXVECTOR3(26, 26, 0),											// サイズ
+					D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),								// カラー
+					60,																// 寿命
+					0.95f);															// 慣性
+			}
+		}
+	}
+
+	// 番号が2の時(プレイヤー)
+	if (nNum == 2)
+	{
+		if (nCntEffectEnemy % 1 == 0)
+		{
+			for (int nCntEffect = 0; nCntEffect < 90; nCntEffect++)	// 個数
+			{
+				//角度の設定
+				float fAngle = ((float)(rand() % 85 - (85 / 2))) / 100 + D3DX_PI * 1.0f;	// 角度
+				float fmove = (float)(rand() % 15);	// 速度
+
+				// パーティクル生成
+				CParticle::Create(Pos,												// 座標
+					D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),		// 移動量
+					D3DXVECTOR3(20, 20, 0),											// サイズ
+					D3DXCOLOR(0.0f, 0.6f, 1.0f, 1.0f),								// カラー
+					50,																// 寿命
+					0.95f);															// 慣性
+			}
 		}
 	}
 }
