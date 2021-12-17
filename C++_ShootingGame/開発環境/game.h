@@ -51,7 +51,6 @@ public:
 	static void LoadAll(void);										// 全てのテクスチャを読み込む
 	static void UnloadAll(void);									// 全てのテクスチャを破棄
 
-	void EnemyAll(void);											// 敵管理
 	void BossAll(void);												// ボス管理
 
 	//デバイスの取得
@@ -80,8 +79,6 @@ private:
 	static CPause*m_pPause;											// ポーズ
 
 	static RESULTMODE m_resultmode;									// リザルトモード
-
-	static int m_nCounterGame;
 };
 
 #endif

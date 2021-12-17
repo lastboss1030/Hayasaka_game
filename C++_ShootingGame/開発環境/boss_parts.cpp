@@ -61,6 +61,8 @@ CParts::CParts(PRIORITY nPriority) :CScene2D(nPriority)
 	m_nSoundCnt = 0;
 	m_nSoundCnt2 = 0;
 	m_nSoundCnt3 = 0;
+
+	m_nCntBossTime = 0;
 }
 
 //=============================================================================
@@ -126,7 +128,9 @@ void CParts::Update(void)
 
 	// 変数宣言
 	int EnemyCnt = m_pEnemy->GetEnemyCnt();		// 敵カウント
-
+	
+	// ボス出現カウント
+	m_nCntBossTime++;
 
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	// ボスパーツの状態
@@ -230,9 +234,9 @@ void CParts::Update(void)
 
 
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	// 雑魚敵が全部消えたら動き始める
+	// 動き始める
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	if (EnemyCnt <= 0)
+	if (m_nCntBossTime >= 3600)
 	{
 		// 移動
 		pos.y += 2.0;

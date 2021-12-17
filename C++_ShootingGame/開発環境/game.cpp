@@ -41,8 +41,6 @@ CPause *CGame::m_pPause = NULL;
 
 CGame::RESULTMODE CGame::m_resultmode = RESULTMODE_NONE;
 
-int CGame::m_nCounterGame = 0;
-
 //=============================================================================
 // コンストラクタ
 //=============================================================================
@@ -102,9 +100,6 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	// ライフの生成
 	m_pLife = CLife::Create(D3DXVECTOR3(130.0f, 40.0f, 0.0f), D3DXVECTOR3(LIFE_WIDTH, LIFE_HEIGHT, 0));
 
-	// 敵生成
-	CGame::EnemyAll();
-
 	// ボス生成
 	CGame::BossAll();
 
@@ -116,6 +111,9 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 //=============================================================================
 void CGame::Uninit(void)
 {
+	// 敵生成装置リセット
+	CEnemy::EnemyGeneratorReset();
+
 	// 全てのテクスチャを破棄する
 	UnloadAll();
 
@@ -144,26 +142,8 @@ void CGame::Update(void)
 	CSound *pSound;
 	pSound = CManager::GetSound();
 
-	// 敵 & ボスのカウント
-	int EnemyCnt = m_pEnemy->GetEnemyCnt();
-
-	m_nCounterGame++;
-
-	if (m_nCounterGame == 60)
-	{
-		// 横移動
-		CEnemy::Create(D3DXVECTOR3(320.0f, -200.0f, 0.0f), D3DXVECTOR3(60.0f, 60.0f, 0.0f), D3DXVECTOR3(1.0f, 2.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), CEnemy::ENEMYTYPE_MOVE, ENEMY_LIFE);
-		CEnemy::Create(D3DXVECTOR3(960.0f, -200.0f, 0.0f), D3DXVECTOR3(60.0f, 60.0f, 0.0f), D3DXVECTOR3(-1.0f, 2.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), CEnemy::ENEMYTYPE_MOVE, ENEMY_LIFE);
-	}
-
-	if (m_nCounterGame == 600)
-	{
-		// 移動２
-		CEnemy::Create(D3DXVECTOR3(240.0f, -200.0f, 0.0f), D3DXVECTOR3(60.0f, 60.0f, 0.0f), D3DXVECTOR3(0.0f, 2.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), CEnemy::ENEMYTYPE_MOVE2, ENEMY_LIFE);
-		CEnemy::Create(D3DXVECTOR3(1040.0f, -200.0f, 0.0f), D3DXVECTOR3(60.0f, 60.0f, 0.0f), D3DXVECTOR3(0.0f, 2.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), CEnemy::ENEMYTYPE_MOVE2, ENEMY_LIFE);
-
-	}
-
+	// 敵生成
+	CEnemy::EnemyGenerator();
 
 	// ライフが0になったら
 	if (m_pLife->GetLife() == 0 && pFade->GetFade() == CFade::FADE_NONE)
@@ -171,6 +151,15 @@ void CGame::Update(void)
 		//サウンドストップ
 		pSound->Stop(CSound::SOUND_LABEL_SE_LASER);
 
+		// ゲームオーバー
+		m_resultmode = RESULTMODE_GAMEOVER;
+
+		// リザルトに移動する
+		pFade->SetFade(CFade::FADE_OUT, CManager::MODE_RESULT);
+	}
+
+	if (plnputKeyboard->GetPress(DIK_0) == true)
+	{
 		// ゲームオーバー
 		m_resultmode = RESULTMODE_GAMEOVER;
 
@@ -229,16 +218,6 @@ void CGame::UnloadAll(void)
 	CEffect::Unload();
 	CParts::Unload();
 	CParticle::Unload();
-}
-
-//=============================================================================
-// 敵管理
-//=============================================================================
-void CGame::EnemyAll(void)
-{
-	// 最初の2体
-	CEnemy::Create(D3DXVECTOR3(320.0f, 100.0f, 0.0f), D3DXVECTOR3(60.0f, 60.0f, 0.0f), D3DXVECTOR3(0.0f, 2.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), CEnemy::ENEMYTYPE_STOP, ENEMY_LIFE);
-	CEnemy::Create(D3DXVECTOR3(960.0f, 100.0f, 0.0f), D3DXVECTOR3(60.0f, 60.0f, 0.0f), D3DXVECTOR3(0.0f, 2.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), CEnemy::ENEMYTYPE_STOP, ENEMY_LIFE);
 }
 
 //=============================================================================

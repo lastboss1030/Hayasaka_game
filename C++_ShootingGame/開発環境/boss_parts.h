@@ -120,5 +120,7 @@ private:
 	int m_nSoundCnt;											// サウンドカウント  (警告音)
 	int m_nSoundCnt2;											// サウンドカウント2 (パーツ破損)
 	int m_nSoundCnt3;											// サウンドカウント3 (レーザー音)
+
+	int m_nCntBossTime;											// ボス出現タイム
 };
 #endif

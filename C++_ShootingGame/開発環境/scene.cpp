@@ -94,7 +94,7 @@ void CScene::UpdateAll()
 	{
 		for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
 		{
-			for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
+ 			for (int nCntScene = 0; nCntScene < MAX_POLYGON; nCntScene++)
 			{
 				if (m_apScene[nCntPriority][nCntScene] != NULL)
 				{

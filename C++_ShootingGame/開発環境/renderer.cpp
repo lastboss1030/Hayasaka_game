@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "scene2D.h"
 #include "main.h"
+#include "enemy.h"
 
 //=============================================================================
 // インストラクタ
@@ -192,7 +193,7 @@ void CRenderer::DrawFPS(void)
 	RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	char str[256];
 
-	wsprintf(str, "FPS:%d\n", nCountFPS);
+	wsprintf(str, "FPS:%d, Count:%d\n", nCountFPS, CEnemy::GetCounterGame());
 
 	// テキスト描画
 	m_pFont->DrawText(NULL, str, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0xff, 0xff));

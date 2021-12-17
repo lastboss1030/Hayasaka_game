@@ -96,7 +96,7 @@ HRESULT CBullet::Init(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, BULLE
 	else
 	{
 		// 追尾の弾
-		m_life = 140;
+		m_life = 300;
 	}
 
 
@@ -131,15 +131,16 @@ void CBullet::Update(void)
 	CSound *pSound;
 	pSound = CManager::GetSound();
 
-
-	// 追尾カウント
-	m_nCntHoming++;
-
 	// 攻撃タイプが追尾だったら
 	if (m_AttackType == ATTACKTYPE_HOMING)
 	{
-		// 追尾処理
-		HomingBullet();
+		// 追尾カウント
+		m_nCntHoming++;
+		if (m_nCntHoming <= 90)
+		{
+			// 追尾処理
+			HomingBullet();
+		}
 	}
 
 	// posにmoveの値を毎秒+する
@@ -455,7 +456,7 @@ void CBullet::HitParticle(int nNum)
 	{
 		if (nCntEffectEnemy % 1 == 0)
 		{
-			for (int nCntEffect = 0; nCntEffect < 50; nCntEffect++)	// 個数
+			for (int nCntEffect = 0; nCntEffect < 10; nCntEffect++)	// 個数
 			{
 				//角度の設定
 				float fAngle = ((float)(rand() % 96 - (96 / 2))) / 100 + D3DX_PI * 0.0f;	// 角度
@@ -465,7 +466,7 @@ void CBullet::HitParticle(int nNum)
 				CParticle::Create(Pos,													// 座標
 					D3DXVECTOR3(sinf(fAngle) * fmove, cosf(fAngle) * fmove, 5),			// 移動量
 					D3DXVECTOR3(20, 20, 0),		// サイズ
-					D3DXCOLOR(0.3f, 1.0f, 0.2f, 1.0f),
+					D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 					70,												// 寿命
 					0.95f);											// 慣性
 			}
@@ -477,7 +478,7 @@ void CBullet::HitParticle(int nNum)
 	{
 		if (nCntEffectEnemy % 1 == 0)
 		{
-			for (int nCntEffect = 0; nCntEffect < 60; nCntEffect++)	// 個数
+			for (int nCntEffect = 0; nCntEffect < 20; nCntEffect++)	// 個数
 			{
 				//角度の設定
 				float fAngle = ((float)(rand() % 72 - (72 / 2))) / 100 + D3DX_PI * -0.0f;	// 角度
@@ -499,7 +500,7 @@ void CBullet::HitParticle(int nNum)
 	{
 		if (nCntEffectEnemy % 1 == 0)
 		{
-			for (int nCntEffect = 0; nCntEffect < 90; nCntEffect++)	// 個数
+			for (int nCntEffect = 0; nCntEffect < 30; nCntEffect++)	// 個数
 			{
 				//角度の設定
 				float fAngle = ((float)(rand() % 85 - (85 / 2))) / 100 + D3DX_PI * 1.0f;	// 角度

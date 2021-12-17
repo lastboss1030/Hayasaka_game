@@ -13,7 +13,10 @@
 //=============================================================================
 // マクロ定義
 //=============================================================================
-#define ENEMY_LIFE (4)		// 敵の体力
+#define ENEMY_LIFE		(2)						// 敵の体力
+#define MAX_ENEMY		(43)					// 敵の最大数
+#define MAX_TEX_ENEMY	(3)						// テクスチャ
+#define ENEMY_TEXT_NAME ("data/TEXT/enemy.txt")	// 敵配置のテキスト
 
 //=============================================================================
 // 敵クラス(派生クラス)
@@ -40,6 +43,17 @@ public:
 		ENEMY_MAX,
 	}ENEMYSTATE;
 
+	// 敵の構造体
+	typedef struct
+	{
+		int nTime;			// 出現時間
+		D3DXVECTOR3 pos;	// 座標
+		D3DXVECTOR3 size;	// サイズ
+		D3DXVECTOR3 move;	// 移動量
+		int nLife;			// ライフ
+		int nType;			// タイプ
+	}ENEMY;
+
 	CEnemy(PRIORITY nPriority = PRIORITY_ENEMY);
 	~CEnemy();
 
@@ -48,9 +62,9 @@ public:
 	static void Unload(void);
 
 	// 生成
-	static CEnemy *Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, D3DXVECTOR3 speed, ENEMYTYPE type, int nLife);
+	static CEnemy *Create(int nIndex);
 
-	HRESULT Init(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, D3DXVECTOR3 speed, ENEMYTYPE type, int nLife);
+	HRESULT Init(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, int nLife, int nType);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
@@ -58,27 +72,42 @@ public:
 	bool HitEnemy(int nDamage);
 
 	// 敵の状態
-	ENEMYSTATE GetState(void) { return m_State; }
-	void SetState(ENEMYSTATE ENEMY_MAX) { m_State = ENEMY_MAX; }
-	int GetEnemyCnt(void) { return m_enmeyCnt; }
+	ENEMYSTATE GetState(void) { return m_State; }							// 状態取得
+	void SetState(ENEMYSTATE ENEMY_MAX) { m_State = ENEMY_MAX; }			// 状態設定
+	int GetEnemyCnt(void) { return m_enmeyCnt; }							// 敵数取得
+	
+	// タイプ
+	ENEMYTYPE GetEnemyType(void) { return m_Enemytype; };					// タイプ取得
+	void SetEnemyType(ENEMYTYPE EnemyType) { m_Enemytype = EnemyType; };	// タイプ設定
 
-	ENEMYTYPE GetEnemyType(void) { return m_Enemytype; };
-	void SetEnemyType(ENEMYTYPE EnemyType) { m_Enemytype = EnemyType; };
+	static void EnemyGenerator(void);										// 敵生成装置
+	static void EnemyGeneratorReset(void);									// 敵生成装置リセット
+	static int GetCounterGame(void);										// カウンター取得
+
+	// 敵の追尾
+	void HomigEnemy(void);
+
+	// 外部ファイル読み込み
+	void LoadData(void);
 
 private:
-	static LPDIRECT3DTEXTURE9 m_apTexture;				// テクスチャのポインタ
-	D3DXVECTOR3 m_size;									// サイズ
-	D3DXVECTOR3 m_move;									// 移動量
-	D3DXCOLOR m_Color;									// カラー
-	ENEMYTYPE m_Enemytype;								// 敵の種類
-	int m_nLife;										// ライフ
+	static LPDIRECT3DTEXTURE9 m_apTexture[MAX_TEX_ENEMY];	// テクスチャのポインタ
+	D3DXVECTOR3 m_size;										// サイズ
+	D3DXVECTOR3 m_move;										// 移動量
+	D3DXCOLOR m_Color;										// カラー
+	ENEMYTYPE m_Enemytype;									// 敵の種類
+	int m_nType;											// タイプ
+	int m_nLife;											// ライフ
 
-	ENEMYSTATE m_State;									// 状態
-	int m_nHitCnt;										// 当たってからのカウント
-	static int m_enmeyCnt;								// 敵数カウント
+	ENEMYSTATE m_State;										// 状態
+	int m_nHitCnt;											// 当たってからのカウント
+	static int m_enmeyCnt;									// 敵数カウント
+	int m_nShotCnt;											// 弾発射カウント
+	int m_nMoveCnt;											// 移動カウント
+	int m_nHomingCnt;										// ホーミングカウント
 
-	int m_nShotCnt;										// 弾発射カウント
-	int m_nCounter;										// カウンター
-	int m_nCntColor;									// 色の切り替えカウンター
+	static ENEMY m_aEnemy[MAX_ENEMY];						// 敵構造体
+	static int m_nIndexEnemy;								// 敵番号
+	static int m_nCounterGame;								// ゲームカウント
 };
 #endif
